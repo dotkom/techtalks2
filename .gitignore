@@ -1,0 +1,23 @@
+# dependencies
+*/node_modules/
+*/package-lock.json
+api/node_modules/
+client/.pnp
+client/.pnp.js
+
+# production
+client/build
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+client/npm-debug.log*
+cient/yarn-debug.log*
+client/yarn-error.log*
+
+# env variables
+api/.env
