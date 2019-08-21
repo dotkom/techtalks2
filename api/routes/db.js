@@ -123,6 +123,7 @@ router.post('/adminLogin', (req, res) => {
 router.post('/isAdminLoggedIn',(req, res) => {
   const { JWTKEY } = process.env;
   try {
+    const { token } = req.body;
     jwt.verify(token, JWTKEY);
     res.json({
       loggedIn: 'y',
@@ -268,9 +269,19 @@ router.post('/editCompany', async (req, res) => {
   }
 });
 
-// below here is not tested
+// this one is not tested - not sure if it will be needed
+
 router.post('/lastEvent', async (req, res) => {
-  const { token } = req.body;
+  try {
+    const { token } = req.body;
+    const { JWTKEY } = process.env;
+    jwt.verify(token, JWTKEY);
+  } catch (err) {
+    res.json({
+      status: 'denied'
+    });
+    return;
+  }
   try {
     const connection = await connect();
     const response = await connection.query(
@@ -294,7 +305,17 @@ router.post('/lastEvent', async (req, res) => {
 });
 
 router.post('/allEvents', async (req, res) => {
-  const { token } = req.body;
+  try {
+    const { token } = req.body;
+    const { JWTKEY } = process.env;
+    jwt.verify(token, JWTKEY);
+  } catch(err) {
+    res.json({
+      status: 'denied'
+    });
+    return;
+  }
+
   try {
     const connection = await connect();
     const response = await connection.query(
@@ -319,12 +340,21 @@ router.post('/allEvents', async (req, res) => {
 });
 
 router.post('/newEvent', async (req, res) => {
-  const { token, dato, plasser, beskrivelse } = req.body;
+  const { token, dato, antallPlasser, beskrivelse } = req.body;
+  try {
+    const { JWTKEY } = process.env;
+    jwt.verify(token, JWTKEY);
+  } catch (error) {
+    res.json({
+      status: 'denied'
+    });
+    return;
+  }
   try {
     const connection = await connect();
     const response = await connection.query(
       'INSERT INTO Arrangement(Dato, AntallPlasser, Beskrivelse) VALUES (?, ?, ?)',
-      [dato, plasser, beskrivelse]
+      [dato, antallPlasser, beskrivelse]
     );
     connection.end();
     const { insertId } = response; 

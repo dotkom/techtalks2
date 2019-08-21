@@ -26,6 +26,16 @@ class InputField extends Component {
 
 	render() {
     const { label, id, val, type, disabled } = this.state;
+    if (type === 'textarea') {
+      return (
+        <div>
+          <label htmlFor={id}>
+            <span>{label}</span>
+            <textarea key={id} onChange={this.handleChange} id={id} value={val} disabled={disabled} />
+          </label>
+			</div>
+      );
+    }
 		return (
 			<div>
         <label htmlFor={id}>

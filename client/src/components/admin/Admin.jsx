@@ -7,7 +7,7 @@ import AdminPanel from './AdminPanel.jsx';
 import Companies from './Companies.jsx';
 import NewCompany from './NewCompany.jsx'; 
 import Events from './Events.jsx';
-const NewEvent = () => <h1>Add new event then you dumb fuck</h1>;
+import NewEvent from './NewEvent.jsx';
 const EventDetails = () => <h1>Detailed info on the event</h1>;
 
 class Admin extends Component {
