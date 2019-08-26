@@ -10,10 +10,9 @@ function connect() {
     host: DBHOST,
     user: DBUSER,
     password: DBPASS,
-    database: DBNAME
+    database: DBNAME,
   });
 }
-
 
 function connectPool() {
   const { DBHOST, DBUSER, DBPASS, DBNAME } = process.env;
@@ -21,22 +20,32 @@ function connectPool() {
     host: DBHOST,
     user: DBUSER,
     password: DBPASS,
-    database: DBNAME
+    database: DBNAME,
   });
 }
-
 
 router.get('/home', async (req, res) => {
   try {
     const connection = await connect();
-    const event =  (await connection.execute('SELECT ArrangementID, Beskrivelse, AntallPlasser, Dato FROM Arrangement ORDER BY Dato DESC LIMIT 1'))[0][0];
+    const event = (await connection.execute(
+      'SELECT ArrangementID, Beskrivelse, AntallPlasser, Dato FROM Arrangement ORDER BY Dato DESC LIMIT 1'
+    ))[0][0];
     const arrID = event.ArrangementID;
     connection.end();
     const pool = connectPool();
-    const [ partnersResponse, programResponse, paameldteResponse ] = await Promise.all([
-      pool.query('SELECT Bedrift.Navn AS name, Bedrift.Logo AS url FROM Bedrift INNER JOIN Sponsor ON Bedrift.BedriftID=Sponsor.BedriftID WHERE Sponsor.ArrangementID = ?', [arrID]),
-      pool.query('SELECT PH.Navn AS navn, PH.Klokkeslett AS tid, PH.Beskrivelse AS beskrivelse, Rom.Navn AS stedNavn, Rom.MazemapURL AS stedLink FROM (ProgramHendelse AS PH) INNER JOIN Rom ON PH.RomID=Rom.RomID WHERE PH.ArrangementID = ?', [arrID]),
-      pool.query('SELECT COUNT(Paameldt.PaameldingsHash) AS AntallPåmeldte FROM Paameldt RIGHT JOIN Arrangement ON Paameldt.ArrangementID=Arrangement.ArrangementID WHERE Arrangement.ArrangementID=? AND Paameldt.Verifisert=TRUE GROUP BY Arrangement.ArrangementID', [arrID])
+    const [partnersResponse, programResponse, paameldteResponse] = await Promise.all([
+      pool.query(
+        'SELECT Bedrift.Navn AS name, Bedrift.Logo AS url FROM Bedrift INNER JOIN Sponsor ON Bedrift.BedriftID=Sponsor.BedriftID WHERE Sponsor.ArrangementID = ?',
+        [arrID]
+      ),
+      pool.query(
+        'SELECT PH.Navn AS navn, PH.Klokkeslett AS tid, PH.Beskrivelse AS beskrivelse, Rom.Navn AS stedNavn, Rom.MazemapURL AS stedLink FROM (ProgramHendelse AS PH) INNER JOIN Rom ON PH.RomID=Rom.RomID WHERE PH.ArrangementID = ?',
+        [arrID]
+      ),
+      pool.query(
+        'SELECT COUNT(Paameldt.PaameldingsHash) AS AntallPåmeldte FROM Paameldt RIGHT JOIN Arrangement ON Paameldt.ArrangementID=Arrangement.ArrangementID WHERE Arrangement.ArrangementID=? AND Paameldt.Verifisert=TRUE GROUP BY Arrangement.ArrangementID',
+        [arrID]
+      ),
     ]);
     pool.end();
     const partners = partnersResponse[0];
@@ -45,7 +54,7 @@ router.get('/home', async (req, res) => {
     res.json({
       partners,
       program,
-      event
+      event,
     });
   } catch (error) {
     console.log('Could not fetch homepage');
@@ -53,11 +62,12 @@ router.get('/home', async (req, res) => {
   }
 });
 
-
 router.post('/paamelding', async (req, res) => {
   const { navn, epost, linjeforening, alder, studieår } = req.body;
   const connection = await connect();
-  const event =  (await connection.execute('SELECT ArrangementID, Beskrivelse, AntallPlasser, Dato FROM Arrangement ORDER BY Dato DESC LIMIT 1'))[0][0];
+  const event = (await connection.execute(
+    'SELECT ArrangementID, Beskrivelse, AntallPlasser, Dato FROM Arrangement ORDER BY Dato DESC LIMIT 1'
+  ))[0][0];
   const arrID = event.ArrangementID;
   const hash = md5(`${arrID}-${navn}-${epost}-${linjeforening}-${alder}-${studieår}-${new Date()}`);
   const response = await connection.query(
@@ -66,37 +76,34 @@ router.post('/paamelding', async (req, res) => {
   );
   connection.end();
   const { affectedRows } = response[0];
-  if(affectedRows === 1 ) {
+  if (affectedRows === 1) {
     res.json({
       status: 'succeeded',
-    })
+    });
   } else {
     res.json({
-      status: 'failed'
-    })
+      status: 'failed',
+    });
   }
-})
+});
 
 router.post('/validering', async (req, res) => {
   const { hash } = req.body;
   const connection = await connect();
-  const response = await connection.query(
-    'UPDATE Paameldt SET Verifisert=TRUE WHERE PaameldingsHash=?',
-    [hash]
-  );
+  const response = await connection.query('UPDATE Paameldt SET Verifisert=TRUE WHERE PaameldingsHash=?', [hash]);
   connection.end();
   const { affectedRows, changedRows } = response[0];
-  if(changedRows === 1) {
+  if (changedRows === 1) {
     res.json({
-      status: 'succeeded'
+      status: 'succeeded',
     });
-  } else if(affectedRows === 1) {
+  } else if (affectedRows === 1) {
     res.json({
-      status: 'repeat'
+      status: 'repeat',
     });
   } else {
     res.json({
-      status: 'failed'
+      status: 'failed',
     });
   }
 });
@@ -104,23 +111,23 @@ router.post('/validering', async (req, res) => {
 router.post('/adminLogin', (req, res) => {
   const { username, password } = req.body;
   const { AUNAME, APASS } = process.env;
-  if ( username === AUNAME && password === APASS) {
+  if (username === AUNAME && password === APASS) {
     const key = process.env.JWTKEY;
-    const token = jwt.sign({ foo: 'bar'}, key, { expiresIn: '30m'});
+    const token = jwt.sign({ foo: 'bar' }, key, { expiresIn: '30m' });
     res.json({
       token,
-      status: 'succeeded'
+      status: 'succeeded',
     });
     console.log(`Admin logged in at ${new Date().toLocaleTimeString()}`);
   } else {
     res.json({
-      status: 'invalid'
+      status: 'invalid',
     });
     console.log('Someone tried to log in with invalid credentials');
   }
 });
 
-router.post('/isAdminLoggedIn',(req, res) => {
+router.post('/isAdminLoggedIn', (req, res) => {
   const { JWTKEY } = process.env;
   try {
     const { token } = req.body;
@@ -128,13 +135,12 @@ router.post('/isAdminLoggedIn',(req, res) => {
     res.json({
       loggedIn: 'y',
     });
-  } catch(err) {
+  } catch (err) {
     res.json({
       loggedIn: 'n',
     });
   }
 });
-
 
 router.post('/allCompanies', async (req, res) => {
   try {
@@ -144,13 +150,15 @@ router.post('/allCompanies', async (req, res) => {
   } catch (err) {
     res.json({
       status: 'denied',
-      bedrifter: []
+      bedrifter: [],
     });
     return;
   }
   try {
     const connection = await connect();
-    const event =  (await connection.execute('SELECT ArrangementID, Beskrivelse, AntallPlasser, Dato FROM Arrangement ORDER BY Dato DESC LIMIT 1'))[0][0];
+    const event = (await connection.execute(
+      'SELECT ArrangementID, Beskrivelse, AntallPlasser, Dato FROM Arrangement ORDER BY Dato DESC LIMIT 1'
+    ))[0][0];
     const arrID = event.ArrangementID;
     const results = await connection.query(
       `SELECT Bedrift.BedriftID AS BedriftID, Bedrift.Navn AS Navn, Bedrift.Logo AS Logo, COUNT(Sponsor.ArrangementID) AS isSponsor
@@ -162,13 +170,13 @@ router.post('/allCompanies', async (req, res) => {
     const bedrifter = results[0];
     res.json({
       bedrifter,
-      status: 'succeeded'
+      status: 'succeeded',
     });
     connection.end();
   } catch (error) {
     res.json({
       bedrifter: [],
-      status: 'failed'
+      status: 'failed',
     });
     console.log('Failed trying to display companies');
     console.log(error);
@@ -180,7 +188,7 @@ router.post('/newCompany', async (req, res) => {
   try {
     const { JWTKEY } = process.env;
     jwt.verify(token, JWTKEY);
-  } catch(err) {
+  } catch (err) {
     res.json({
       status: 'denied',
     });
@@ -188,25 +196,20 @@ router.post('/newCompany', async (req, res) => {
   }
   try {
     const connection = await connect();
-    const response = await connection.query(
-      'INSERT INTO Bedrift(Navn, Logo) VALUES (?, ?)',
-      [navn, logo]
-    );
+    const response = await connection.query('INSERT INTO Bedrift(Navn, Logo) VALUES (?, ?)', [navn, logo]);
     if (isSponsor) {
       const { insertId } = response;
-      const arrID =  (await connection.execute('SELECT ArrangementID FROM Arrangement ORDER BY Dato DESC LIMIT 1'))[0][0].ArrangementID;
-      await connection.query(
-        'INSERT INTO Sponsor(ArrangementID, BedriftID) VALUES (?, ?)',
-        [arrID, insertId]
-      );
+      const arrID = (await connection.execute('SELECT ArrangementID FROM Arrangement ORDER BY Dato DESC LIMIT 1'))[0][0]
+        .ArrangementID;
+      await connection.query('INSERT INTO Sponsor(ArrangementID, BedriftID) VALUES (?, ?)', [arrID, insertId]);
     }
     connection.end();
     res.json({
-      status: 'succeeded'
+      status: 'succeeded',
     });
   } catch (error) {
     res.json({
-      status: 'failed'
+      status: 'failed',
     });
     console.log('Error while creating new company:');
     console.log(error);
@@ -226,43 +229,43 @@ router.post('/editCompany', async (req, res) => {
   }
   try {
     const connection = await connect();
-    const response = await connection.query(
-      'UPDATE Bedrift SET Navn=?, Logo=? WHERE BedriftID=?',
-      [Navn, Logo, BedriftID]
-    );
+    const response = await connection.query('UPDATE Bedrift SET Navn=?, Logo=? WHERE BedriftID=?', [
+      Navn,
+      Logo,
+      BedriftID,
+    ]);
     if (sponsorshipChanged) {
-      const event =  (await connection.execute('SELECT ArrangementID, Beskrivelse, AntallPlasser, Dato FROM Arrangement ORDER BY Dato DESC LIMIT 1'))[0][0];
+      const event = (await connection.execute(
+        'SELECT ArrangementID, Beskrivelse, AntallPlasser, Dato FROM Arrangement ORDER BY Dato DESC LIMIT 1'
+      ))[0][0];
       const arrID = event.ArrangementID;
-      if(isSponsor) {
-        await connection.query(
-          'INSERT INTO Sponsor(BedriftID, ArrangementID, SponsorType) VALUES (?, ?, 1)',
-          [BedriftID, arrID]
-        );
+      if (isSponsor) {
+        await connection.query('INSERT INTO Sponsor(BedriftID, ArrangementID, SponsorType) VALUES (?, ?, 1)', [
+          BedriftID,
+          arrID,
+        ]);
       } else {
-        await connection.query(
-          'DELETE FROM Sponsor WHERE ArrangementID=? AND BedriftID=?',
-          [arrID, BedriftID]
-        );
+        await connection.query('DELETE FROM Sponsor WHERE ArrangementID=? AND BedriftID=?', [arrID, BedriftID]);
       }
     }
     connection.end();
     const { affectedRows, changedRows } = response[0];
-    if(changedRows === 1) {
+    if (changedRows === 1) {
       res.json({
-        status: 'succeeded'
+        status: 'succeeded',
       });
-    } else if(affectedRows === 1) {
+    } else if (affectedRows === 1) {
       res.json({
-        status: 'unchanged'
+        status: 'unchanged',
       });
     } else {
       res.json({
-        status: 'failed'
-      })
+        status: 'failed',
+      });
     }
   } catch (error) {
     res.json({
-      status: 'failed'
+      status: 'failed',
     });
     console.log(`Error while updating company with id ${BedriftID}.`);
     console.log(error);
@@ -278,7 +281,7 @@ router.post('/lastEvent', async (req, res) => {
     jwt.verify(token, JWTKEY);
   } catch (err) {
     res.json({
-      status: 'denied'
+      status: 'denied',
     });
     return;
   }
@@ -295,11 +298,11 @@ router.post('/lastEvent', async (req, res) => {
     const event = response[0][0];
     res.json({
       status: 'succeeded',
-      event
+      event,
     });
   } catch (err) {
     res.json({
-      status: 'failed'
+      status: 'failed',
     });
   }
 });
@@ -309,9 +312,9 @@ router.post('/allEvents', async (req, res) => {
     const { token } = req.body;
     const { JWTKEY } = process.env;
     jwt.verify(token, JWTKEY);
-  } catch(err) {
+  } catch (err) {
     res.json({
-      status: 'denied'
+      status: 'denied',
     });
     return;
   }
@@ -327,12 +330,12 @@ router.post('/allEvents', async (req, res) => {
     const events = response[0];
     res.send({
       status: 'succeeded',
-      events
+      events,
     });
   } catch (error) {
     res.send({
       status: 'failed',
-      events: []
+      events: [],
     });
     console.log('Error while fetching list of events');
     console.log(error);
@@ -346,7 +349,7 @@ router.post('/newEvent', async (req, res) => {
     jwt.verify(token, JWTKEY);
   } catch (error) {
     res.json({
-      status: 'denied'
+      status: 'denied',
     });
     return;
   }
@@ -357,10 +360,10 @@ router.post('/newEvent', async (req, res) => {
       [dato, antallPlasser, beskrivelse]
     );
     connection.end();
-    const { insertId } = response; 
+    const { insertId } = response;
     res.json({
       status: 'succeeded',
-      ArrangementID: insertId
+      ArrangementID: insertId,
     });
   } catch (error) {
     res.json({
@@ -381,11 +384,11 @@ router.post('/editEvent', async (req, res) => {
     );
     connection.end();
     res.json({
-      status: 'succeeded'
+      status: 'succeeded',
     });
   } catch (error) {
     res.json({
-      status: 'failed'
+      status: 'failed',
     });
     console.log(`Error while editing event with ID ${arrangementID}`);
     console.log(error);
@@ -396,17 +399,14 @@ router.post('/addSponsor', async (req, res) => {
   const { token, arrangementID, bedriftID } = req.body;
   try {
     const connection = await connect();
-    await connection.query(
-      'INSERT INTO Sponsor(ArrangementID, BedriftID) VALUES (?, ?)',
-      [arrangementID, bedriftID]
-    );
+    await connection.query('INSERT INTO Sponsor(ArrangementID, BedriftID) VALUES (?, ?)', [arrangementID, bedriftID]);
     connection.end();
     res.json({
-      status: 'succeeded'
+      status: 'succeeded',
     });
   } catch (error) {
     res.json({
-      status: 'failed'
+      status: 'failed',
     });
     console.log('Error while adding sponsor');
     console.log(error);
@@ -417,21 +417,18 @@ router.post('/removeSponsor', async (req, res) => {
   const { token, arrangementID, bedriftID } = req.body;
   try {
     const connection = await connect();
-    await connection.query(
-      'DELETE FROM Sponsor WHERE ArrangementID=? AND BedriftID=?',
-      [arrangementID, bedriftID]
-    );
+    await connection.query('DELETE FROM Sponsor WHERE ArrangementID=? AND BedriftID=?', [arrangementID, bedriftID]);
     connection.end();
     res.json({
-      status: 'succeeded'
+      status: 'succeeded',
     });
   } catch (error) {
     res.json({
-      status: 'failed'
+      status: 'failed',
     });
     console.log('Error while removing sponsor');
     console.log(error);
   }
-})
+});
 
 module.exports = router;
