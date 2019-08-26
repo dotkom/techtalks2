@@ -19,7 +19,7 @@ class Footer extends Component {
       <Wrapper>
         <P>
           Organisasjonsnavn <b>Ekskursjonskomiteen Online</b>
-          <br/>
+          <br />
           Orgnr. <b>920 939 627</b>
           <br />
           Epost <b>ekskom@online.ntnu.no</b>

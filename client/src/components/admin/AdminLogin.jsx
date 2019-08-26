@@ -8,8 +8,8 @@ class AdminLogin extends Component {
     this.state = {
       username: '',
       password: '',
-      status: 'waiting'
-    }
+      status: 'waiting',
+    };
     this.changeUsername = this.changeUsername.bind(this);
     this.changePass = this.changePass.bind(this);
     this.login = this.login.bind(this);
@@ -17,22 +17,22 @@ class AdminLogin extends Component {
 
   async componentDidMount() {
     const token = localStorage.getItem('token');
-    if(token) {
+    if (token) {
       const req = {
         method: 'POST',
         body: JSON.stringify({
-          token
+          token,
         }),
         headers: {
-          'Content-Type':'application/json'
-        }
+          'Content-Type': 'application/json',
+        },
       };
       const res = await fetch('/db/isAdminLoggedIn', req);
       const j = await res.json();
       const { loggedIn } = j;
-      if(loggedIn === 'y') {
+      if (loggedIn === 'y') {
         this.setState({
-          status: 'succeeded'
+          status: 'succeeded',
         });
       }
     }
@@ -40,13 +40,13 @@ class AdminLogin extends Component {
 
   changeUsername(newVal) {
     this.setState({
-      username: newVal
+      username: newVal,
     });
   }
 
   changePass(newVal) {
     this.setState({
-      password: newVal
+      password: newVal,
     });
   }
 
@@ -57,21 +57,21 @@ class AdminLogin extends Component {
       method: 'POST',
       body: JSON.stringify({
         username,
-        password
+        password,
       }),
       headers: {
-        'Content-Type': 'application/json'
-      }
+        'Content-Type': 'application/json',
+      },
     };
     console.log(req);
     const res = await fetch('/db/adminLogin', req);
     const j = await res.json();
     const { token, status } = j;
-    if(status === 'succeeded') {
+    if (status === 'succeeded') {
       localStorage.setItem('token', token);
     }
     this.setState({
-      status
+      status,
     });
     console.log(j);
   }
@@ -79,15 +79,23 @@ class AdminLogin extends Component {
   render() {
     const { username, password, status } = this.state;
     if (status === 'succeeded') {
-      return <Redirect to='/admin/main' />
+      return <Redirect to="/admin/main" />;
     }
     return (
       <div>
         <h1>Sup, wanna login?</h1>
-        <InputField updateValue={this.changeUsername} label='Brukernavn: ' id='adminUsername' val={username} type='text' />
-        <InputField updateValue={this.changePass} label='Passord: ' id='adminPass' val={password} type='password' />
-        { status === 'invalid' ? <p>Invalid login credentials</p> : null}
-        <button type='button' onClick={this.login} >Attempt hack</button>
+        <InputField
+          updateValue={this.changeUsername}
+          label="Brukernavn: "
+          id="adminUsername"
+          val={username}
+          type="text"
+        />
+        <InputField updateValue={this.changePass} label="Passord: " id="adminPass" val={password} type="password" />
+        {status === 'invalid' ? <p>Invalid login credentials</p> : null}
+        <button type="button" onClick={this.login}>
+          Attempt hack
+        </button>
       </div>
     );
   }

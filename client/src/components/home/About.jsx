@@ -5,8 +5,8 @@ class About extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      event: props.event
-    }
+      event: props.event,
+    };
   }
 
   render() {
@@ -21,15 +21,15 @@ class About extends Component {
     const DatoString = D.toLocaleDateString();
     return (
       <Wrapper>
-        <h2 id='about'>Om Tech Talks</h2>
-        {
-          ArrangementID ? (
-            <div>
-              <p>{Beskrivelse}</p>
-              <p>{D < new Date() ? 'Siste tech talks var ' : 'Neste tech talks er '} den {DatoString}</p>
-            </div>
-          ) : null
-        }
+        <h2 id="about">Om Tech Talks</h2>
+        {ArrangementID ? (
+          <div>
+            <p>{Beskrivelse}</p>
+            <p>
+              {D < new Date() ? 'Siste tech talks var ' : 'Neste tech talks er '} den {DatoString}
+            </p>
+          </div>
+        ) : null}
       </Wrapper>
     );
   }

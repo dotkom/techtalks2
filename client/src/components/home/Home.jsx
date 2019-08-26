@@ -18,8 +18,8 @@ class Home extends Component {
         Beskrivelse: '',
         AntallPlasser: 0,
         AntallPåmeldte: 0,
-      }
-    }
+      },
+    };
   }
 
   async componentDidMount() {
@@ -29,7 +29,7 @@ class Home extends Component {
     this.setState({
       partners,
       program,
-      event
+      event,
     });
   }
 
@@ -42,10 +42,10 @@ class Home extends Component {
     return (
       <Wrapper>
         <Navbar />
-        <About event={ event } />
-        <Samarbeidspartnere partners={ partners } />
-        <Program events={ program } />
-        <Paamelding event={ event }/>
+        <About event={event} />
+        <Samarbeidspartnere partners={partners} />
+        <Program events={program} />
+        <Paamelding event={event} />
       </Wrapper>
     );
   }

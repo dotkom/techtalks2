@@ -6,9 +6,8 @@ class Events extends Component {
     super(props);
     this.state = {
       events: [],
-      status: 'waiting'
-    }
-
+      status: 'waiting',
+    };
   }
 
   async componentDidMount() {
@@ -19,22 +18,22 @@ class Events extends Component {
         token,
       }),
       headers: {
-        'Content-Type': 'application/json'
-      }
+        'Content-Type': 'application/json',
+      },
     };
     const res = await fetch('/db/allEvents', req);
     const j = await res.json();
     const { status, events } = j;
     this.setState({
       status,
-      events
+      events,
     });
   }
 
   render() {
     const { status, events } = this.state;
     if (status === 'denied') {
-      return <Redirect to='/admin' />;
+      return <Redirect to="/admin" />;
     }
     return (
       <div>
@@ -48,15 +47,13 @@ class Events extends Component {
             </tr>
           </thead>
           <tbody>
-            {
-              events.map(({ArrangementID, Dato, AntallPåmeldte, AntallPlasser}) => (
-                <tr key={ArrangementID}>
-                  <td>{ArrangementID}</td>
-                  <td>{new Date(Dato).toLocaleDateString()}</td>
-                  <td>{`${AntallPåmeldte}/${AntallPlasser}`}</td>
-                </tr>
-              ))
-            }
+            {events.map(({ ArrangementID, Dato, AntallPåmeldte, AntallPlasser }) => (
+              <tr key={ArrangementID}>
+                <td>{ArrangementID}</td>
+                <td>{new Date(Dato).toLocaleDateString()}</td>
+                <td>{`${AntallPåmeldte}/${AntallPlasser}`}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>

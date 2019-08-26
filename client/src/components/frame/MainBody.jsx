@@ -5,7 +5,7 @@ import { BrowserRouter, Route } from 'react-router-dom';
 import Home from '../home/Home.jsx';
 import Admin from '../admin/Admin.jsx';
 import Validate from '../validate/Validate.jsx';
-  
+
 class MainBody extends Component {
   render() {
     const Wrapper = styled.div`
@@ -17,9 +17,9 @@ class MainBody extends Component {
     return (
       <Wrapper>
         <BrowserRouter>
-          <Route exact path='/' component={Home} />
-          <Route path='/admin' component={Admin} />
-          <Route path='/validate' component={Validate} />
+          <Route exact path="/" component={Home} />
+          <Route path="/admin" component={Admin} />
+          <Route path="/validate" component={Validate} />
         </BrowserRouter>
       </Wrapper>
     );

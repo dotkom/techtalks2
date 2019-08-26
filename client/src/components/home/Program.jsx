@@ -6,7 +6,7 @@ class Program extends Component {
     super(props);
     this.state = {
       events: props.events,
-      displayDetails: props.events.map(() => false)
+      displayDetails: props.events.map(() => false),
     };
     this.handleClick = this.handleClick.bind(this);
   }
@@ -25,12 +25,12 @@ class Program extends Component {
       max-width: 600px;
     `;
     const ProgramTable = styled.table`
-      width: 100%
-    `
+      width: 100%;
+    `;
     const { events } = this.state;
     return (
       <Wrapper>
-        <h2 id='program'>Program</h2>
+        <h2 id="program">Program</h2>
         <ProgramTable>
           <thead>
             <tr>
@@ -46,18 +46,18 @@ class Program extends Component {
               <tbody key={index}>
                 <tr>
                   <td>{tid}</td>
-                  <td onClick={ this.handleClick } id={index} >{navn}</td>
-                  <td><a href={stedLink}>{stedNavn}</a></td>
+                  <td onClick={this.handleClick} id={index}>
+                    {navn}
+                  </td>
+                  <td>
+                    <a href={stedLink}>{stedNavn}</a>
+                  </td>
                 </tr>
-                { shouldDisplay ? 
-                  (<tr>
-                    <td colSpan='3'>
-                      { beskrivelse }
-                    </td>
-                  </tr>)
-                  :
-                  null
-                }
+                {shouldDisplay ? (
+                  <tr>
+                    <td colSpan="3">{beskrivelse}</td>
+                  </tr>
+                ) : null}
               </tbody>
             );
           })}

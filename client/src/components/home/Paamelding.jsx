@@ -30,34 +30,33 @@ class Paamelding extends Component {
     this.submitForm = this.submitForm.bind(this);
   }
 
-
   updateName(newVal) {
     this.setState({
-      navn: newVal
+      navn: newVal,
     });
   }
 
   updateEmail(newVal) {
     this.setState({
-      epost: newVal
+      epost: newVal,
     });
   }
 
   updateLinje(newVal) {
     this.setState({
-      linjeforening: newVal
-    })
+      linjeforening: newVal,
+    });
   }
 
   updateAge(newVal) {
     this.setState({
-      alder: newVal
+      alder: newVal,
     });
   }
 
   updateYear(newVal) {
     this.setState({
-      studieår: newVal
+      studieår: newVal,
     });
   }
 
@@ -74,27 +73,27 @@ class Paamelding extends Component {
         epost,
         linjeforening,
         alder,
-        studieår
+        studieår,
       }),
       headers: {
         'Content-Type': 'application/json',
-      }
-    }
+      },
+    };
     const res = await fetch('db/paamelding', req);
     const jsoned = await res.json();
     console.log(jsoned);
     this.setState({
-      status: jsoned.status
-    })
+      status: jsoned.status,
+    });
   }
 
   render() {
     const { navn, epost, linjeforening, alder, studieår, event, status } = this.state;
     const { AntallPlasser, AntallPåmeldte } = event;
     if (status === 'succeeded') {
-      return(
+      return (
         <Wrapper>
-          <h2 id='paamelding'>Påmelding</h2>
+          <h2 id="paamelding">Påmelding</h2>
           <p>
             Du vil snart få en bekreftelses e-post sendt til {epost}.
             <br />
@@ -105,13 +104,25 @@ class Paamelding extends Component {
     }
     return (
       <Wrapper>
-        <h2 id='paamelding'>Påmelding</h2>
+        <h2 id="paamelding">Påmelding</h2>
         <h3>{`${AntallPåmeldte} av ${AntallPlasser} påmeldt`}</h3>
-        <InputField type='text' updateValue={this.updateName} label='Navn: ' id='paameldingNavn' val={navn} />
-        <InputField type='text' updateValue={this.updateEmail} label='E-post: ' id='paameldingEpost' val={epost} />
-        <InputField type='text' updateValue={this.updateLinje} label='Linjeforening: ' id='paameldingLinje' val={linjeforening} />
-        <InputField type='number' updateValue={this.updateAge} label='Alder: ' id='paameldingAlder' val={alder}/>
-        <InputField type='number' updateValue={this.updateYear} label='Studieår: ' id='paameldingStudieaar' val={studieår} />
+        <InputField type="text" updateValue={this.updateName} label="Navn: " id="paameldingNavn" val={navn} />
+        <InputField type="text" updateValue={this.updateEmail} label="E-post: " id="paameldingEpost" val={epost} />
+        <InputField
+          type="text"
+          updateValue={this.updateLinje}
+          label="Linjeforening: "
+          id="paameldingLinje"
+          val={linjeforening}
+        />
+        <InputField type="number" updateValue={this.updateAge} label="Alder: " id="paameldingAlder" val={alder} />
+        <InputField
+          type="number"
+          updateValue={this.updateYear}
+          label="Studieår: "
+          id="paameldingStudieaar"
+          val={studieår}
+        />
         <button onClick={this.submitForm}>Meld meg på</button>
       </Wrapper>
     );
