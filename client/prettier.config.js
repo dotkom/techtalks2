@@ -1,3 +1,5 @@
+const config = require('../prettier.config');
+
 module.exports = {
-  ...require('../prettier.config'),
+  ...config,
 };
