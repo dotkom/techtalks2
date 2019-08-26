@@ -1,4 +1,5 @@
 const express = require('express');
+
 const router = express.Router();
 const mysql = require('mysql2/promise');
 const md5 = require('md5');
@@ -24,7 +25,7 @@ function connectPool() {
   });
 }
 
-router.get('/home', async (req, res) => {
+router.get('/home', async (_, res) => {
   try {
     const connection = await connect();
     const event = (await connection.execute(
@@ -375,7 +376,7 @@ router.post('/newEvent', async (req, res) => {
 });
 
 router.post('/editEvent', async (req, res) => {
-  const { token, arrangementID, dato, plasser, beskrivelse } = req.body;
+  const { arrangementID, dato, plasser, beskrivelse } = req.body;
   try {
     const connection = await connect();
     const response = await connection.query(
@@ -396,7 +397,7 @@ router.post('/editEvent', async (req, res) => {
 });
 
 router.post('/addSponsor', async (req, res) => {
-  const { token, arrangementID, bedriftID } = req.body;
+  const { arrangementID, bedriftID } = req.body;
   try {
     const connection = await connect();
     await connection.query('INSERT INTO Sponsor(ArrangementID, BedriftID) VALUES (?, ?)', [arrangementID, bedriftID]);
@@ -414,7 +415,7 @@ router.post('/addSponsor', async (req, res) => {
 });
 
 router.post('/removeSponsor', async (req, res) => {
-  const { token, arrangementID, bedriftID } = req.body;
+  const { arrangementID, bedriftID } = req.body;
   try {
     const connection = await connect();
     await connection.query('DELETE FROM Sponsor WHERE ArrangementID=? AND BedriftID=?', [arrangementID, bedriftID]);
