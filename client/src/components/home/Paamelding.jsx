@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 
-import InputField from '../inputs/InputField.jsx';
+import InputField from '../inputs/InputField';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -95,7 +95,8 @@ class Paamelding extends Component {
         <Wrapper>
           <h2 id="paamelding">Påmelding</h2>
           <p>
-            Du vil snart få en bekreftelses e-post sendt til {epost}.
+            Du vil snart få en bekreftelses e-post sendt til {epost}
+            .
             <br />
             <b>OBS! Du er ikke påmeldt før du har verifisert påmeldingen din</b>
           </p>

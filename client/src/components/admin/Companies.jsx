@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 
-import Company from './Company.jsx';
+import Company from './Company';
 
 class Companies extends Component {
   constructor(props) {

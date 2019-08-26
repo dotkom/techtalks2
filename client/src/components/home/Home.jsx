@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 
-import Navbar from './Navbar.jsx';
-import About from './About.jsx';
-import Samarbeidspartnere from './Samarbeidspartnere.jsx';
-import Program from './Program.jsx';
-import Paamelding from './Paamelding.jsx';
+import Navbar from './Navbar';
+import About from './About';
+import Samarbeidspartnere from './Samarbeidspartnere';
+import Program from './Program';
+import Paamelding from './Paamelding';
 
 class Home extends Component {
   constructor(props) {

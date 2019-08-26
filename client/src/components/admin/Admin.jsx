@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import { BrowserRouter, Route } from 'react-router-dom';
 
-import AdminLogin from './AdminLogin.jsx';
-import AdminPanel from './AdminPanel.jsx';
-import Companies from './Companies.jsx';
-import NewCompany from './NewCompany.jsx';
-import Events from './Events.jsx';
-import NewEvent from './NewEvent.jsx';
+import AdminLogin from './AdminLogin';
+import AdminPanel from './AdminPanel';
+import Companies from './Companies';
+import NewCompany from './NewCompany';
+import Events from './Events';
+import NewEvent from './NewEvent';
+
 const EventDetails = () => <h1>Detailed info on the event</h1>;
 
 class Admin extends Component {

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
-import InputField from '../inputs/InputField.jsx';
+import InputField from '../inputs/InputField';
 
 class AdminLogin extends Component {
   constructor(props) {

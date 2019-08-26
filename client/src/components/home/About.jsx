@@ -26,7 +26,8 @@ class About extends Component {
           <div>
             <p>{Beskrivelse}</p>
             <p>
-              {D < new Date() ? 'Siste tech talks var ' : 'Neste tech talks er '} den {DatoString}
+              {D < new Date() ? 'Siste tech talks var ' : 'Neste tech talks er '} den
+              {DatoString}
             </p>
           </div>
         ) : null}
