@@ -8,10 +8,12 @@ import Companies from './Companies.jsx';
 import NewCompany from './NewCompany.jsx'; 
 import Events from './Events.jsx';
 import NewEvent from './NewEvent.jsx';
-const EventDetails = () => <h1>Detailed info on the event</h1>;
+import Event from './Event.jsx';
 
 class Admin extends Component {
   render() {
+    const U = new URL(window.location.href);
+    const params = U.searchParams;
     return (
       <div>
         <BrowserRouter>
@@ -21,7 +23,7 @@ class Admin extends Component {
           <Route path='/admin/newCompany' component={NewCompany} />
           <Route path='/admin/events' component={Events} />
           <Route path='/admin/newEvent' component={NewEvent} />
-          <Route path='/admin/eventDetails' component={EventDetails} />
+          <Route path='/admin/event' component={() => <Event id={params.get('id')} />} />
         </BrowserRouter>
       </div>
     );

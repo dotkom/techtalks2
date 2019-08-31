@@ -62,6 +62,7 @@ CREATE TABLE Paameldt(
   StudieAar INT NOT NULL,
   ArrangementID INT NOT NULL,
   Verifisert BOOLEAN DEFAULT FALSE,
+  PaameldingsTidspunkt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (ArrangementID) REFERENCES Arrangement(ArrangementID),
   PRIMARY KEY (PaameldingsHash)
 );

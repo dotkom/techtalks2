@@ -339,6 +339,45 @@ router.post('/allEvents', async (req, res) => {
   }
 });
 
+router.post('/adminEvent', async (req, res) => {
+  const { token, id } = req.body;
+  try {
+    const { JWTKEY } = process.env;
+    jwt.verify(token, JWTKEY);
+  } catch (error) {
+    res.json({
+      status: 'denied'
+    });
+    return;
+  }
+
+  try {
+    const pool = connectPool();
+    const [ sponsorRes, programRes, eventRes, deltagereRes ] = await Promise.all([
+      pool.query('SELECT Bedrift.BedriftID AS BedriftID, Bedrift.Navn AS navn, Bedrift.Logo AS logo FROM Bedrift INNER JOIN Sponsor ON Bedrift.BedriftID=Sponsor.BedriftID WHERE Sponsor.ArrangementID = ?', [id]),
+      pool.query('SELECT PH.Navn AS navn, PH.Klokkeslett AS tid, PH.Beskrivelse AS beskrivelse, Rom.Navn AS stedNavn, Rom.MazemapURL AS stedLink FROM (ProgramHendelse AS PH) INNER JOIN Rom ON PH.RomID=Rom.RomID WHERE PH.ArrangementID = ?', [id]),
+      pool.query('SELECT Arrangement.Navn AS Navn, Arrangement.Beskrivelse AS Beskrivelse, Arrangement.Dato AS Dato, Arrangement.AntallPlasser AS AntallPlasser, Arrangement.Beskrivelse AS Beskrivelse, Arrangement.Link AS Link, COUNT(Paameldt.PaameldingsHash) AS AntallPåmeldte FROM Paameldt RIGHT JOIN Arrangement ON Paameldt.ArrangementID=Arrangement.ArrangementID WHERE Arrangement.ArrangementID=? AND Paameldt.Verifisert=TRUE GROUP BY Arrangement.ArrangementID', [id]),
+      pool.query('SELECT PaameldingsHash, Navn, Epost, Linjeforening, Alder, StudieAar, Verifisert, PaameldingsTidspunkt FROM Paameldt WHERE ArrangementID=?', [id])
+    ]);
+    pool.end();
+    const sponsors = sponsorRes[0];
+    const program = programRes[0];
+    const event = eventRes[0][0];
+    const deltagere = deltagereRes[0];
+    res.json({
+      status: 'succeeded',
+      sponsors,
+      program,
+      event,
+      deltagere
+    });
+  } catch (error) {
+    res.json({
+      status: 'failed'
+    });
+  }
+})
+
 router.post('/newEvent', async (req, res) => {
   const { token, dato, antallPlasser, beskrivelse } = req.body;
   try {
