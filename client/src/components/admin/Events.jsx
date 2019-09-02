@@ -45,6 +45,7 @@ class Events extends Component {
               <th>ArrangementID</th>
               <th>Dato</th>
               <th>Påmeldte</th>
+              <th>Mer info</th>
             </tr>
           </thead>
           <tbody>
@@ -54,6 +55,7 @@ class Events extends Component {
                   <td>{ArrangementID}</td>
                   <td>{new Date(Dato).toLocaleDateString()}</td>
                   <td>{`${AntallPåmeldte}/${AntallPlasser}`}</td>
+                  <td><a href={`/admin/event?id=${ArrangementID}`}>Mer info</a></td>
                 </tr>
               ))
             }

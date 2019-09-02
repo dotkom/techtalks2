@@ -30,13 +30,13 @@ router.get('/home', async (req, res) => {
   try {
     const connection = await connect();
     const event =  (await connection.execute('SELECT ArrangementID, Beskrivelse, AntallPlasser, Dato FROM Arrangement ORDER BY Dato DESC LIMIT 1'))[0][0];
-    const arrID = event.ArrangementID;
+    const arrID = event.ArrangementID;;
     connection.end();
     const pool = connectPool();
     const [ partnersResponse, programResponse, paameldteResponse ] = await Promise.all([
       pool.query('SELECT Bedrift.Navn AS name, Bedrift.Logo AS url FROM Bedrift INNER JOIN Sponsor ON Bedrift.BedriftID=Sponsor.BedriftID WHERE Sponsor.ArrangementID = ?', [arrID]),
       pool.query('SELECT PH.Navn AS navn, PH.Klokkeslett AS tid, PH.Beskrivelse AS beskrivelse, Rom.Navn AS stedNavn, Rom.MazemapURL AS stedLink FROM (ProgramHendelse AS PH) INNER JOIN Rom ON PH.RomID=Rom.RomID WHERE PH.ArrangementID = ?', [arrID]),
-      pool.query('SELECT COUNT(Paameldt.PaameldingsHash) AS AntallPåmeldte FROM Paameldt RIGHT JOIN Arrangement ON Paameldt.ArrangementID=Arrangement.ArrangementID WHERE Arrangement.ArrangementID=? AND Paameldt.Verifisert=TRUE GROUP BY Arrangement.ArrangementID', [arrID])
+      pool.query('SELECT COUNT(PaameldingsHash) AS AntallPåmeldte FROM Paameldt WHERE ArrangementID=? AND Verifisert=TRUE', [arrID])
     ]);
     pool.end();
     const partners = partnersResponse[0];
@@ -353,16 +353,20 @@ router.post('/adminEvent', async (req, res) => {
 
   try {
     const pool = connectPool();
-    const [ sponsorRes, programRes, eventRes, deltagereRes ] = await Promise.all([
+    const [ sponsorRes, programRes, eventRes, påmeldtRes, deltagereRes ] = await Promise.all([
       pool.query('SELECT Bedrift.BedriftID AS BedriftID, Bedrift.Navn AS navn, Bedrift.Logo AS logo FROM Bedrift INNER JOIN Sponsor ON Bedrift.BedriftID=Sponsor.BedriftID WHERE Sponsor.ArrangementID = ?', [id]),
       pool.query('SELECT PH.Navn AS navn, PH.Klokkeslett AS tid, PH.Beskrivelse AS beskrivelse, Rom.Navn AS stedNavn, Rom.MazemapURL AS stedLink FROM (ProgramHendelse AS PH) INNER JOIN Rom ON PH.RomID=Rom.RomID WHERE PH.ArrangementID = ?', [id]),
-      pool.query('SELECT Arrangement.Navn AS Navn, Arrangement.Beskrivelse AS Beskrivelse, Arrangement.Dato AS Dato, Arrangement.AntallPlasser AS AntallPlasser, Arrangement.Beskrivelse AS Beskrivelse, Arrangement.Link AS Link, COUNT(Paameldt.PaameldingsHash) AS AntallPåmeldte FROM Paameldt RIGHT JOIN Arrangement ON Paameldt.ArrangementID=Arrangement.ArrangementID WHERE Arrangement.ArrangementID=? AND Paameldt.Verifisert=TRUE GROUP BY Arrangement.ArrangementID', [id]),
+      pool.query('SELECT Beskrivelse, Dato, AntallPlasser, Link FROM Arrangement WHERE ArrangementID=?', [id]),
+      pool.query('SELECT COUNT(PaameldingsHash) AS AntallPåmeldte FROM Paameldt WHERE ArrangementID=? AND Verifisert=TRUE', [id]),
       pool.query('SELECT PaameldingsHash, Navn, Epost, Linjeforening, Alder, StudieAar, Verifisert, PaameldingsTidspunkt FROM Paameldt WHERE ArrangementID=?', [id])
     ]);
     pool.end();
     const sponsors = sponsorRes[0];
     const program = programRes[0];
+    console.log(eventRes);
     const event = eventRes[0][0];
+    const { AntallPåmeldte } = påmeldtRes[0][0];
+    event.AntallPåmeldte = AntallPåmeldte;
     const deltagere = deltagereRes[0];
     res.json({
       status: 'succeeded',
