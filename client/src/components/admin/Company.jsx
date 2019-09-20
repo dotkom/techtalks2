@@ -17,9 +17,9 @@ class Company extends Component {
       preedit: {
         navn,
         logo,
-        sponsorType
-      }
-    }
+        sponsorType,
+      },
+    };
     this.allowEditing = this.allowEditing.bind(this);
     this.cancelEditing = this.cancelEditing.bind(this);
     this.submitEdit = this.submitEdit.bind(this);
@@ -30,7 +30,7 @@ class Company extends Component {
 
   allowEditing() {
     this.setState({
-      edit: true
+      edit: true,
     });
   }
 
@@ -57,18 +57,18 @@ class Company extends Component {
         navn,
         logo,
         oldSponsorType,
-        sponsorType
+        sponsorType,
       }),
       headers: {
-        'Content-Type': 'application/json'
-      }
+        'Content-Type': 'application/json',
+      },
     };
     const res = await fetch('/db/editCompany', req);
     const j = await res.json();
     const { status } = j;
     if (status === 'denied' || status === 'failed') {
       this.setState({
-        status
+        status,
       });
     } else {
       this.setState({
@@ -77,41 +77,53 @@ class Company extends Component {
         preedit: {
           navn,
           logo,
-          sponsorType
-        }
+          sponsorType,
+        },
       });
     }
   }
 
   changeName(navn) {
     this.setState({
-      navn
+      navn,
     });
   }
 
   changeLogo(logo) {
     this.setState({
-      logo
+      logo,
     });
   }
 
   changeSponsorship(e) {
     this.setState({
-      sponsorType: parseInt(e.target.value)
+      sponsorType: parseInt(e.target.value),
     });
   }
 
   render() {
     const { status, navn, logo, sponsorType, edit, bedriftID } = this.state;
     if (status === 'denied') {
-      return <Redirect to='/admin' />;
+      return <Redirect to="/admin" />;
     }
     if (edit) {
       return (
         <tr>
-          <td colSpan='4'>
-            <InputField label='Navn: ' id={`company${bedriftID}Name`} updateValue={this.changeName} val={navn} type='text' />
-            <InputField label='Logo: ' id={`company${bedriftID}Logo`} updateValue={this.changeLogo} val={logo} type='text' />
+          <td colSpan="4">
+            <InputField
+              label="Navn: "
+              id={`company${bedriftID}Name`}
+              updateValue={this.changeName}
+              val={navn}
+              type="text"
+            />
+            <InputField
+              label="Logo: "
+              id={`company${bedriftID}Logo`}
+              updateValue={this.changeLogo}
+              val={logo}
+              type="text"
+            />
             <label htmlFor={`company${bedriftID}Spons`}>
               Sponsor?
               <select value={sponsorType} onChange={this.changeSponsorship}>
@@ -121,8 +133,12 @@ class Company extends Component {
                 <option value={3}>HSP</option>
               </select>
             </label>
-            <button type='button' onClick={this.submitEdit}>Submit</button>
-            <button type='button' onClick={this.cancelEditing}>Avbryt</button>
+            <button type="button" onClick={this.submitEdit}>
+              Submit
+            </button>
+            <button type="button" onClick={this.cancelEditing}>
+              Avbryt
+            </button>
           </td>
         </tr>
       );
@@ -144,9 +160,13 @@ class Company extends Component {
         <td>{navn}</td>
         <td>{logo}</td>
         <td>{sponsorName}</td>
-        <td><button type='button' onClick={this.allowEditing}>Endre</button></td>
+        <td>
+          <button type="button" onClick={this.allowEditing}>
+            Endre
+          </button>
+        </td>
       </tr>
-    );                  
+    );
   }
 }
 

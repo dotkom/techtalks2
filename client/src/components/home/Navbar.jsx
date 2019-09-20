@@ -22,17 +22,17 @@ class Navbar extends Component {
     `;
     return (
       <Navbar>
-        <a href='#about'>
+        <a href="#about">
           <Knapp>
             <NavbarText>Om Arrangementet</NavbarText>
           </Knapp>
         </a>
-        <a href='#program'>
+        <a href="#program">
           <Knapp>
             <NavbarText>Program</NavbarText>
           </Knapp>
         </a>
-        <a href='#paamelding'>
+        <a href="#paamelding">
           <Knapp>
             <NavbarText>Påmelding</NavbarText>
           </Knapp>

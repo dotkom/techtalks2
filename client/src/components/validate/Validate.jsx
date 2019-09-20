@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 
-const Wrapper = styled.div`
-
-`;
+const Wrapper = styled.div``;
 
 class Validate extends Component {
   constructor(props) {
@@ -12,8 +10,8 @@ class Validate extends Component {
     const ha = u.searchParams.get('ha');
     this.state = {
       status: 'waiting',
-      ha
-    }
+      ha,
+    };
   }
 
   async componentDidMount() {
@@ -21,43 +19,42 @@ class Validate extends Component {
     const req = {
       method: 'POST',
       body: JSON.stringify({
-        hash: ha
+        hash: ha,
       }),
       headers: {
-        'Content-Type': 'application/json'
-      }
+        'Content-Type': 'application/json',
+      },
     };
     const res = await fetch('db/validering', req);
     const jsoned = await res.json();
     const { status } = jsoned;
     this.setState({
-      status
+      status,
     });
-
   }
 
   render() {
     const { status } = this.state;
-    if(status === 'succeeded') {
+    if (status === 'succeeded') {
       return (
         <Wrapper>
           <h2>Påmeldingen din har blitt validert!</h2>
         </Wrapper>
       );
     }
-    if(status === 'repeat') {
+    if (status === 'repeat') {
       return (
         <Wrapper>
           <h2>Påmeldingen din har allerede blitt validert</h2>
         </Wrapper>
       );
     }
-    if(status === 'failed') {
-      return(
+    if (status === 'failed') {
+      return (
         <Wrapper>
           <h2>Kunne ikke validere påmeldingen din</h2>
         </Wrapper>
-      )
+      );
     }
     return (
       <Wrapper>

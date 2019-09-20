@@ -19,9 +19,9 @@ class Samarbeidspartnere extends Component {
     const pages = [];
     // pages inneholder partnere, i grupper på 3
     const n = partners.length;
-    for(let i = 0; i < n; i += 3) {
+    for (let i = 0; i < n; i += 3) {
       const page = [];
-      for(let j = i; j < i + 3 && j < n; j++) {
+      for (let j = i; j < i + 3 && j < n; j++) {
         page.push(partners[j]);
       }
       pages.push(page);

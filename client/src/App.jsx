@@ -1,9 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import Header from './components/frame/Header.jsx';
-import MainBody from './components/frame/MainBody.jsx';
-import Footer from './components/frame/Footer.jsx';
+import Header from './components/frame/Header';
+import MainBody from './components/frame/MainBody';
+import Footer from './components/frame/Footer';
 
 function App() {
   const Wrapper = styled.div`

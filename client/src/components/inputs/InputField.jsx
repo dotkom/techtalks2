@@ -1,30 +1,29 @@
 import React, { Component } from 'react';
 
 class InputField extends Component {
-	constructor(props) {
+  constructor(props) {
     super(props);
     const { updateValue, label, id, val, type, disabled } = props;
     this.updateValue = updateValue;
-		this.state = {
+    this.state = {
       label,
       id,
       val,
       type,
-      disabled
+      disabled,
     };
     this.handleChange = this.handleChange.bind(this);
   }
-  
 
   handleChange(e) {
     const val = e.target.value;
     this.setState({
-      val
+      val,
     });
     this.updateValue(val);
   }
 
-	render() {
+  render() {
     const { label, id, val, type, disabled } = this.state;
     if (type === 'textarea') {
       return (
@@ -33,18 +32,18 @@ class InputField extends Component {
             <span>{label}</span>
             <textarea key={id} onChange={this.handleChange} id={id} value={val} disabled={disabled} />
           </label>
-			</div>
+        </div>
       );
     }
-		return (
-			<div>
+    return (
+      <div>
         <label htmlFor={id}>
           <span>{label}</span>
           <input key={id} type={type} onChange={this.handleChange} id={id} value={val} disabled={disabled} />
         </label>
-			</div>
-		);
-	}
+      </div>
+    );
+  }
 }
 
 export default InputField;
