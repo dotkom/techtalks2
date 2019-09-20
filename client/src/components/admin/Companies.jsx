@@ -55,7 +55,7 @@ class Companies extends Component {
             </tr>
           </thead>
           <tbody>
-            {companies.map(({ BedriftID, Navn, Logo, isSponsor }) => (
+            {companies.map(({ BedriftID, Navn, Logo, sponsorType }) => (
               <Company key={BedriftID} bedriftID={BedriftID} navn={Navn} logo={Logo} sponsorType={sponsorType} />
             ))}
           </tbody>

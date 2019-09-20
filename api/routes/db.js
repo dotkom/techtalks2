@@ -36,7 +36,7 @@ router.get('/home', async (_, res) => {
     const pool = connectPool();
     const [partnersResponse, programResponse, paameldteResponse] = await Promise.all([
       pool.query(
-        'SELECT Bedrift.Navn AS name, Bedrift.Logo AS url, Sponsor.SponsorType as sponsorType FROM Bedrift INNER JOIN Sponsor ON Bedrift.BedriftID=Sponsor.BedriftID WHERE Sponsor.ArrangementID = ?',
+        'SELECT Bedrift.Navn AS name, Bedrift.Logo AS url, Sponsor.SponsorType as sponsorType FROM Bedrift INNER JOIN Sponsor ON Bedrift.BedriftID=Sponsor.BedriftID WHERE Sponsor.ArrangementID = ? ORDER BY sponsorType DESC',
         [arrID]
       ),
       pool.query(
