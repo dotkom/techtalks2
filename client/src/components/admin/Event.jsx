@@ -4,6 +4,10 @@ import styled from 'styled-components';
 
 const Table = styled.table`
   margin: auto;
+  padding: 1em;
+`;
+const Td = styled.td`
+  max-width: 50em;
 `;
 
 class Event extends Component {
@@ -100,19 +104,19 @@ class Event extends Component {
               <tbody>
                 <tr>
                   <th>Dato</th>
-                  <td>{new Date(Dato).toLocaleDateString()}</td>
+                  <Td>{new Date(Dato).toLocaleDateString()}</Td>
                 </tr>
                 <tr>
                   <th>Beskrivelse</th>
-                  <td>{Beskrivelse}</td>
+                  <Td>{Beskrivelse}</Td>
                 </tr>
                 <tr>
                   <th>Påmeldte</th>
-                  <td>{`${AntallPåmeldte}/${AntallPlasser}`}</td>
+                  <Td>{`${AntallPåmeldte}/${AntallPlasser}`}</Td>
                 </tr>
                 <tr>
                   <th>Link</th>
-                  <td>{Link}</td>
+                  <Td><a href={Link}>{Link}</a></Td>
                 </tr>
               </tbody>
             </Table>
@@ -133,9 +137,9 @@ class Event extends Component {
                 {
                   sponsors.map(({BedriftID, navn, logo}) => (
                     <tr key={BedriftID}>
-                      <td>{BedriftID}</td>
-                      <td>{navn}</td>
-                      <td>{logo}</td>
+                      <Td>{BedriftID}</Td>
+                      <Td>{navn}</Td>
+                      <Td>{logo}</Td>
                     </tr>
                   ))
                 }
@@ -161,13 +165,13 @@ class Event extends Component {
               <tbody>
                 {deltagere.map(({PaameldingsHash, Navn, Epost, Linjeforening, Alder, StudieAar, Verifisert, PaameldingsTidspunkt}) => (
                   <tr key={PaameldingsHash}>
-                    <td>{Navn}</td>
-                    <td>{Epost}</td>
-                    <td>{Linjeforening}</td>
-                    <td>{Alder}</td>
-                    <td>{StudieAar}</td>
-                    <td>{Verifisert ? 'Ja' : 'Nei'}</td>
-                    <td>{new Date(PaameldingsTidspunkt).toLocaleString()}</td>
+                    <Td>{Navn}</Td>
+                    <Td>{Epost}</Td>
+                    <Td>{Linjeforening}</Td>
+                    <Td>{Alder}</Td>
+                    <Td>{StudieAar}</Td>
+                    <Td>{Verifisert ? 'Ja' : 'Nei'}</Td>
+                    <Td>{new Date(PaameldingsTidspunkt).toLocaleString()}</Td>
                   </tr>
                 ))}
               </tbody>
@@ -188,10 +192,10 @@ class Event extends Component {
             <tbody>
               {program.map(({navn, tid, beskrivelse, stedNavn, stedLink}, ind) => (
                 <tr key={ind}>
-                  <td>{navn}</td>
-                  <td>{tid}</td>
-                  <td><a href={stedLink}>{stedNavn}</a></td>
-                  <td>{beskrivelse}</td>
+                  <Td>{navn}</Td>
+                  <Td>{tid}</Td>
+                  <Td><a href={stedLink}>{stedNavn}</a></Td>
+                  <Td>{beskrivelse}</Td>
                 </tr>))
               }
             </tbody>

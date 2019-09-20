@@ -6,18 +6,18 @@ import InputField from '../inputs/InputField';
 class Company extends Component {
   constructor(props) {
     super(props);
-    const { bedriftID, navn, logo, isSponsor } = props;
+    const { bedriftID, navn, logo, sponsorType } = props;
     this.state = {
       status: 'default',
       bedriftID,
       navn,
       logo,
-      isSponsor,
+      sponsorType,
       edit: false,
       preedit: {
         navn,
         logo,
-        isSponsor
+        sponsorType
       }
     }
     this.allowEditing = this.allowEditing.bind(this);
@@ -36,29 +36,28 @@ class Company extends Component {
 
   cancelEditing() {
     const { preedit } = this.state;
-    const { navn, logo, isSponsor } = preedit;
+    const { navn, logo, sponsorType } = preedit;
     this.setState({
       navn,
       logo,
-      isSponsor,
+      sponsorType,
       edit: false,
     });
   }
 
   async submitEdit() {
     const token = localStorage.getItem('token');
-    const { bedriftID, navn, logo, isSponsor, preedit } = this.state;
-    const wasSponsor = preedit.isSponsor;
-    const sponsorshipChanged = wasSponsor !== isSponsor;
+    const { bedriftID, navn, logo, sponsorType, preedit } = this.state;
+    const oldSponsorType = preedit.sponsorType;
     const req = {
       method: 'POST',
       body: JSON.stringify({
         token,
-        BedriftID: bedriftID,
-        Navn: navn,
-        Logo: logo,
-        sponsorshipChanged,
-        isSponsor
+        bedriftID,
+        navn,
+        logo,
+        oldSponsorType,
+        sponsorType
       }),
       headers: {
         'Content-Type': 'application/json'
@@ -78,7 +77,7 @@ class Company extends Component {
         preedit: {
           navn,
           logo,
-          isSponsor
+          sponsorType
         }
       });
     }
@@ -98,12 +97,12 @@ class Company extends Component {
 
   changeSponsorship(e) {
     this.setState({
-      isSponsor: e.target.checked
+      sponsorType: parseInt(e.target.value)
     });
   }
 
   render() {
-    const { status, navn, logo, isSponsor, edit, bedriftID } = this.state;
+    const { status, navn, logo, sponsorType, edit, bedriftID } = this.state;
     if (status === 'denied') {
       return <Redirect to='/admin' />;
     }
@@ -115,7 +114,12 @@ class Company extends Component {
             <InputField label='Logo: ' id={`company${bedriftID}Logo`} updateValue={this.changeLogo} val={logo} type='text' />
             <label htmlFor={`company${bedriftID}Spons`}>
               Sponsor?
-              <input type='checkbox' checked={isSponsor} onChange={this.changeSponsorship} id={`company${bedriftID}Spons`} />
+              <select value={sponsorType} onChange={this.changeSponsorship}>
+                <option value={0}>Nei</option>
+                <option value={1}>Sølv</option>
+                <option value={2}>Gull</option>
+                <option value={3}>HSP</option>
+              </select>
             </label>
             <button type='button' onClick={this.submitEdit}>Submit</button>
             <button type='button' onClick={this.cancelEditing}>Avbryt</button>
@@ -123,11 +127,23 @@ class Company extends Component {
         </tr>
       );
     }
+
+    let sponsorName = null;
+    if(sponsorType === 1) {
+      sponsorName = 'Sølv';
+    } else if (sponsorType === 2) {
+      sponsorName = 'Gull';
+    } else if (sponsorType === 3) {
+      sponsorName = 'HSP';
+    } else {
+      sponsorName = 'Nei';
+    }
+
     return (
       <tr>
         <td>{navn}</td>
         <td>{logo}</td>
-        <td>{isSponsor ? 'Ja' : 'Nei'}</td>
+        <td>{sponsorName}</td>
         <td><button type='button' onClick={this.allowEditing}>Endre</button></td>
       </tr>
     );                  
