@@ -28,15 +28,15 @@ function connectPool() {
 router.get('/home', async (_, res) => {
   try {
     const connection = await connect();
-    const event = (await connection.execute(
+    const event =  (await connection.execute(
       'SELECT ArrangementID, Beskrivelse, AntallPlasser, Dato FROM Arrangement ORDER BY Dato DESC LIMIT 1'
     ))[0][0];
-    const arrID = event.ArrangementID;
+    const arrID = event.ArrangementID;;
     connection.end();
     const pool = connectPool();
     const [partnersResponse, programResponse, paameldteResponse] = await Promise.all([
       pool.query(
-        'SELECT Bedrift.Navn AS name, Bedrift.Logo AS url FROM Bedrift INNER JOIN Sponsor ON Bedrift.BedriftID=Sponsor.BedriftID WHERE Sponsor.ArrangementID = ?',
+        'SELECT Bedrift.Navn AS name, Bedrift.Logo AS url, Sponsor.SponsorType as sponsorType FROM Bedrift INNER JOIN Sponsor ON Bedrift.BedriftID=Sponsor.BedriftID WHERE Sponsor.ArrangementID = ?',
         [arrID]
       ),
       pool.query(
@@ -44,7 +44,7 @@ router.get('/home', async (_, res) => {
         [arrID]
       ),
       pool.query(
-        'SELECT COUNT(Paameldt.PaameldingsHash) AS AntallPåmeldte FROM Paameldt RIGHT JOIN Arrangement ON Paameldt.ArrangementID=Arrangement.ArrangementID WHERE Arrangement.ArrangementID=? AND Paameldt.Verifisert=TRUE GROUP BY Arrangement.ArrangementID',
+        'SELECT COUNT(PaameldingsHash) AS AntallPåmeldte FROM Paameldt WHERE ArrangementID=? AND Verifisert=TRUE',
         [arrID]
       ),
     ]);
@@ -162,7 +162,7 @@ router.post('/allCompanies', async (req, res) => {
     ))[0][0];
     const arrID = event.ArrangementID;
     const results = await connection.query(
-      `SELECT Bedrift.BedriftID AS BedriftID, Bedrift.Navn AS Navn, Bedrift.Logo AS Logo, COUNT(Sponsor.ArrangementID) AS isSponsor
+      `SELECT Bedrift.BedriftID AS BedriftID, Bedrift.Navn AS Navn, Bedrift.Logo AS Logo, Sponsor.SponsorType AS sponsorType
       FROM Bedrift LEFT JOIN Sponsor ON Bedrift.BedriftID=Sponsor.BedriftID
       WHERE Sponsor.ArrangementID=? OR Sponsor.ArrangementID IS NULL
       GROUP BY Bedrift.BedriftID`,
@@ -185,7 +185,7 @@ router.post('/allCompanies', async (req, res) => {
 });
 
 router.post('/newCompany', async (req, res) => {
-  const { token, navn, logo, isSponsor } = req.body;
+  const { token, navn, logo, sponsorType } = req.body;
   try {
     const { JWTKEY } = process.env;
     jwt.verify(token, JWTKEY);
@@ -198,11 +198,14 @@ router.post('/newCompany', async (req, res) => {
   try {
     const connection = await connect();
     const response = await connection.query('INSERT INTO Bedrift(Navn, Logo) VALUES (?, ?)', [navn, logo]);
-    if (isSponsor) {
+    if (sponsorType) {
       const { insertId } = response;
-      const arrID = (await connection.execute('SELECT ArrangementID FROM Arrangement ORDER BY Dato DESC LIMIT 1'))[0][0]
+      const arrID =  (await connection.execute('SELECT ArrangementID FROM Arrangement ORDER BY Dato DESC LIMIT 1'))[0][0]
         .ArrangementID;
-      await connection.query('INSERT INTO Sponsor(ArrangementID, BedriftID) VALUES (?, ?)', [arrID, insertId]);
+      await connection.query(
+        'INSERT INTO Sponsor(ArrangementID, BedriftID, SponsorType) VALUES (?, ?, ?)',
+        [arrID, insertId, sponsorType]
+      );
     }
     connection.end();
     res.json({
@@ -218,7 +221,7 @@ router.post('/newCompany', async (req, res) => {
 });
 
 router.post('/editCompany', async (req, res) => {
-  const { token, BedriftID, Navn, Logo, isSponsor, sponsorshipChanged } = req.body;
+  const { token, bedriftID, navn, logo, sponsorType, oldSponsorType } = req.body;
   try {
     const { JWTKEY } = process.env;
     jwt.verify(token, JWTKEY);
@@ -231,23 +234,33 @@ router.post('/editCompany', async (req, res) => {
   try {
     const connection = await connect();
     const response = await connection.query('UPDATE Bedrift SET Navn=?, Logo=? WHERE BedriftID=?', [
-      Navn,
-      Logo,
-      BedriftID,
+      navn,
+      logo,
+      bedriftID
     ]);
-    if (sponsorshipChanged) {
-      const event = (await connection.execute(
+    const isSponsor = sponsorType > 0;
+    const wasSponsor = oldSponsorType > 0;
+    if (isSponsor !== wasSponsor) {
+      const event =  (await connection.execute(
         'SELECT ArrangementID, Beskrivelse, AntallPlasser, Dato FROM Arrangement ORDER BY Dato DESC LIMIT 1'
       ))[0][0];
       const arrID = event.ArrangementID;
-      if (isSponsor) {
-        await connection.query('INSERT INTO Sponsor(BedriftID, ArrangementID, SponsorType) VALUES (?, ?, 1)', [
-          BedriftID,
+      if(sponsorType) {
+        await connection.query('INSERT INTO Sponsor(BedriftID, ArrangementID, SponsorType) VALUES (?, ?, ?)', [
+          bedriftID,
           arrID,
+          sponsorType,
         ]);
       } else {
-        await connection.query('DELETE FROM Sponsor WHERE ArrangementID=? AND BedriftID=?', [arrID, BedriftID]);
+        await connection.query('DELETE FROM Sponsor WHERE ArrangementID=? AND BedriftID=?', [arrID, bedriftID]);
       }
+    } else if (sponsorType !== oldSponsorType) {
+      const event =  (await connection.execute('SELECT ArrangementID, Beskrivelse, AntallPlasser, Dato FROM Arrangement ORDER BY Dato DESC LIMIT 1'))[0][0];
+      const arrID = event.ArrangementID;
+      await connection.query(
+        'UPDATE Sponsor SET SponsorType=? WHERE ArrangementID=? AND BedriftID=?',
+        [sponsorType, arrID, bedriftID]
+      );
     }
     connection.end();
     const { affectedRows, changedRows } = response[0];
@@ -343,6 +356,48 @@ router.post('/allEvents', async (req, res) => {
   }
 });
 
+router.post('/adminEvent', async (req, res) => {
+  const { token, id } = req.body;
+  try {
+    const { JWTKEY } = process.env;
+    jwt.verify(token, JWTKEY);
+  } catch (error) {
+    res.json({
+      status: 'denied'
+    });
+    return;
+  }
+
+  try {
+    const pool = connectPool();
+    const [ sponsorRes, programRes, eventRes, påmeldtRes, deltagereRes ] = await Promise.all([
+      pool.query('SELECT Bedrift.BedriftID AS BedriftID, Bedrift.Navn AS navn, Bedrift.Logo AS logo FROM Bedrift INNER JOIN Sponsor ON Bedrift.BedriftID=Sponsor.BedriftID WHERE Sponsor.ArrangementID = ?', [id]),
+      pool.query('SELECT PH.Navn AS navn, PH.Klokkeslett AS tid, PH.Beskrivelse AS beskrivelse, Rom.Navn AS stedNavn, Rom.MazemapURL AS stedLink FROM (ProgramHendelse AS PH) INNER JOIN Rom ON PH.RomID=Rom.RomID WHERE PH.ArrangementID = ?', [id]),
+      pool.query('SELECT Beskrivelse, Dato, AntallPlasser, Link FROM Arrangement WHERE ArrangementID=?', [id]),
+      pool.query('SELECT COUNT(PaameldingsHash) AS AntallPåmeldte FROM Paameldt WHERE ArrangementID=? AND Verifisert=TRUE', [id]),
+      pool.query('SELECT PaameldingsHash, Navn, Epost, Linjeforening, Alder, StudieAar, Verifisert, PaameldingsTidspunkt FROM Paameldt WHERE ArrangementID=?', [id])
+    ]);
+    pool.end();
+    const sponsors = sponsorRes[0];
+    const program = programRes[0];
+    const event = eventRes[0][0];
+    const { AntallPåmeldte } = påmeldtRes[0][0];
+    event.AntallPåmeldte = AntallPåmeldte;
+    const deltagere = deltagereRes[0];
+    res.json({
+      status: 'succeeded',
+      sponsors,
+      program,
+      event,
+      deltagere
+    });
+  } catch (error) {
+    res.json({
+      status: 'failed'
+    });
+  }
+})
+
 router.post('/newEvent', async (req, res) => {
   const { token, dato, antallPlasser, beskrivelse } = req.body;
   try {
@@ -378,6 +433,16 @@ router.post('/newEvent', async (req, res) => {
 router.post('/editEvent', async (req, res) => {
   const { arrangementID, dato, plasser, beskrivelse } = req.body;
   try {
+    const { JWTKEY } = process.env;
+    jwt.verify(token, JWTKEY);
+  } catch (error) {
+    res.json({
+      status: 'denied'
+    });
+    return;
+  }
+
+  try {
     const connection = await connect();
     const response = await connection.query(
       'UPDATE Arrangement SET Dato=?, AntallPlasser=?, Beskrivelse=? WHERE ArrangementID=?',
@@ -399,6 +464,15 @@ router.post('/editEvent', async (req, res) => {
 router.post('/addSponsor', async (req, res) => {
   const { arrangementID, bedriftID } = req.body;
   try {
+    const { JWTKEY } = process.env;
+    jwt.verify(token, JWTKEY);
+  } catch (error) {
+    res.json({
+      status: 'denied'
+    });
+    return;
+  }
+  try {
     const connection = await connect();
     await connection.query('INSERT INTO Sponsor(ArrangementID, BedriftID) VALUES (?, ?)', [arrangementID, bedriftID]);
     connection.end();
@@ -416,6 +490,15 @@ router.post('/addSponsor', async (req, res) => {
 
 router.post('/removeSponsor', async (req, res) => {
   const { arrangementID, bedriftID } = req.body;
+  try {
+    const { JWTKEY } = process.env;
+    jwt.verify(token, JWTKEY);
+  } catch (error) {
+    res.json({
+      status: 'denied'
+    });
+    return;
+  }
   try {
     const connection = await connect();
     await connection.query('DELETE FROM Sponsor WHERE ArrangementID=? AND BedriftID=?', [arrangementID, bedriftID]);
