@@ -46,7 +46,6 @@ class AdminLogin extends Component {
 
   login = async () => {
     const { username, password } = this.state;
-    console.log(`Attempted login with username ${username} and password ${password}`);
     const req = {
       method: 'POST',
       body: JSON.stringify({
@@ -57,7 +56,6 @@ class AdminLogin extends Component {
         'Content-Type': 'application/json',
       },
     };
-    console.log(req);
     const res = await fetch('/db/adminLogin', req);
     const j = await res.json();
     const { token, status } = j;
@@ -67,7 +65,6 @@ class AdminLogin extends Component {
     this.setState({
       status,
     });
-    console.log(j);
   }
 
   render() {

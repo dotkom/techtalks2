@@ -7,7 +7,7 @@ const InputField = props => {
       <div>
         <label htmlFor={id}>
           <span>{label}</span>
-          <textarea key={id} onChange={e => updateValue(e.target.value)} id={id} value={val} disabled={disabled} />
+          <textarea onChange={e => updateValue(e.target.value)} id={id} value={val} disabled={disabled} />
         </label>
       </div>
     );

@@ -371,7 +371,7 @@ router.post('/adminEvent', async (req, res) => {
   try {
     const pool = connectPool();
     const [ sponsorRes, programRes, eventRes, påmeldtRes, deltagereRes ] = await Promise.all([
-      pool.query('SELECT Bedrift.BedriftID AS BedriftID, Bedrift.Navn AS navn, Bedrift.Logo AS logo FROM Bedrift INNER JOIN Sponsor ON Bedrift.BedriftID=Sponsor.BedriftID WHERE Sponsor.ArrangementID = ?', [id]),
+      pool.query('SELECT Bedrift.BedriftID AS BedriftID, Bedrift.Navn AS navn, Bedrift.Logo AS logo, Sponsor.SponsorType AS sponsorType FROM Bedrift INNER JOIN Sponsor ON Bedrift.BedriftID=Sponsor.BedriftID WHERE Sponsor.ArrangementID = ?', [id]),
       pool.query('SELECT PH.Navn AS navn, PH.Klokkeslett AS tid, PH.Beskrivelse AS beskrivelse, Rom.Navn AS stedNavn, Rom.MazemapURL AS stedLink FROM (ProgramHendelse AS PH) INNER JOIN Rom ON PH.RomID=Rom.RomID WHERE PH.ArrangementID = ?', [id]),
       pool.query('SELECT Beskrivelse, Dato, AntallPlasser, Link FROM Arrangement WHERE ArrangementID=?', [id]),
       pool.query('SELECT COUNT(PaameldingsHash) AS AntallPåmeldte FROM Paameldt WHERE ArrangementID=? AND Verifisert=TRUE', [id]),
@@ -431,7 +431,7 @@ router.post('/newEvent', async (req, res) => {
 });
 
 router.post('/editEvent', async (req, res) => {
-  const { arrangementID, dato, plasser, beskrivelse } = req.body;
+  const { token, arrangementID, dato, plasser, beskrivelse, link } = req.body;
   try {
     const { JWTKEY } = process.env;
     jwt.verify(token, JWTKEY);
@@ -445,8 +445,8 @@ router.post('/editEvent', async (req, res) => {
   try {
     const connection = await connect();
     const response = await connection.query(
-      'UPDATE Arrangement SET Dato=?, AntallPlasser=?, Beskrivelse=? WHERE ArrangementID=?',
-      [dato, plasser, beskrivelse, arrangementID]
+      'UPDATE Arrangement SET Dato=?, AntallPlasser=?, Beskrivelse=?, Link=? WHERE ArrangementID=?',
+      [dato, plasser, beskrivelse, link, arrangementID]
     );
     connection.end();
     res.json({
@@ -489,7 +489,7 @@ router.post('/deleteParticipant', async (req, res) => {
 })
 
 router.post('/addSponsor', async (req, res) => {
-  const { arrangementID, bedriftID } = req.body;
+  const { token, arrangementID, bedriftID, sponsorType } = req.body;
   try {
     const { JWTKEY } = process.env;
     jwt.verify(token, JWTKEY);
@@ -501,7 +501,7 @@ router.post('/addSponsor', async (req, res) => {
   }
   try {
     const connection = await connect();
-    await connection.query('INSERT INTO Sponsor(ArrangementID, BedriftID) VALUES (?, ?)', [arrangementID, bedriftID]);
+    await connection.query('INSERT INTO Sponsor(ArrangementID, BedriftID, SponsorType) VALUES (?, ?, ?)', [arrangementID, bedriftID, sponsorType]);
     connection.end();
     res.json({
       status: 'succeeded',
@@ -516,7 +516,7 @@ router.post('/addSponsor', async (req, res) => {
 });
 
 router.post('/removeSponsor', async (req, res) => {
-  const { arrangementID, bedriftID } = req.body;
+  const { token, arrangementID, bedriftID } = req.body;
   try {
     const { JWTKEY } = process.env;
     jwt.verify(token, JWTKEY);

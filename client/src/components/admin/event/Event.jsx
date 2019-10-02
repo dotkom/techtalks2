@@ -73,6 +73,40 @@ class Event extends Component {
     }
   }
 
+  changeInfo = async newData => {
+    const token = localStorage.getItem('token');
+    const { dato, beskrivelse, antallPlasser, link } = newData;
+    const { id } = this.props;
+    const req = {
+      method: 'POST',
+      body: JSON.stringify({
+        token,
+        arrangementID: id,
+        dato,
+        beskrivelse,
+        plasser: antallPlasser,
+        link
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    };
+    const res = await fetch('/db/editEvent', req);
+
+    const j = await res.json();
+    const { status } = j;
+    if (status === 'denied') {
+      this.setState({status: 'denied'});
+    } else if (status === 'succeeded') {
+      const { event } = this.state;
+      event.AntallPlasser = antallPlasser;
+      event.Dato = dato;
+      event.Link = link;
+      event.Beskrivelse = beskrivelse;
+      this.setState({event})
+    }
+  }
+
   async componentDidMount() {
     const token = localStorage.getItem('token');
     const { id } = this.props;
@@ -88,7 +122,6 @@ class Event extends Component {
     };
     const res = await fetch('/db/adminEvent', req);
     const j = await res.json();
-    console.log(j);
     this.setState(j);
   }
 
@@ -117,6 +150,7 @@ class Event extends Component {
           antallPlasser={AntallPlasser}
           antallPåmeldte={AntallPåmeldte}
           link={Link}
+          saveChanges={this.changeInfo}
         />
         <Sponsors 
           toggleSponsors={this.toggleSponsors}
