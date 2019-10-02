@@ -7,7 +7,7 @@ import Companies from './Companies.jsx';
 import NewCompany from './NewCompany.jsx'; 
 import Events from './Events.jsx';
 import NewEvent from './NewEvent.jsx';
-import Event from './Event.jsx';
+import Event from './event/Event.jsx';
 
 
 class Admin extends Component {

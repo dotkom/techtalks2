@@ -4,39 +4,32 @@ import { Redirect } from 'react-router-dom';
 import InputField from '../inputs/InputField';
 
 class NewCompany extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      name: '',
-      logo: '',
-      isSponsor: false,
-      status: 'default',
-    };
-    this.changeName = this.changeName.bind(this);
-    this.changeLogo = this.changeLogo.bind(this);
-    this.changeSponsorship = this.changeSponsorship.bind(this);
-    this.submitCompany = this.submitCompany.bind(this);
-  }
+  state = {
+    name: '',
+    logo: '',
+    isSponsor: false,
+    status: 'default',
+  };
 
-  changeName(name) {
+  changeName = name => {
     this.setState({
       name,
     });
   }
 
-  changeLogo(logo) {
+  changeLogo = logo => {
     this.setState({
       logo,
     });
   }
 
-  changeSponsorship(e) {
+  changeSponsorship = e => {
     this.setState({
       isSponsor: e.target.checked,
     });
   }
 
-  async submitCompany() {
+  submitCompany = async () => {
     const token = localStorage.getItem('token');
     const { name, logo, isSponsor } = this.state;
     const req = {

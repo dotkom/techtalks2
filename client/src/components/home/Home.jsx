@@ -7,20 +7,23 @@ import Samarbeidspartnere from './Samarbeidspartnere';
 import Program from './Program';
 import Paamelding from './Paamelding';
 
+const Wrapper = styled.div`
+  width: 100%;
+  min-height: 90%;
+`;
+
+
 class Home extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      partners: [],
-      program: [],
-      event: {
-        ArrangementID: 0,
-        Beskrivelse: '',
-        AntallPlasser: 0,
-        AntallPåmeldte: 0,
-      },
-    };
-  }
+  state = {
+    partners: [],
+    program: [],
+    event: {
+      ArrangementID: 0,
+      Beskrivelse: '',
+      AntallPlasser: 0,
+      AntallPåmeldte: 0,
+    },
+  };
 
   async componentDidMount() {
     const response = await fetch('/db/home');
@@ -34,10 +37,6 @@ class Home extends Component {
   }
 
   render() {
-    const Wrapper = styled.div`
-      width: 100%;
-      min-height: 90%;
-    `;
     const { partners, program, event } = this.state;
     return (
       <Wrapper>

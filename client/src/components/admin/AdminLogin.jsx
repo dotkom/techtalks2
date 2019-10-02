@@ -3,17 +3,11 @@ import { Redirect } from 'react-router-dom';
 import InputField from '../inputs/InputField';
 
 class AdminLogin extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      username: '',
-      password: '',
-      status: 'waiting',
-    };
-    this.changeUsername = this.changeUsername.bind(this);
-    this.changePass = this.changePass.bind(this);
-    this.login = this.login.bind(this);
-  }
+  state = {
+    username: '',
+    password: '',
+    status: 'waiting',
+  };
 
   async componentDidMount() {
     const token = localStorage.getItem('token');
@@ -38,19 +32,19 @@ class AdminLogin extends Component {
     }
   }
 
-  changeUsername(newVal) {
+  changeUsername = (newVal) => {
     this.setState({
       username: newVal,
     });
   }
 
-  changePass(newVal) {
+  changePass = (newVal) => {
     this.setState({
       password: newVal,
     });
   }
 
-  async login() {
+  login = async () => {
     const { username, password } = this.state;
     console.log(`Attempted login with username ${username} and password ${password}`);
     const req = {

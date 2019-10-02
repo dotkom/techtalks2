@@ -1,17 +1,28 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 
+const Wrapper = styled.div`
+  margin: auto;
+  width: 100%;
+  max-width: 600px;
+`;
+const ProgramTable = styled.table`
+  width: 100%;
+`;
+const Td = styled.td`
+  cursor: pointer;
+`;
+
+
 class Program extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      events: props.events,
       displayDetails: props.events.map(() => false),
     };
-    this.handleClick = this.handleClick.bind(this);
   }
 
-  handleClick(e) {
+  handleClick = e => {
     const n = parseInt(e.target.id);
     const { displayDetails } = this.state;
     displayDetails[n] = !displayDetails[n];
@@ -19,15 +30,7 @@ class Program extends Component {
   }
 
   render() {
-    const Wrapper = styled.div`
-      margin: auto;
-      width: 100%;
-      max-width: 600px;
-    `;
-    const ProgramTable = styled.table`
-      width: 100%;
-    `;
-    const { events } = this.state;
+    const { events } = this.props;
     return (
       <Wrapper>
         <h2 id="program">Program</h2>
@@ -46,9 +49,9 @@ class Program extends Component {
               <tbody key={index}>
                 <tr>
                   <td>{tid}</td>
-                  <td onClick={this.handleClick} id={index}>
+                  <Td onClick={this.handleClick} id={index}>
                     {navn}
-                  </td>
+                  </Td>
                   <td>
                     <a href={stedLink}>{stedNavn}</a>
                   </td>

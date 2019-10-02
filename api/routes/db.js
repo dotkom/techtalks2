@@ -336,7 +336,7 @@ router.post('/allEvents', async (req, res) => {
   try {
     const connection = await connect();
     const response = await connection.query(
-      `SELECT Arrangement.ArrangementID AS ArrangementID, Arrangement.Dato AS Dato, Arrangement.AntallPlasser AS AntallPlasser, COUNT(Paameldingshash) AS AntallPåmeldte
+      `SELECT Arrangement.ArrangementID AS ArrangementID, Arrangement.Dato AS Dato, Arrangement.AntallPlasser AS AntallPlasser, SUM(Paameldt.Verifisert) AS AntallPåmeldte, COUNT(Paameldingshash) AS AntallPåmeldteTotal
       FROM Arrangement LEFT JOIN Paameldt ON Arrangement.ArrangementID=Paameldt.ArrangementID
       GROUP BY Arrangement.ArrangementID
       ORDER BY Arrangement.ArrangementID DESC`
@@ -460,6 +460,33 @@ router.post('/editEvent', async (req, res) => {
     console.log(error);
   }
 });
+
+router.post('/deleteParticipant', async (req, res) => {
+  const { PaameldingsHash, token } = req.body;
+
+  try {
+    const { JWTKEY } = process.env;
+    jwt.verify(token, JWTKEY);
+  } catch (error) {
+    res.json({
+      status: 'denied'
+    });
+    return;
+  }
+
+  try {
+    const connection = await connect();
+    await connection.query('DELETE FROM Paameldt WHERE PaameldingsHash=?', [PaameldingsHash]);
+    connection.end();
+    res.json({
+      status: 'succeeded'
+    });
+  } catch (error) {
+    res.json({
+      status: 'failed'
+    });
+  }
+})
 
 router.post('/addSponsor', async (req, res) => {
   const { arrangementID, bedriftID } = req.body;

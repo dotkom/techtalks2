@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
@@ -13,20 +13,16 @@ const P = styled.p`
   max-width: 100%;
 `;
 
-class Footer extends Component {
-  render() {
-    return (
-      <Wrapper>
-        <P>
-          Organisasjonsnavn <b>Ekskursjonskomiteen Online</b>
-          <br />
-          Orgnr. <b>920 939 627</b>
-          <br />
-          Epost <b>ekskom@online.ntnu.no</b>
-        </P>
-      </Wrapper>
-    );
-  }
-}
+const Footer = () => (
+  <Wrapper>
+    <P>
+      Organisasjonsnavn <b>Ekskursjonskomiteen Online</b>
+      <br />
+      Orgnr. <b>920 939 627</b>
+      <br />
+      Epost <b>ekskom@online.ntnu.no</b>
+    </P>
+  </Wrapper>
+);
 
 export default Footer;

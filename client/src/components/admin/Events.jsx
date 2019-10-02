@@ -2,13 +2,10 @@ import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 
 class Events extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      events: [],
-      status: 'waiting',
-    };
-  }
+  state = {
+    events: [],
+    status: 'waiting',
+  };
 
   async componentDidMount() {
     const token = localStorage.getItem('token');
@@ -48,11 +45,11 @@ class Events extends Component {
             </tr>
           </thead>
           <tbody>
-            {events.map(({ ArrangementID, Dato, AntallPåmeldte, AntallPlasser }) => (
+            {events.map(({ ArrangementID, Dato, AntallPåmeldte, AntallPåmeldteTotal, AntallPlasser }) => (
               <tr key={ArrangementID}>
                 <td>{ArrangementID}</td>
                 <td>{new Date(Dato).toLocaleDateString()}</td>
-                <td>{`${AntallPåmeldte}/${AntallPlasser}`}</td>
+                <td>{`${AntallPåmeldte} (${AntallPåmeldteTotal})/${AntallPlasser}`}</td>
                   <td><a href={`/admin/event?id=${ArrangementID}`}>Mer info</a></td>
               </tr>
             ))}

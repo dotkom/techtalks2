@@ -4,13 +4,10 @@ import { Redirect } from 'react-router-dom';
 import Company from './Company';
 
 class Companies extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      companies: [],
-      status: 'waiting',
-    };
-  }
+  state = {
+    companies: [],
+    status: 'waiting',
+  };
 
   async componentDidMount() {
     const token = localStorage.getItem('token');
@@ -25,7 +22,6 @@ class Companies extends Component {
     };
     const res = await fetch('/db/allCompanies', req);
     const j = await res.json();
-    console.log(j);
     const { status, bedrifter } = j;
     this.setState({
       status,

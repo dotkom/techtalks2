@@ -11,56 +11,46 @@ const Wrapper = styled.div`
 `;
 
 class Paamelding extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      navn: '',
-      epost: '',
-      linjeforening: '',
-      alder: '',
-      studieår: '',
-      event: props.event,
-      status: '',
-    };
-    this.updateName = this.updateName.bind(this);
-    this.updateEmail = this.updateEmail.bind(this);
-    this.updateLinje = this.updateLinje.bind(this);
-    this.updateAge = this.updateAge.bind(this);
-    this.updateYear = this.updateYear.bind(this);
-    this.submitForm = this.submitForm.bind(this);
-  }
+  state = {
+    navn: '',
+    epost: '',
+    linjeforening: '',
+    alder: '',
+    studieår: '',
+    status: '',
+  };
 
-  updateName(newVal) {
+  updateName = navn => {
     this.setState({
-      navn: newVal,
+      navn,
     });
   }
 
-  updateEmail(newVal) {
+  updateEmail = epost => {
     this.setState({
-      epost: newVal,
+      epost,
     });
   }
 
-  updateLinje(newVal) {
+  updateLinje = linjeforening => {
     this.setState({
-      linjeforening: newVal,
+      linjeforening,
     });
   }
 
-  updateAge(newVal) {
+  updateAge = alder => {
     this.setState({
-      alder: newVal,
+      alder,
     });
   }
 
-  updateYear(newVal) {
+  updateYear = studieår => {
     this.setState({
-      studieår: newVal,
+      studieår,
     });
   }
 
-  async submitForm() {
+  submitForm = async () => {
     const { navn, epost, linjeforening, alder, studieår } = this.state;
     console.log(`navn: ${navn}`);
     console.log(`linje: ${linjeforening}`);
@@ -88,7 +78,8 @@ class Paamelding extends Component {
   }
 
   render() {
-    const { navn, epost, linjeforening, alder, studieår, event, status } = this.state;
+    const { navn, epost, linjeforening, alder, studieår, status } = this.state;
+    const { event } = this.props;
     const { AntallPlasser, AntallPåmeldte } = event;
     if (status === 'succeeded') {
       return (

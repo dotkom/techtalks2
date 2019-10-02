@@ -4,39 +4,32 @@ import { Redirect } from 'react-router-dom';
 import InputField from '../inputs/InputField';
 
 class NewEvent extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      dato: '',
-      antallPlasser: '',
-      beskrivelse: '',
-      status: 'default',
-    };
-    this.changeDate = this.changeDate.bind(this);
-    this.changePlasser = this.changePlasser.bind(this);
-    this.changeDesc = this.changeDesc.bind(this);
-    this.submit = this.submit.bind(this);
-  }
+  state = {
+    dato: '',
+    antallPlasser: '',
+    beskrivelse: '',
+    status: 'default',
+  };
 
-  changeDate(dato) {
+  changeDate = dato => {
     this.setState({
       dato,
     });
   }
 
-  changePlasser(antallPlasser) {
+  changePlasser = antallPlasser => {
     this.setState({
       antallPlasser,
     });
   }
 
-  changeDesc(beskrivelse) {
+  changeDesc = beskrivelse => {
     this.setState({
       beskrivelse,
     });
   }
 
-  async submit() {
+  submit = async () => {
     await this.setState({
       status: 'waiting',
     });

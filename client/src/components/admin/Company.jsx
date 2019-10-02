@@ -20,21 +20,15 @@ class Company extends Component {
         sponsorType,
       },
     };
-    this.allowEditing = this.allowEditing.bind(this);
-    this.cancelEditing = this.cancelEditing.bind(this);
-    this.submitEdit = this.submitEdit.bind(this);
-    this.changeName = this.changeName.bind(this);
-    this.changeLogo = this.changeLogo.bind(this);
-    this.changeSponsorship = this.changeSponsorship.bind(this);
   }
 
-  allowEditing() {
+  allowEditing = () => {
     this.setState({
       edit: true,
     });
   }
 
-  cancelEditing() {
+  cancelEditing = () => {
     const { preedit } = this.state;
     const { navn, logo, sponsorType } = preedit;
     this.setState({
@@ -45,7 +39,7 @@ class Company extends Component {
     });
   }
 
-  async submitEdit() {
+  submitEdit = async () => {
     const token = localStorage.getItem('token');
     const { bedriftID, navn, logo, sponsorType, preedit } = this.state;
     const oldSponsorType = preedit.sponsorType;
@@ -83,19 +77,19 @@ class Company extends Component {
     }
   }
 
-  changeName(navn) {
+  changeName  = navn => {
     this.setState({
       navn,
     });
   }
 
-  changeLogo(logo) {
+  changeLogo = logo => {
     this.setState({
       logo,
     });
   }
 
-  changeSponsorship(e) {
+  changeSponsorship = e => {
     this.setState({
       sponsorType: parseInt(e.target.value),
     });
