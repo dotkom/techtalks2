@@ -96,7 +96,7 @@ class Event extends Component {
     const j = await res.json();
     const { status } = j;
     if (status === 'denied') {
-      this.setState({status: 'denied'});
+      this.setState({status});
     } else if (status === 'succeeded') {
       const { event } = this.state;
       event.AntallPlasser = antallPlasser;
@@ -116,7 +116,7 @@ class Event extends Component {
         token,
         id
       }),
-      headers: { 
+      headers: {
         'Content-Type': 'application/json'
       }
     };
@@ -167,6 +167,7 @@ class Event extends Component {
           toggleProgram={this.toggleProgram}
           showProgram={showProgram}
           program={program}
+          id={this.props.id}
         />
       </div>
     );

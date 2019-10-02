@@ -488,6 +488,69 @@ router.post('/deleteParticipant', async (req, res) => {
   }
 })
 
+router.post('/preCreateProgram', async (req, res) => {
+  const { token, arrangementID } = req.body;
+  try {
+    const { JWTKEY } = process.env;
+    jwt.verify(token, JWTKEY);
+  } catch (err) {
+    res.json({
+      status: 'denied'
+    });
+    return;
+  }
+
+  try {
+    const pool = await connectPool();
+    const [sponsorRes, romRes] = await Promise.all([
+      pool.query('SELECT Bedrift.BedriftID AS BedriftID, Bedrift.Navn as navn FROM Bedrift INNER JOIN Sponsor ON Sponsor.BedriftID = Bedrift.BedriftID WHERE Sponsor.ArrangementID = ?', [arrangementID]),
+      pool.query('SELECT RomID AS romID, Navn AS navn, Bygning AS bygning FROM Rom')
+    ]);
+    pool.end();
+    const sponsors = sponsorRes[0];
+    const rom = romRes[0];
+    res.json({
+      status: 'succeeded',
+      sponsors,
+      rom
+    });
+  } catch (err) {
+    res.json({
+      status: 'failed'
+    });
+    console.log(`Failed to fetch rooms and sponsors for event with ID ${arrangementID}:`);
+    console.log(err);
+  }
+});
+
+router.post('/createProgramEvent', async (req, res) => {
+  const { token, arrangementID, bedriftID, navn, beskrivelse, romID, klokkeslett } = req.body;
+  try {
+    const { JWTKEY } = process.env;
+    jwt.verify(token, JWTKEY);
+  } catch (err) {
+    res.json({
+      status: 'denied'
+    });
+    return;
+  }
+
+  try {
+    const connection = await connect();
+    await connection.query(
+      'INSERT INTO ProgramHendelse(ArrangementID, Bedrift, Navn, Beskrivelse, RomID, Klokkeslett) VALUES (?, ?, ?, ?, ?, ?)',
+      [arrangementID, bedriftID, navn, beskrivelse, romID, klokkeslett]
+    );
+    res.json({
+      status: 'succeeded'
+    });
+  } catch (err) {
+    res.json({status: 'failed'});
+    console.log('Failed to create new program event: ');
+    console.log(err);
+  }
+});
+
 router.post('/addSponsor', async (req, res) => {
   const { token, arrangementID, bedriftID, sponsorType } = req.body;
   try {

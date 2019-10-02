@@ -8,6 +8,7 @@ import NewCompany from './NewCompany.jsx';
 import Events from './Events.jsx';
 import NewEvent from './NewEvent.jsx';
 import Event from './event/Event.jsx';
+import NewProgramEvent from './NewProgramEvent.jsx';
 
 
 class Admin extends Component {
@@ -24,6 +25,7 @@ class Admin extends Component {
           <Route path='/admin/events' component={Events} />
           <Route path='/admin/newEvent' component={NewEvent} />
           <Route path='/admin/event' component={() => <Event id={params.get('id')} />} />
+          <Route path='/admin/newProgramEvent' component={() => <NewProgramEvent arrangementID={params.get('id')} />} />
         </BrowserRouter>
       </div>
     );

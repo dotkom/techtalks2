@@ -38,6 +38,7 @@ class EventInfo extends Component {
       beskrivelse,
       antallPlasser,
       link,
+      // dato på YYYY/MM/DD-format. Offset må trekkes fra for at tidssoner ikke setter dagen tilbake med 1
       dato: new Date(d - 60000*d.getTimezoneOffset()).toISOString().split('T')[0],
       editing: true
     });
