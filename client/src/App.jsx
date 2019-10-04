@@ -5,11 +5,17 @@ import Header from './components/frame/Header';
 import MainBody from './components/frame/MainBody';
 import Footer from './components/frame/Footer';
 
+const Wrapper = styled.div`
+  width: 100vw;
+  min-height: 100vh;
+  background-color: lightgrey;
+  z-index: -100;
+`;
+
+
 function App() {
-  const Wrapper = styled.div`
-    width: 100%;
-    min-height: 100%;
-  `;
+
+
   return (
     <Wrapper>
       <Header />

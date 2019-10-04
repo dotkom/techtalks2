@@ -2,9 +2,8 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
-  margin: auto;
   width: 100%;
-  max-width: 600px;
+  margin: 0;
 `;
 const ProgramTable = styled.table`
   width: 100%;

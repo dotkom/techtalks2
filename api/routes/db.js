@@ -40,7 +40,7 @@ router.get('/home', async (_, res) => {
         [arrID]
       ),
       pool.query(
-        'SELECT PH.Navn AS navn, PH.Klokkeslett AS tid, PH.Beskrivelse AS beskrivelse, Rom.Navn AS stedNavn, Rom.MazemapURL AS stedLink FROM (ProgramHendelse AS PH) INNER JOIN Rom ON PH.RomID=Rom.RomID WHERE PH.ArrangementID = ?',
+        'SELECT PH.Navn AS navn, PH.Klokkeslett AS tid, PH.Beskrivelse AS beskrivelse, Rom.Navn AS stedNavn, Rom.MazemapURL AS stedLink FROM (ProgramHendelse AS PH) INNER JOIN Rom ON PH.RomID=Rom.RomID WHERE PH.ArrangementID = ? ORDER BY tid ASC',
         [arrID]
       ),
       pool.query(
@@ -336,7 +336,7 @@ router.post('/allEvents', async (req, res) => {
   try {
     const connection = await connect();
     const response = await connection.query(
-      `SELECT Arrangement.ArrangementID AS ArrangementID, Arrangement.Dato AS Dato, Arrangement.AntallPlasser AS AntallPlasser, SUM(Paameldt.Verifisert) AS AntallPåmeldte, COUNT(Paameldingshash) AS AntallPåmeldteTotal
+      `SELECT Arrangement.ArrangementID AS ArrangementID, Arrangement.Dato AS Dato, Arrangement.AntallPlasser AS AntallPlasser, COALESCE(SUM(Paameldt.Verifisert), 0) AS AntallPåmeldte, COUNT(Paameldingshash) AS AntallPåmeldteTotal
       FROM Arrangement LEFT JOIN Paameldt ON Arrangement.ArrangementID=Paameldt.ArrangementID
       GROUP BY Arrangement.ArrangementID
       ORDER BY Arrangement.ArrangementID DESC`

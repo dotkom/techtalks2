@@ -9,7 +9,12 @@ import Paamelding from './Paamelding';
 
 const Wrapper = styled.div`
   width: 100%;
-  min-height: 90%;
+  min-height: calc(100vh - 14em);
+  max-width: 50em;
+  margin: 0 auto;
+  padding: 1em 0.5em;
+  z-index: 0;
+  background-color: white;
 `;
 
 
@@ -39,13 +44,15 @@ class Home extends Component {
   render() {
     const { partners, program, event } = this.state;
     return (
-      <Wrapper>
+      <div>
         <Navbar />
-        <About event={event} />
-        <Samarbeidspartnere partners={partners} />
-        <Program events={program} />
-        <Paamelding event={event} />
-      </Wrapper>
+        <Wrapper>
+          <About event={event} />
+          <Samarbeidspartnere partners={partners} />
+          <Program events={program} />
+          <Paamelding event={event} />
+        </Wrapper>
+      </div>
     );
   }
 }

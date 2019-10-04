@@ -5,8 +5,7 @@ import InputField from '../inputs/InputField';
 
 const Wrapper = styled.div`
   width: 100%;
-  max-width: 600px;
-  margin: auto;
+  margin: 0;
   text-align: left;
 `;
 
@@ -86,8 +85,7 @@ class Paamelding extends Component {
         <Wrapper>
           <h2 id="paamelding">Påmelding</h2>
           <p>
-            Du vil snart få en bekreftelses e-post sendt til {epost}
-            .
+            Du vil snart få en bekreftelses e-post sendt til {epost}.
             <br />
             <b>OBS! Du er ikke påmeldt før du har verifisert påmeldingen din</b>
           </p>
@@ -98,24 +96,31 @@ class Paamelding extends Component {
       <Wrapper>
         <h2 id="paamelding">Påmelding</h2>
         <h3>{`${AntallPåmeldte} av ${AntallPlasser} påmeldt`}</h3>
-        <InputField type="text" updateValue={this.updateName} label="Navn: " id="paameldingNavn" val={navn} />
-        <InputField type="text" updateValue={this.updateEmail} label="E-post: " id="paameldingEpost" val={epost} />
-        <InputField
-          type="text"
-          updateValue={this.updateLinje}
-          label="Linjeforening: "
-          id="paameldingLinje"
-          val={linjeforening}
-        />
-        <InputField type="number" updateValue={this.updateAge} label="Alder: " id="paameldingAlder" val={alder} />
-        <InputField
-          type="number"
-          updateValue={this.updateYear}
-          label="Studieår: "
-          id="paameldingStudieaar"
-          val={studieår}
-        />
-        <button onClick={this.submitForm}>Meld meg på</button>
+        { 
+          AntallPåmeldte < AntallPlasser ? (
+            <div>
+              <InputField type="text" updateValue={this.updateName} label="Navn: " id="paameldingNavn" val={navn} />
+              <InputField type="text" updateValue={this.updateEmail} label="E-post: " id="paameldingEpost" val={epost} />
+              <InputField
+                type="text"
+                updateValue={this.updateLinje}
+                label="Linjeforening: "
+                id="paameldingLinje"
+                val={linjeforening}
+              />
+              <InputField type="number" updateValue={this.updateAge} label="Alder: " id="paameldingAlder" val={alder} />
+              <InputField
+                type="number"
+                updateValue={this.updateYear}
+                label="Studieår: "
+                id="paameldingStudieaar"
+                val={studieår}
+              />
+              <button onClick={this.submitForm}>Meld meg på</button>
+            </div>
+          )  : <p>Arrangementet er fullt</p>
+        }
+        
       </Wrapper>
     );
   }

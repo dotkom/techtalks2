@@ -4,23 +4,25 @@ import styled from 'styled-components';
 const NavbarWrapper = styled.div`
   margin: 0px;
   width: 100%;
-  height: 35px;
   background-color: blue;
   z-index: 0;
-`,
-Knapp = styled.div`
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+`;
+const Knapp = styled.div`
   display: inline-block;
-  margin: 0px 25px;
+  margin: 0px 1.5em;
   z-index: 1;
   &:hover {
     text-decoration: white underline;
   }
-`,
-NavbarText = styled.h1`
+`;
+const NavbarText = styled.h1`
   color: white;
   margin-top: 0px;
   margin-bottom: 0px;
-  font-size: 25px;
+  font-size: 1.5em;
   text-align: center;
 `;
 

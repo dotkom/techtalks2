@@ -2,9 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
+  margin: 0;
   width: 100%;
-  max-width: 600px;
-  margin: auto;
 `;
 
 const About = props => {

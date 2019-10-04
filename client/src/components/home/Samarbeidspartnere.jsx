@@ -1,12 +1,17 @@
 import React from 'react';
 import styled from 'styled-components';
 
+const Wrapper = styled.div`
+  margin: 0;
+  width: 100%;
+`;
+
+const Img = styled.img`
+  max-height: 15em;
+  max-width: 30%;
+`;
+
 const Samarbeidspartnere = props => {
-  const Wrapper = styled.div`
-    margin: auto;
-    width: 100%;
-    max-width: 600px;
-  `;
   const { partners } = props;
   const [ hovedSamarbeidspartner ] = partners.filter(partner => partner.sponsorType === 3);
   const gullSponsor = partners.filter(partner => partner.sponsorType === 2);
@@ -38,14 +43,7 @@ const Samarbeidspartnere = props => {
       {pages.map((page, pageno) => {
         return (
           <div key={pageno}>
-            {page.map((partner, partnerno) => {
-              const BetterImg = styled.img`
-                max-height: 200px;
-                max-width: 200px;
-              `;
-              const { name, url } = partner;
-              return <BetterImg src={url} alt={name} key={partnerno} />;
-            })}
+            {page.map(({ name, url }, partnerno) => <Img src={url} alt={name} key={partnerno} />)}
             <br />
           </div>
         );
