@@ -504,7 +504,7 @@ router.post('/preCreateProgram', async (req, res) => {
     const pool = await connectPool();
     const [sponsorRes, romRes] = await Promise.all([
       pool.query('SELECT Bedrift.BedriftID AS BedriftID, Bedrift.Navn as navn FROM Bedrift INNER JOIN Sponsor ON Sponsor.BedriftID = Bedrift.BedriftID WHERE Sponsor.ArrangementID = ?', [arrangementID]),
-      pool.query('SELECT RomID AS romID, Navn AS navn, Bygning AS bygning FROM Rom')
+      pool.query('SELECT RomID AS romID, CONCAT(Bygning, \' \', Navn) AS navn FROM Rom')
     ]);
     pool.end();
     const sponsors = sponsorRes[0];

@@ -6,6 +6,11 @@ const Wrapper = styled.div`
   width: 100%;
 `;
 
+const BigImg = styled.img`
+  max-height: 20em;
+  max-width: 50%;
+`
+
 const Img = styled.img`
   max-height: 15em;
   max-width: 30%;
@@ -34,7 +39,10 @@ const Samarbeidspartnere = props => {
         <div>
           <h2>Hovedsamarbeidspartner</h2>
           {
-            <img src={hovedSamarbeidspartner.url} alt={hovedSamarbeidspartner.name} />
+            <BigImg 
+              src={`https://online.ntnu.no/media/images/responsive/${hovedSamarbeidspartner.url}`}
+              alt={hovedSamarbeidspartner.name} 
+            />
           }
         </div>
       ) : null}
@@ -43,7 +51,13 @@ const Samarbeidspartnere = props => {
       {pages.map((page, pageno) => {
         return (
           <div key={pageno}>
-            {page.map(({ name, url }, partnerno) => <Img src={url} alt={name} key={partnerno} />)}
+            {page.map(({ name, url }, partnerno) => 
+              <Img 
+                src={`https://online.ntnu.no/media/images/responsive/${url}`}
+                alt={name}
+                key={partnerno} 
+              />
+            )}
             <br />
           </div>
         );

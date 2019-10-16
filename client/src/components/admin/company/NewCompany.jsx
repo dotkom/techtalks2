@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 
-import InputField from '../inputs/InputField';
+import InputField from '../../inputs/InputField';
 
 class NewCompany extends Component {
   state = {

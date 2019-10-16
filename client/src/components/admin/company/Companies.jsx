@@ -39,7 +39,7 @@ class Companies extends Component {
       <div>
         <h1>Alle selskaper</h1>
         <p>
-          <a href="/admin/newCompany">Legg til nytt selskap</a>
+          <a href="/admin/importCompany">Legg til nytt selskap</a>
         </p>
         <table>
           <thead>

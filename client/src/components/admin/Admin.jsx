@@ -3,13 +3,13 @@ import { BrowserRouter, Route } from 'react-router-dom';
 
 import AdminLogin from './AdminLogin.jsx';
 import AdminPanel from './AdminPanel.jsx';
-import Companies from './Companies.jsx';
-import NewCompany from './NewCompany.jsx'; 
-import Events from './Events.jsx';
-import NewEvent from './NewEvent.jsx';
+import Companies from './company/Companies.jsx';
+import NewCompany from './company/NewCompany.jsx'; 
+import Events from './event/Events.jsx';
+import NewEvent from './event/NewEvent.jsx';
 import Event from './event/Event.jsx';
-import NewProgramEvent from './NewProgramEvent.jsx';
-
+import NewProgramEvent from './event/NewProgramEvent.jsx';
+import ImportCompany from './company/ImportCompany.jsx';
 
 class Admin extends Component {
   render() {
@@ -22,6 +22,7 @@ class Admin extends Component {
           <Route path='/admin/main' component={AdminPanel} />
           <Route path='/admin/companies' component={Companies} />
           <Route path='/admin/newCompany' component={NewCompany} />
+          <Route path='/admin/importCompany' component={ImportCompany} />
           <Route path='/admin/events' component={Events} />
           <Route path='/admin/newEvent' component={NewEvent} />
           <Route path='/admin/event' component={() => <Event id={params.get('id')} />} />

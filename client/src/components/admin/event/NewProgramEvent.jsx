@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 
-import InputField from '../inputs/InputField.jsx';
-import DropdownMenu from '../inputs/DropdownMenu.jsx';
+import InputField from '../../inputs/InputField.jsx';
+import DropdownMenu from '../../inputs/DropdownMenu.jsx';
 
 
 class NewProgramEvent extends Component {
