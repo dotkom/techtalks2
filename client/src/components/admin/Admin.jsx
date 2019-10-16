@@ -10,6 +10,9 @@ import NewEvent from './event/NewEvent.jsx';
 import Event from './event/Event.jsx';
 import NewProgramEvent from './event/NewProgramEvent.jsx';
 import ImportCompany from './company/ImportCompany.jsx';
+import Rooms from './Rooms.jsx'
+import NewRoom from './NewRoom.jsx'
+
 
 class Admin extends Component {
   render() {
@@ -27,6 +30,8 @@ class Admin extends Component {
           <Route path='/admin/newEvent' component={NewEvent} />
           <Route path='/admin/event' component={() => <Event id={params.get('id')} />} />
           <Route path='/admin/newProgramEvent' component={() => <NewProgramEvent arrangementID={params.get('id')} />} />
+          <Route path='/admin/rooms' component={Rooms} />
+          <Route path='/admin/newRoom' component={NewRoom} />
         </BrowserRouter>
       </div>
     );

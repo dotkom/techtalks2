@@ -488,6 +488,62 @@ router.post('/deleteParticipant', async (req, res) => {
   }
 })
 
+router.post('/getRooms', async (req, res) => {
+  const { token } = req.body;
+  try {
+    const { JWTKEY } = process.env;
+    jwt.verify(token, JWTKEY);
+  } catch (err) {
+    res.json({
+      status: 'denied'
+    });
+    return
+  }
+
+  try {
+    const connection = await connect();
+    const response = await connection.query('SELECT Navn, Bygning, MazemapURL FROM Rom');
+    connection.end();
+    const rooms = response[0];
+    res.json({
+      status: 'succeeded',
+      rooms
+    });
+  } catch (error) {
+    res.json({
+      status: 'failed'
+    });
+  }
+});
+
+router.post('/newRoom', async (req, res) => {
+  const { token, name, building, mazemap } = req.body;
+  try {
+    const { JWTKEY } = process.env;
+    jwt.verify(token, JWTKEY);
+  } catch (err) {
+    res.json({
+      status: 'denied'
+    });
+    return;
+  }
+
+  try {
+    const connection = await connect();
+    await connection.query('INSERT INTO Rom(Navn, Bygning, MazemapURL) VALUES (?, ?, ?)', [name, building, mazemap]);
+    connection.end();
+    res.json({
+      status: 'succeeded'
+    });
+  } catch (err) {
+    console.log('Failed to create new room')
+    console.log(err);
+    res.json({
+      status: 'failed'
+    });
+  }
+})
+
 router.post('/preCreateProgram', async (req, res) => {
   const { token, arrangementID } = req.body;
   try {

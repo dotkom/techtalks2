@@ -18,6 +18,9 @@ const AdminPanel = () => (
       <li>
         <a href="/admin/events">Se arrangementer</a>
       </li>
+      <li>
+        <a href="/admin/rooms">Se rom</a>
+      </li>
     </UL>
   </div>
 );
