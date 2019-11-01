@@ -107,6 +107,22 @@ class Event extends Component {
     }
   }
 
+  deleteProgramEvent = async idToDelete => {
+    const token = localStorage.getItem('token');
+    const req = {
+      method: 'POST',
+      body: JSON.stringify({token, id: idToDelete}),
+      headers: {'Content-Type': 'application/json'}
+    };
+    const res = await fetch('/db/deleteProgramEvent', req);
+    const { status } = await res.json();
+    if (status === 'ok') {
+      const { program } = this.state;
+      const newProgram = program.filter(p=>p.id!==idToDelete);
+      this.setState({program: newProgram});
+    }
+  }
+
   async componentDidMount() {
     const token = localStorage.getItem('token');
     const { id } = this.props;
@@ -168,6 +184,7 @@ class Event extends Component {
           showProgram={showProgram}
           program={program}
           id={this.props.id}
+          deleteProgramEvent={this.deleteProgramEvent}
         />
       </div>
     );

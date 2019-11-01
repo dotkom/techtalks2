@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
@@ -13,60 +13,42 @@ const Td = styled.td`
 `;
 
 
-class Program extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      displayDetails: props.events.map(() => false),
-    };
+const Program = props => {
+  const { events } = props;
+  const timeslots = [];
+  console.table(events);
+  const jsonRooms = [];
+  for(let event of events) {
+    const jsonRoom = JSON.stringify({navn: event.stedNavn, link: event.stedLink});
+    if (jsonRooms.indexOf(jsonRoom) === -1) {
+      jsonRooms.push(jsonRoom);
+    }
   }
-
-  handleClick = e => {
-    const n = parseInt(e.target.id);
-    const { displayDetails } = this.state;
-    displayDetails[n] = !displayDetails[n];
-    this.forceUpdate();
-  }
-
-  render() {
-    const { events } = this.props;
-    return (
-      <Wrapper>
-        <h2 id="program">Program</h2>
-        <ProgramTable>
-          <thead>
-            <tr>
-              <th>Tid</th>
-              <th>Foredrag</th>
-              <th>Sted</th>
-            </tr>
-          </thead>
-          {events.map((event, index) => {
-            const { navn, tid, stedNavn, stedLink, beskrivelse } = event;
-            const shouldDisplay = this.state.displayDetails[index];
-            return (
-              <tbody key={index}>
-                <tr>
-                  <td>{tid}</td>
-                  <Td onClick={this.handleClick} id={index}>
-                    {navn}
-                  </Td>
-                  <td>
-                    <a href={stedLink}>{stedNavn}</a>
-                  </td>
-                </tr>
-                {shouldDisplay ? (
-                  <tr>
-                    <td colSpan="3">{beskrivelse}</td>
-                  </tr>
-                ) : null}
-              </tbody>
-            );
-          })}
-        </ProgramTable>
-      </Wrapper>
-    );
-  }
+  jsonRooms.sort(); // name first => this sorts by name
+  const rooms = jsonRooms.map(JSON.parse);
+  return (
+    <Wrapper>
+      <h2 id="program">Program</h2>
+      <ProgramTable>
+        <thead>
+          <tr>
+            <th>Tid</th>
+            {
+  rooms.map(({navn, link}) => <th key={navn}><a href={link}>{navn}</a></th>)
+            }
+          </tr>
+        </thead>
+        <tbody>
+          {
+            timeslots.map((timeslot, index)=>{
+            
+              return (<tr></tr>)
+            })
+          }
+        </tbody>
+      </ProgramTable>
+    </Wrapper>
+  );
 }
 
 export default Program;

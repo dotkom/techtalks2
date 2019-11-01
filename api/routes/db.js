@@ -103,7 +103,7 @@ router.post('/validering', async (req, res) => {
       status: 'repeat',
     });
   } else {
-    res.json({
+    res.status(500).json({
       status: 'failed',
     });
   }
@@ -372,7 +372,7 @@ router.post('/adminEvent', async (req, res) => {
     const pool = connectPool();
     const [ sponsorRes, programRes, eventRes, påmeldtRes, deltagereRes ] = await Promise.all([
       pool.query('SELECT Bedrift.BedriftID AS BedriftID, Bedrift.Navn AS navn, Bedrift.Logo AS logo, Sponsor.SponsorType AS sponsorType FROM Bedrift INNER JOIN Sponsor ON Bedrift.BedriftID=Sponsor.BedriftID WHERE Sponsor.ArrangementID = ?', [id]),
-      pool.query('SELECT PH.Navn AS navn, PH.Klokkeslett AS tid, PH.Beskrivelse AS beskrivelse, Rom.Navn AS stedNavn, Rom.MazemapURL AS stedLink FROM (ProgramHendelse AS PH) INNER JOIN Rom ON PH.RomID=Rom.RomID WHERE PH.ArrangementID = ?', [id]),
+      pool.query('SELECT PH.HendelsesID AS id, PH.Navn AS navn, PH.Klokkeslett AS tid, PH.Beskrivelse AS beskrivelse, Rom.Navn AS stedNavn, Rom.MazemapURL AS stedLink, Bedrift.BedriftID AS bedriftID, Bedrift.Navn AS bedriftNavn FROM ROM Inner Join (ProgramHendelse AS PH) ON Rom.RomID=PH.RomID LEFT JOIN Bedrift ON PH.Bedrift=Bedrift.BedriftID WHERE PH.ArrangementID = ?', [id]),
       pool.query('SELECT Beskrivelse, Dato, AntallPlasser, Link FROM Arrangement WHERE ArrangementID=?', [id]),
       pool.query('SELECT COUNT(PaameldingsHash) AS AntallPåmeldte FROM Paameldt WHERE ArrangementID=? AND Verifisert=TRUE', [id]),
       pool.query('SELECT PaameldingsHash, Navn, Epost, Linjeforening, Alder, StudieAar, Verifisert, PaameldingsTidspunkt FROM Paameldt WHERE ArrangementID=?', [id])
@@ -395,6 +395,7 @@ router.post('/adminEvent', async (req, res) => {
     res.json({
       status: 'failed'
     });
+    console.log(error);
   }
 })
 
@@ -604,6 +605,25 @@ router.post('/createProgramEvent', async (req, res) => {
     res.json({status: 'failed'});
     console.log('Failed to create new program event: ');
     console.log(err);
+  }
+});
+
+router.post('/deleteProgramEvent', async (req, res) => {
+  const { token, id } = req.body;
+  try {
+    const { JWTKEY } = process.env;
+    jwt.verify(token, JWTKEY);
+  } catch(e) {
+    res.status(401).json({status: 'denied'});
+  }
+
+  try {
+    const connection = await connect();
+    await connection.query('DELETE FROM ProgramHendelse WHERE HendelsesID=?', [id]);
+    connection.end();
+    res.json({status:'ok'});
+  } catch (error) {
+    res.status(500).json({status: 'failed'});
   }
 });
 

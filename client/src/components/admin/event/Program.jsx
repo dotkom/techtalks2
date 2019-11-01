@@ -9,6 +9,7 @@ const Td = styled.td`
   max-width: 50em;
 `;
 
+
 const Program = props => (
   <div>
     <button type='button' onClick={props.toggleProgram}>{`${props.showProgram ? 'Skjul' : 'Vis'} program`}</button>
@@ -20,17 +21,21 @@ const Program = props => (
             <tr>
               <th>Navn</th>
               <th>Tid</th>
+              <th>Bedrift</th>
               <th>Sted</th>
               <th>Beskrivelse</th>
+              <th>Slett</th>
             </tr>
           </thead>
           <tbody>
-            {props.program.map(({navn, tid, beskrivelse, stedNavn, stedLink}, ind) => (
-              <tr key={ind}>
+            {props.program.map(({id, navn, tid, beskrivelse, stedNavn, stedLink, bedriftNavn}, ind) => (
+              <tr key={id}>
                 <Td>{navn}</Td>
                 <Td>{tid}</Td>
+                <Td>{bedriftNavn}</Td>
                 <Td><a href={stedLink}>{stedNavn}</a></Td>
                 <Td>{beskrivelse}</Td>
+                <Td><button type="button" onClick={()=>props.deleteProgramEvent(id)}>Slett</button></Td>
               </tr>))
             }
           </tbody>
