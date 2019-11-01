@@ -46,6 +46,7 @@ CREATE TABLE ProgramHendelse(
   Navn TEXT NOT NULL,
   Beskrivelse TEXT NOT NULL,
   Klokkeslett TIME,
+  Varighet INT NOT NULL DEFAULT 1,
   RomID INT,
   FOREIGN KEY (ArrangementID) REFERENCES Arrangement(ArrangementID),
   FOREIGN KEY (Bedrift, ArrangementID) REFERENCES Sponsor(BedriftID, ArrangementID),

@@ -15,7 +15,7 @@ const Td = styled.td`
 
 const Program = props => {
   const { events } = props;
-  const timeslots = [];
+  const timeslots = ["09:15","10:15","11:15","12:15","13:15","14:15","15:15"];
   console.table(events);
   const jsonRooms = [];
   for(let event of events) {
@@ -34,15 +34,34 @@ const Program = props => {
           <tr>
             <th>Tid</th>
             {
-  rooms.map(({navn, link}) => <th key={navn}><a href={link}>{navn}</a></th>)
+              rooms.map(({navn, link}) => <th key={navn}><a href={link}>{navn}</a></th>)
             }
           </tr>
         </thead>
         <tbody>
           {
             timeslots.map((timeslot, index)=>{
-            
-              return (<tr></tr>)
+              const rowEvents = events.filter(event=>event.tid.startsWith(timeslot));
+              return (
+                <tr key={timeslot}>
+                  <td>{timeslot}</td>
+                  {
+                    rooms.map((room,ind) => {
+                      const thisEvent = rowEvents.filter(event=>event.stedNavn === room.navn);
+                      if(thisEvent.length) {
+                        const {navn,beskrivelse,varighet} = thisEvent[0];
+                        return (
+                          <td key={ind} rowSpan={varighet}>
+                            <h3>{navn}</h3>
+                            <p>{beskrivelse}</p>
+                          </td>
+                        )
+                      }
+                      return null;
+                    })
+                  }
+                </tr>
+              )
             })
           }
         </tbody>
