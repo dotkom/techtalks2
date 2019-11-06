@@ -7,16 +7,25 @@ const Wrapper = styled.div`
 `;
 const ProgramTable = styled.table`
   width: 100%;
-`;
-const Td = styled.td`
-  cursor: pointer;
-`;
+  border: 1px solid #ccc;
+  border-collapse: collapse;
+  & tr {
+    display: flex;
+    flex-flow: row nowrap;
+  }
+  & td,th {
+    border: 1px solid #ccc;
+    flex: 1;
+    &:nth-child(1) {
+      flex: 0 0 4em;
+    }
+  }
 
+`;
 
 const Program = props => {
   const { events } = props;
-  const timeslots = ["09:15","10:15","11:15","12:15","13:15","14:15","15:15"];
-  console.table(events);
+  const timeslots = ['09:15','10:15','11:15','12:15','13:15','14:15','15:15'];
   const jsonRooms = [];
   for(let event of events) {
     const jsonRoom = JSON.stringify({navn: event.stedNavn, link: event.stedLink});
@@ -40,7 +49,7 @@ const Program = props => {
         </thead>
         <tbody>
           {
-            timeslots.map((timeslot, index)=>{
+            timeslots.map((timeslot, _)=>{
               const rowEvents = events.filter(event=>event.tid.startsWith(timeslot));
               return (
                 <tr key={timeslot}>

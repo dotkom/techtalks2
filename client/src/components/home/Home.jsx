@@ -48,8 +48,8 @@ class Home extends Component {
         <Navbar />
         <Wrapper>
           <About event={event} />
-          <Samarbeidspartnere partners={partners} />
           <Program events={program} />
+          <Samarbeidspartnere partners={partners} />
           <Paamelding event={event} />
         </Wrapper>
       </div>

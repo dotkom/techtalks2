@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import styled from 'styled-components';
 
 import InputField from '../inputs/InputField';
@@ -9,48 +9,17 @@ const Wrapper = styled.div`
   text-align: left;
 `;
 
-class Paamelding extends Component {
-  state = {
-    navn: '',
-    epost: '',
-    linjeforening: '',
-    alder: '',
-    studieår: '',
-    status: '',
-  };
+const Paamelding = props => {
 
-  updateName = navn => {
-    this.setState({
-      navn,
-    });
-  }
+  const [navn, updateName] = useState('');
+  const [epost, updateEmail] = useState('');
+  const [linjeforening, updateLinje] = useState('');
+  const [alder, updateAge] = useState('');
+  const [studieår, updateYear] = useState('');
+  const [status, setStatus] = useState('');
 
-  updateEmail = epost => {
-    this.setState({
-      epost,
-    });
-  }
 
-  updateLinje = linjeforening => {
-    this.setState({
-      linjeforening,
-    });
-  }
-
-  updateAge = alder => {
-    this.setState({
-      alder,
-    });
-  }
-
-  updateYear = studieår => {
-    this.setState({
-      studieår,
-    });
-  }
-
-  submitForm = async () => {
-    const { navn, epost, linjeforening, alder, studieår } = this.state;
+  const submitForm = async () => {
     console.log(`navn: ${navn}`);
     console.log(`linje: ${linjeforening}`);
     console.log(`alder: ${alder}`);
@@ -71,59 +40,54 @@ class Paamelding extends Component {
     const res = await fetch('db/paamelding', req);
     const jsoned = await res.json();
     console.log(jsoned);
-    this.setState({
-      status: jsoned.status,
-    });
+    setStatus(jsoned.status);
   }
 
-  render() {
-    const { navn, epost, linjeforening, alder, studieår, status } = this.state;
-    const { event } = this.props;
-    const { AntallPlasser, AntallPåmeldte } = event;
-    if (status === 'succeeded') {
-      return (
-        <Wrapper>
-          <h2 id="paamelding">Påmelding</h2>
-          <p>
-            Du vil snart få en bekreftelses e-post sendt til {epost}.
-            <br />
-            <b>OBS! Du er ikke påmeldt før du har verifisert påmeldingen din</b>
-          </p>
-        </Wrapper>
-      );
-    }
+  const { event } = props;
+  const { AntallPlasser, AntallPåmeldte } = event;
+  if (status === 'succeeded') {
     return (
       <Wrapper>
         <h2 id="paamelding">Påmelding</h2>
-        <h3>{`${AntallPåmeldte} av ${AntallPlasser} påmeldt`}</h3>
-        { 
-          AntallPåmeldte < AntallPlasser ? (
-            <div>
-              <InputField type="text" updateValue={this.updateName} label="Navn: " id="paameldingNavn" val={navn} />
-              <InputField type="text" updateValue={this.updateEmail} label="E-post: " id="paameldingEpost" val={epost} />
-              <InputField
-                type="text"
-                updateValue={this.updateLinje}
-                label="Linjeforening: "
-                id="paameldingLinje"
-                val={linjeforening}
-              />
-              <InputField type="number" updateValue={this.updateAge} label="Alder: " id="paameldingAlder" val={alder} />
-              <InputField
-                type="number"
-                updateValue={this.updateYear}
-                label="Studieår: "
-                id="paameldingStudieaar"
-                val={studieår}
-              />
-              <button onClick={this.submitForm}>Meld meg på</button>
-            </div>
-          )  : <p>Arrangementet er fullt</p>
-        }
-        
+        <p>
+          Du vil snart få en bekreftelses e-post sendt til {epost}.
+          <br />
+          <b>OBS! Du er ikke påmeldt før du har verifisert påmeldingen din</b>
+        </p>
       </Wrapper>
     );
   }
+  return (
+    <Wrapper>
+      <h2 id="paamelding">Påmelding</h2>
+      <h3>{`${AntallPåmeldte} av ${AntallPlasser} påmeldt`}</h3>
+      { 
+        AntallPåmeldte < AntallPlasser ? (
+          <div>
+            <InputField type="text" updateValue={updateName} label="Navn: " id="paameldingNavn" val={navn} />
+            <InputField type="text" updateValue={updateEmail} label="E-post: " id="paameldingEpost" val={epost} />
+            <InputField
+              type="text"
+              updateValue={updateLinje}
+              label="Linjeforening: "
+              id="paameldingLinje"
+              val={linjeforening}
+            />
+            <InputField type="number" updateValue={updateAge} label="Alder: " id="paameldingAlder" val={alder} />
+            <InputField
+              type="number"
+              updateValue={updateYear}
+              label="Studieår: "
+              id="paameldingStudieaar"
+              val={studieår}
+            />
+            <button onClick={submitForm}>Meld meg på</button>
+          </div>
+        )  : <p>Arrangementet er fullt</p>
+      }
+      
+    </Wrapper>
+  );
 }
 
 export default Paamelding;
