@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
 import InputField from '../../inputs/InputField.jsx';
@@ -11,113 +11,50 @@ const Td = styled.td`
   max-width: 50em;
 `;
 
-class EventInfo extends Component {
-  state = {
-    editing: false,
-    beskrivelse: '',
-    antallPlasser: '',
-    link: '',
-    dato: '',
+const EventInfo = props => {
+  const [editing, setEditing] = useState(false);
+  const [beskrivelse, changeDesc] = useState('');
+  const [antallPlasser, changePlasser] = useState('');
+  const [link, changeLink] = useState('');
+  const [dato, changeDate] = useState('');
+
+
+  const cancelEditing = () => {
+    setEditing(false);
+    changeDesc('');
+    changePlasser('');
+    changeLink('');
+    changeDate('');
   }
 
-
-  cancelEditing = () => {
-    this.setState({
-      beskrivelse: '',
-      antallPlasser: '',
-      link: '',
-      dato: '',
-      editing: false
-    });
-  }
-
-  enableEditing = () => {
-    const { beskrivelse, antallPlasser, link, dato } = this.props;
+  const enableEditing = () => {
+    const { beskrivelse, antallPlasser, link, dato } = props;
     const d = new Date(dato);
-    this.setState({
-      beskrivelse,
-      antallPlasser,
-      link,
-      // dato på YYYY/MM/DD-format. Offset må trekkes fra for at tidssoner ikke setter dagen tilbake med 1
-      dato: new Date(d - 60000*d.getTimezoneOffset()).toISOString().split('T')[0],
-      editing: true
-    });
+    setEditing(true);
+    changeDesc(beskrivelse);
+    changePlasser(antallPlasser);
+    changeLink(link);
+    // dato på YYYY/MM/DD-format. Offset må trekkes fra for at tidssoner ikke setter dagen tilbake med 1
+    changeDate(new Date(d - 60000*d.getTimezoneOffset()).toISOString().split('T')[0]);
   }
 
-  saveChanges = async () => {
-    const { beskrivelse, antallPlasser, link, dato } = this.state;
+  const saveChanges = async () => {
     const newData = { beskrivelse, antallPlasser, link, dato };
-    this.props.saveChanges(newData);
-    this.setState({
-      beskrivelse: '',
-      antallPlasser: '',
-      link: '',
-      dato: '',
-      editing: false
-    });
+    props.saveChanges(newData);
+    cancelEditing();
   }
 
-  changeDate = dato => {
-    this.setState({dato});
-  }
-
-  changeDesc = beskrivelse => {
-    this.setState({beskrivelse});
-  }
-
-  changePlasser = antallPlasser => {
-    this.setState({antallPlasser});
-  }
-
-  changeLink = link => {
-    this.setState({link});
-  }
-
-  render() {
-    const { toggleEvent, showEvent, antallPåmeldte } = this.props;
-    const { editing } = this.state;
-    if(editing) {
-      // if editing, the things that can be edited are in the state
-      const { dato, beskrivelse, antallPlasser, link } = this.state;
-      return (
-        <div>
-          <button type="button" onClick={toggleEvent}>{`${showEvent ? 'Skjul' : 'Vis'} info om arrangementet`}</button>
-          {
-            showEvent ? (
-              <div>
-                <button type="button" onClick={this.saveChanges}>Lagre</button>
-                <button type="button" onClick={this.cancelEditing}>Avbryt</button>
-                <Table id="eventInfo">
-                  <tbody>
-                    <tr>
-                      <Td><InputField type="date" label="Dato: " val={dato} id={"eventDate"} updateValue={this.changeDate} /></Td>
-                    </tr>
-                    <tr>
-                      <Td><InputField type="textarea" label="Beskrivelse: " val={beskrivelse} updateValue={this.changeDesc} /></Td>
-                    </tr>
-                    <tr>
-                      <Td><InputField type="number" label="Antall plasser: " val={antallPlasser} updateValue={this.changePlasser} /></Td>
-                    </tr>
-                    <tr>
-                      <Td><InputField type="text" label="Link: " val={link} updateValue={this.changeLink} /></Td>
-                    </tr>
-                  </tbody>
-                </Table>
-              </div>
-            ) : <br/>
-          }
-        </div>
-      );
-    }
-    // if not editing, the state is empty and props should be used
-    const { dato, beskrivelse, antallPlasser, link } = this.props;
+  const { toggleEvent, showEvent, antallPåmeldte } = props;
+  if(!editing) {
+    // if not editing, the things that can be edited are in the props
+    const { dato, beskrivelse, antallPlasser, link } = props;
     return (
       <div>
         <button type="button" onClick={toggleEvent}>{`${showEvent ? 'Skjul' : 'Vis'} info om arrangementet`}</button>
         {
           showEvent ? (
             <div>
-              <button type="button" onClick={this.enableEditing}>Rediger</button>
+              <button type="button" onClick={enableEditing}>Rediger</button>
               <Table id="eventInfo">
                 <tbody>
                   <tr>
@@ -144,6 +81,39 @@ class EventInfo extends Component {
       </div>
     );
   }
+  // if editing, use the values in working state
+  // The if is in this order (rather than `if(editing)`) for scoping reasons
+  // (since 'dato' is in global scope, the props unpacking can't be)
+  // not the best of practices, but it's mostly a readability issue - will fix when the rest is done
+  return (
+    <div>
+      <button type="button" onClick={toggleEvent}>{`${showEvent ? 'Skjul' : 'Vis'} info om arrangementet`}</button>
+      {
+        showEvent ? (
+          <div>
+            <button type="button" onClick={saveChanges}>Lagre</button>
+            <button type="button" onClick={cancelEditing}>Avbryt</button>
+            <Table id="eventInfo">
+              <tbody>
+                <tr>
+                  <Td><InputField type="date" label="Dato: " val={dato} id={"eventDate"} updateValue={changeDate} /></Td>
+                </tr>
+                <tr>
+                  <Td><InputField type="textarea" label="Beskrivelse: " val={beskrivelse} updateValue={changeDesc} /></Td>
+                </tr>
+                <tr>
+                  <Td><InputField type="number" label="Antall plasser: " val={antallPlasser} updateValue={changePlasser} /></Td>
+                </tr>
+                <tr>
+                  <Td><InputField type="text" label="Link: " val={link} updateValue={changeLink} /></Td>
+                </tr>
+              </tbody>
+            </Table>
+          </div>
+        ) : <br/>
+      }
+    </div>
+  );
 }
 
 export default EventInfo;

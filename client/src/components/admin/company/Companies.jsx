@@ -27,6 +27,13 @@ const Companies = props => {
     };
     internal();
   }, []);
+
+  const updateCompany = (indexToUpdate, newValue) => {
+    const copy = [...companies];
+    copy[indexToUpdate] = newValue;
+    setCompanies(copy);
+  };
+
   if (status === 'denied') {
     return <Redirect to="/admin" />;
   }
@@ -47,8 +54,15 @@ const Companies = props => {
           </tr>
         </thead>
         <tbody>
-          {companies.map(({ BedriftID, Navn, Logo, sponsorType }) => (
-            <Company key={BedriftID} bedriftID={BedriftID} navn={Navn} logo={Logo} sponsorType={sponsorType} />
+          {companies.map(({ BedriftID, Navn, Logo, sponsorType }, index) => (
+            <Company
+              key={BedriftID}
+              bedriftID={BedriftID}
+              navn={Navn}
+              logo={Logo}
+              sponsorType={sponsorType}
+              handleUpdate={values=>updateCompany(index, values)}
+            />
           ))}
         </tbody>
       </table>

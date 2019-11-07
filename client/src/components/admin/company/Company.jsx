@@ -1,57 +1,42 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import { Redirect } from 'react-router-dom';
 
 import InputField from '../../inputs/InputField';
 
-class Company extends Component {
-  constructor(props) {
-    super(props);
-    const { bedriftID, navn, logo, sponsorType } = props;
-    this.state = {
-      status: 'default',
-      bedriftID,
-      navn,
-      logo,
-      sponsorType,
-      edit: false,
-      preedit: {
-        navn,
-        logo,
-        sponsorType,
-      },
-    };
+const Company = props => {
+  // const { bedriftID, navn, logo, sponsorType } = props;
+  const [status, setStatus] = useState('default');
+  const [edit, setEditing] = useState(false);
+  const [eNavn, changeName] = useState('');
+  const [eLogo, changeLogo] = useState('');
+  const [eType, setSponsorship] = useState(0);
+
+  const changeSponsorship = e => setSponsorship(parseInt(e.target.value));
+
+  const allowEditing = () => {
+    const { navn, logo, sponsorType } = props;
+    changeName(navn);
+    changeLogo(logo);
+    setSponsorship(sponsorType);
+    setEditing(true);
   }
 
-  allowEditing = () => {
-    this.setState({
-      edit: true,
-    });
+  const cancelEditing = () => {
+    this.setEditing(false);
   }
 
-  cancelEditing = () => {
-    const { preedit } = this.state;
-    const { navn, logo, sponsorType } = preedit;
-    this.setState({
-      navn,
-      logo,
-      sponsorType,
-      edit: false,
-    });
-  }
-
-  submitEdit = async () => {
+  const submitEdit = async () => {
     const token = localStorage.getItem('token');
-    const { bedriftID, navn, logo, sponsorType, preedit } = this.state;
-    const oldSponsorType = preedit.sponsorType;
+    const { bedriftID, sponsorType, handleUpdate } = props;
     const req = {
       method: 'POST',
       body: JSON.stringify({
         token,
         bedriftID,
-        navn,
-        logo,
-        oldSponsorType,
-        sponsorType,
+        navn: eNavn,
+        logo: eLogo,
+        oldSponsorType: sponsorType,
+        sponsorType: eType,
       }),
       headers: {
         'Content-Type': 'application/json',
@@ -61,107 +46,79 @@ class Company extends Component {
     const j = await res.json();
     const { status } = j;
     if (status === 'denied' || status === 'failed') {
-      this.setState({
-        status,
-      });
+      setStatus(status);
     } else {
-      this.setState({
-        status,
-        edit: false,
-        preedit: {
-          navn,
-          logo,
-          sponsorType,
-        },
-      });
-    }
+      setStatus(status);
+      setEditing(false);
+      handleUpdate({Navn:eNavn,Logo:eLogo,eType});
+    };
   }
 
-  changeName  = navn => {
-    this.setState({
-      navn,
-    });
+  if (status === 'denied') {
+    return <Redirect to="/admin" />;
   }
-
-  changeLogo = logo => {
-    this.setState({
-      logo,
-    });
-  }
-
-  changeSponsorship = e => {
-    this.setState({
-      sponsorType: parseInt(e.target.value),
-    });
-  }
-
-  render() {
-    const { status, navn, logo, sponsorType, edit, bedriftID } = this.state;
-    if (status === 'denied') {
-      return <Redirect to="/admin" />;
-    }
-    if (edit) {
-      return (
-        <tr>
-          <td colSpan="4">
-            <InputField
-              label="Navn: "
-              id={`company${bedriftID}Name`}
-              updateValue={this.changeName}
-              val={navn}
-              type="text"
-            />
-            <InputField
-              label="Logo: "
-              id={`company${bedriftID}Logo`}
-              updateValue={this.changeLogo}
-              val={logo}
-              type="text"
-            />
-            <label htmlFor={`company${bedriftID}Spons`}>
-              Sponsor?
-              <select value={sponsorType} onChange={this.changeSponsorship}>
-                <option value={0}>Nei</option>
-                <option value={1}>Sølv</option>
-                <option value={2}>Gull</option>
-                <option value={3}>HSP</option>
-              </select>
-            </label>
-            <button type="button" onClick={this.submitEdit}>
-              Submit
-            </button>
-            <button type="button" onClick={this.cancelEditing}>
-              Avbryt
-            </button>
-          </td>
-        </tr>
-      );
-    }
-
-    let sponsorName = null;
-    if(sponsorType === 1) {
-      sponsorName = 'Sølv';
-    } else if (sponsorType === 2) {
-      sponsorName = 'Gull';
-    } else if (sponsorType === 3) {
-      sponsorName = 'HSP';
-    } else {
-      sponsorName = 'Nei';
-    }
-
+  const { bedriftID, sponsorType, navn, logo } = props;
+  if (edit) {
     return (
       <tr>
-        <td>{navn}</td>
-        <td>{logo}</td>
-        <td>{sponsorName}</td>
-        <td>
-          <button type="button" onClick={this.allowEditing}>
-            Endre
+        <td colSpan="4">
+          <InputField
+            label="Navn: "
+            id={`company${bedriftID}Name`}
+            updateValue={changeName}
+            val={eNavn}
+            type="text"
+          />
+          <InputField
+            label="Logo: "
+            id={`company${bedriftID}Logo`}
+            updateValue={changeLogo}
+            val={eLogo}
+            type="text"
+          />
+          <label htmlFor={`company${bedriftID}Spons`}>
+            Sponsor?
+            <select value={eType} onChange={changeSponsorship}>
+              <option value={0}>Nei</option>
+              <option value={1}>Sølv</option>
+              <option value={2}>Gull</option>
+              <option value={3}>HSP</option>
+            </select>
+          </label>
+          <button type="button" onClick={submitEdit}>
+            Submit
+          </button>
+          <button type="button" onClick={cancelEditing}>
+            Avbryt
           </button>
         </td>
       </tr>
     );
   }
+
+  let sponsorName = null;
+  if(sponsorType === 1) {
+    sponsorName = 'Sølv';
+  } else if (sponsorType === 2) {
+    sponsorName = 'Gull';
+  } else if (sponsorType === 3) {
+    sponsorName = 'HSP';
+  } else {
+    sponsorName = 'Nei';
+  }
+
+  return (
+    <tr>
+      <td>{navn}</td>
+      <td>{logo}</td>
+      <td>{sponsorName}</td>
+      <td>
+        <button type="button" onClick={allowEditing}>
+          Endre
+        </button>
+      </td>
+    </tr>
+  );
 }
 
 export default Company;

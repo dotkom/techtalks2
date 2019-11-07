@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Redirect } from 'react-router-dom';
 
 import EventInfo from './EventInfo.jsx';
@@ -7,51 +7,23 @@ import Participants from './Participants.jsx';
 import Program from './Program.jsx';
 
 
-class Event extends Component {
-  state = {
-    status: 'waiting',
-    sponsors: [],
-    program: [],
-    event: {
-      Beskrivelse: '',
-      Dato: null,
-      AntallPlasser: 0,
-      AntallPåmeldte: 0,
-      Link: ''
-    },
-    deltagere: [],
-    showEvent: false,
-    showSponsors: false,
-    showDeltagere: false,
-    showProgram: false,
-  };
+const Event = props => {
+  const [status, setStatus] = useState('waiting');
+  const [sponsors, setSponsors] = useState([]);
+  const [program, setProgram] = useState([]);
+  const [event, setEvent] = useState({Beskrivelse:'',Dato:null,AntallPlasser:0,AntallPåmeldte:0,Link:''});
+  const [deltagere, setDeltagere] = useState([]);
+  const [showEvent, setShowEvent] = useState(false);
+  const [showSponsors, setShowSponsors] = useState(false);
+  const [showDeltagere, setShowDeltagere] = useState(false);
+  const [showProgram, setShowProgram] = useState(false);
 
-  toggleEvent = () => {
-    this.setState({
-      showEvent: !this.state.showEvent
-    });
-  }
+  const toggleEvent = () => setShowEvent(!showEvent);
+  const toggleSponsors = () => setShowSponsors(!showSponsors);
+  const toggleDeltagere = () => setShowDeltagere(!showDeltagere);
+  const toggleProgram = () => setShowProgram(!showProgram);
 
-  toggleSponsors = () => {
-    this.setState({
-      showSponsors: !this.state.showSponsors
-    });
-  }
-
-  toggleDeltagere = () => {
-    this.setState({
-      showDeltagere: !this.state.showDeltagere
-    });
-  }
-
-  toggleProgram = () => {
-    this.setState({
-      showProgram: !this.state.showProgram
-    });
-  }
-
-  slettDeltager = async (index) => {
-    const { deltagere } = this.state;
+  const slettDeltager = async (index) => {
     const token = localStorage.getItem('token');
     const { PaameldingsHash } = deltagere[index];
     const req = {
@@ -67,16 +39,39 @@ class Event extends Component {
     const { status } = j;
     if(status === 'succeeded') {
       deltagere.splice(index, 1);
-      this.setState({
-        deltagere
-      });
+      setDeltagere(deltagere);
     }
   }
 
-  changeInfo = async newData => {
+  useEffect(()=>{
+    const internal = async () => {
+      const token = localStorage.getItem('token');
+      const { id } = props;
+      const req = {
+        method: 'POST',
+        body: JSON.stringify({
+          token,
+          id
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      };
+      const res = await fetch('/db/adminEvent', req);
+      const { status, sponsors, program, event, deltagere } = await res.json();
+      setStatus(status);
+      setSponsors(sponsors);
+      setProgram(program);
+      setEvent(event);
+      setDeltagere(deltagere);
+    };
+    internal();
+  },[]);
+
+  const changeInfo = async newData => {
     const token = localStorage.getItem('token');
     const { dato, beskrivelse, antallPlasser, link } = newData;
-    const { id } = this.props;
+    const { id } = props;
     const req = {
       method: 'POST',
       body: JSON.stringify({
@@ -92,22 +87,21 @@ class Event extends Component {
       }
     };
     const res = await fetch('/db/editEvent', req);
-
     const j = await res.json();
     const { status } = j;
     if (status === 'denied') {
-      this.setState({status});
+      setStatus(status);
     } else if (status === 'succeeded') {
-      const { event } = this.state;
-      event.AntallPlasser = antallPlasser;
-      event.Dato = dato;
-      event.Link = link;
-      event.Beskrivelse = beskrivelse;
-      this.setState({event})
+      setEvent({
+        AntallPlasser: antallPlasser,
+        Dato: dato,
+        Link: link,
+        Beskrivelse: beskrivelse
+      });
     }
   }
 
-  deleteProgramEvent = async idToDelete => {
+  const deleteProgramEvent = async idToDelete => {
     const token = localStorage.getItem('token');
     const req = {
       method: 'POST',
@@ -117,78 +111,55 @@ class Event extends Component {
     const res = await fetch('/db/deleteProgramEvent', req);
     const { status } = await res.json();
     if (status === 'ok') {
-      const { program } = this.state;
-      const newProgram = program.filter(p=>p.id!==idToDelete);
-      this.setState({program: newProgram});
+      setProgram(program.filter(p=>p.id!==idToDelete));
     }
   }
 
-  async componentDidMount() {
-    const token = localStorage.getItem('token');
-    const { id } = this.props;
-    const req = {
-      method: 'POST',
-      body: JSON.stringify({
-        token,
-        id
-      }),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    };
-    const res = await fetch('/db/adminEvent', req);
-    const j = await res.json();
-    this.setState(j);
+  const { Beskrivelse, Dato, AntallPlasser, AntallPåmeldte, Link } = event;
+  if(status === 'denied') {
+    return <Redirect to='/admin' />;
   }
-
-  render() {
-    const { status, event, sponsors, program, deltagere, showEvent, showSponsors, showProgram, showDeltagere } = this.state;
-    const { Beskrivelse, Dato, AntallPlasser, AntallPåmeldte, Link } = event;
-    if(status === 'denied') {
-      return <Redirect to='/admin' />;
-    }
-    if(status === 'waiting') {
-      return (
-        <div>
-          <h1>Info om arrangement</h1>
-          <p>Laster inn</p>
-        </div>
-      );
-    }
+  if(status === 'waiting') {
     return (
       <div>
         <h1>Info om arrangement</h1>
-        <EventInfo 
-          toggleEvent={this.toggleEvent}
-          showEvent={showEvent}
-          dato={Dato}
-          beskrivelse={Beskrivelse}
-          antallPlasser={AntallPlasser}
-          antallPåmeldte={AntallPåmeldte}
-          link={Link}
-          saveChanges={this.changeInfo}
-        />
-        <Sponsors 
-          toggleSponsors={this.toggleSponsors}
-          showSponsors={showSponsors}
-          sponsors={sponsors}
-        />
-        <Participants
-          deltagere={deltagere}
-          toggleDeltagere={this.toggleDeltagere}
-          showDeltagere={showDeltagere}
-          slettDeltager={this.slettDeltager}
-        />
-        <Program
-          toggleProgram={this.toggleProgram}
-          showProgram={showProgram}
-          program={program}
-          id={this.props.id}
-          deleteProgramEvent={this.deleteProgramEvent}
-        />
+        <p>Laster inn</p>
       </div>
     );
   }
+  return (
+    <div>
+      <h1>Info om arrangement</h1>
+      <EventInfo 
+        toggleEvent={toggleEvent}
+        showEvent={showEvent}
+        dato={Dato}
+        beskrivelse={Beskrivelse}
+        antallPlasser={AntallPlasser}
+        antallPåmeldte={AntallPåmeldte}
+        link={Link}
+        saveChanges={changeInfo}
+      />
+      <Sponsors 
+        toggleSponsors={toggleSponsors}
+        showSponsors={showSponsors}
+        sponsors={sponsors}
+      />
+      <Participants
+        deltagere={deltagere}
+        toggleDeltagere={toggleDeltagere}
+        showDeltagere={showDeltagere}
+        slettDeltager={slettDeltager}
+      />
+      <Program
+        toggleProgram={toggleProgram}
+        showProgram={showProgram}
+        program={program}
+        id={props.id}
+        deleteProgramEvent={deleteProgramEvent}
+      />
+    </div>
+  );
 };
 
 export default Event;

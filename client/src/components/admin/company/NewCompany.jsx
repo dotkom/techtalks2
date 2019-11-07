@@ -1,37 +1,16 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import { Redirect } from 'react-router-dom';
 
 import InputField from '../../inputs/InputField';
 
-class NewCompany extends Component {
-  state = {
-    name: '',
-    logo: '',
-    isSponsor: false,
-    status: 'default',
-  };
+const NewCompany = props => {
+  const [name, changeName] = useState('');
+  const [logo, changeLogo] = useState('');
+  const [isSponsor, changeSponsorship] = useState(false);
+  const [status, setStatus] = useState('');
 
-  changeName = name => {
-    this.setState({
-      name,
-    });
-  }
-
-  changeLogo = logo => {
-    this.setState({
-      logo,
-    });
-  }
-
-  changeSponsorship = e => {
-    this.setState({
-      isSponsor: e.target.checked,
-    });
-  }
-
-  submitCompany = async () => {
+  const submitCompany = async () => {
     const token = localStorage.getItem('token');
-    const { name, logo, isSponsor } = this.state;
     const req = {
       method: 'POST',
       body: JSON.stringify({
@@ -44,41 +23,33 @@ class NewCompany extends Component {
         'Content-Type': 'application/json',
       },
     };
-    this.setState({
-      status: 'waiting',
-    });
+    setStatus('waiting',);
     const res = await fetch('/db/newCompany', req);
     const j = await res.json();
     const { status } = j;
-    this.setState({
-      status,
-    });
+    setStatus(status);
+  }
+  if (status === 'denied') {
+    return <Redirect to="/admin" />;
   }
 
-  render() {
-    const { name, logo, isSponsor, status } = this.state;
-    if (status === 'denied') {
-      return <Redirect to="/admin" />;
-    }
-
-    if (status === 'succeeded') {
-      return <Redirect to="/admin/companies" />;
-    }
-    return (
-      <div>
-        <InputField label="Navn: " id="cName" val={name} updateValue={this.changeName} type="text" />
-        <InputField label="Logo: " id="cLogo" val={logo} updateValue={this.changeLogo} type="text" />
-        <label htmlFor="cSpons">
-          Sponsor
-          <input type="checkbox" id="cSpons" checked={isSponsor} onChange={this.changeSponsorship} />
-        </label>
-        <button type="button" onClick={this.submitCompany}>
-          Lag selskap
-        </button>
-        {status === 'failed' ? <p>Kunne ikke opprette selskapet</p> : null}
-      </div>
-    );
+  if (status === 'succeeded') {
+    return <Redirect to="/admin/companies" />;
   }
+  return (
+    <div>
+      <InputField label="Navn: " id="cName" val={name} updateValue={changeName} type="text" />
+      <InputField label="Logo: " id="cLogo" val={logo} updateValue={changeLogo} type="text" />
+      <label htmlFor="cSpons">
+        Sponsor
+        <input type="checkbox" id="cSpons" checked={isSponsor} onChange={e=>changeSponsorship(e.target.checked)} />
+      </label>
+      <button type="button" onClick={submitCompany}>
+        Lag selskap
+      </button>
+      {status === 'failed' ? <p>Kunne ikke opprette selskapet</p> : null}
+    </div>
+  );
 }
 
 export default NewCompany;

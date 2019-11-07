@@ -1,41 +1,45 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Redirect } from 'react-router-dom';
 
 import InputField from '../../inputs/InputField.jsx';
 
+const Wrapper = styled.div`
+  max-width: 50em;
+  margin: auto;
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+`;
+
 const Img = styled.img`
   max-width: 10em;
 `;
 
-class ImportCompany extends Component {
-  state = {
-    status: 'waiting',
-    name: '',
-    companies: []
-  }
+const Search = styled.div`
+  display: flex;
+  flex-flow: row wrap;
+`;
 
-  searchDotkom = async () => {
-    const { name } = this.state;
+const ImportCompany = props => {
+  const [name, updateName] = useState('');
+  const [status, setStatus] = useState('waiting');
+  const [companies, setCompanies] = useState([]);
+
+  const searchDotkom = async () => {
     const res = await fetch(`https://online.ntnu.no/api/v1/companies?name=${name}`);
     const j = await res.json();
     const { results } = j;
-    this.setState({
-      status: 'loaded',
-      companies: results
-    });
-    console.log(results);
+    setStatus('loaded');
+    setCompanies(results);
   }
 
-  addCompany = async index => {
-    const { companies } = this.state;
+  const addCompany = async index => {
     const company = companies[index];
     const { name, image } = company;
     const { original } = image;
     const parts = original.split('/');
     const imageID = parts[parts.length - 1];
-    console.log(name);
-    console.log(imageID);
     const token = localStorage.getItem('token');
     const req = {
       method: 'POST',
@@ -51,55 +55,49 @@ class ImportCompany extends Component {
     const res = await fetch('/db/newCompany', req);
     const j = await res.json();
     if(j.status === 'succeeded') {
-      this.setState({
-        status: 'succeeeded'
-      });
+      setStatus('succeeded');
     }
   }
 
-  updateName = async name => {
-    this.setState({name});
+  if (status === 'succeeded') {
+    return <Redirect to="/admin/companies" />;
   }
-
-  render() {
-    const { status, companies, name } = this.state;
-    if (status === 'succeeeded') {
-      return <Redirect to="/admin/companies" />;
-    }
-    return (
-      <div>
-        <h1>Importer et selsap fra dotkom's API</h1>
+  return (
+    <Wrapper>
+      <h1>Importer et selsap fra dotkoms API</h1>
+      <Search>
         <InputField
           label="Navn (case sensitive): "
           id="nameIn"
           val={name}
           type="text"
-          updateValue={this.updateName}
+          updateValue={updateName}
         />
-        <button type="button" onClick={this.searchDotkom}>Søk</button>
-        {
-          status === 'loaded' ? (
-            <table>
-              <thead>
-                <tr>
-                  <th>Navn</th><th>Bilde</th><th>Legg til</th>
+        <button type="button" onClick={searchDotkom}>Søk</button>
+      </Search>
+      
+      {
+        status === 'loaded' ? (
+          <table>
+            <thead>
+              <tr>
+                <th>Navn</th><th>Bilde</th><th>Legg til</th>
+              </tr>
+            </thead>
+            <tbody>
+              {companies.map((company, index) => (
+                <tr key={index}>
+                  <td>{company.name}</td>
+                  <td><Img src={`https://online.ntnu.no${company.image.original}`} /></td>
+                  <td><button onClick={() => addCompany(index)}>Legg til</button></td>
                 </tr>
-              </thead>
-              <tbody>
-                {companies.map((company, index) => (
-                  <tr key={index}>
-                    <td>{company.name}</td>
-                    <td><Img src={`https://online.ntnu.no${company.image.original}`} /></td>
-                    <td><button onClick={() => this.addCompany(index)}>Legg til</button></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          ) : null
-        }
-      </div>
-    );
-  }
+              ))}
+            </tbody>
+          </table>
+        ) : null
+      }
+    </Wrapper>
+  );
 }
 
 export default ImportCompany;
