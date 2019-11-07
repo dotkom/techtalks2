@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
 import Navbar from './Navbar';
@@ -18,43 +18,37 @@ const Wrapper = styled.div`
 `;
 
 
-class Home extends Component {
-  state = {
-    partners: [],
-    program: [],
-    event: {
-      ArrangementID: 0,
-      Beskrivelse: '',
-      AntallPlasser: 0,
-      AntallPåmeldte: 0,
-    },
-  };
+const Home = () => {
+  const [partners, setPartners] = useState([]);
+  const [program, setProgram] = useState([]);
+  const [event, setEvent] = useState({
+    ArrangementID: 0,
+    Beskrivelse: '',
+    AntallPlasser: 0,
+    AntallPåmeldte: 0
+  });
 
-  async componentDidMount() {
-    const response = await fetch('/db/home');
-    const jsoned = await response.json();
-    const { partners, program, event } = jsoned;
-    this.setState({
-      partners,
-      program,
-      event,
-    });
-  }
+  useEffect(()=>{
+    const internal = async () => {
+      const response = await fetch('/db/home');
+      const jsoned = await response.json();
+      const { partners, program, event } = jsoned;
+      setPartners(partners);
+      setProgram(program);
+      setEvent(event);
+    };
+    internal();
+  }, []);
 
-  render() {
-    const { partners, program, event } = this.state;
-    return (
-      <div>
-        <Navbar />
-        <Wrapper>
-          <About event={event} />
-          <Program events={program} />
-          <Samarbeidspartnere partners={partners} />
-          <Paamelding event={event} />
-        </Wrapper>
-      </div>
-    );
-  }
+  return (
+    <Wrapper>
+      <Navbar />
+      <Program events={program} />
+      <Samarbeidspartnere partners={partners} />
+      <Paamelding event={event} />
+      <About event={event} />
+    </Wrapper>
+  );
 }
 
 export default Home;

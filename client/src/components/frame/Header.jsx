@@ -3,18 +3,18 @@ import styled from 'styled-components';
 
 const Wrapper = styled.div`
   width: 100wv;
-  height: 7em;
+  height: 15em;
   background-color: black;
 `;
 
-const P = styled.p`
+const Img = styled.img`
   margin-top: 0px;
-  color: white;
+  max-height: 100%;
 `;
 
 const Header = () => (
   <Wrapper>
-    <P>Tik tok lol</P>
+    <Img src='/logo.svg' />
   </Wrapper>
 );
 

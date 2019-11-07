@@ -12,7 +12,6 @@ const Wrapper = styled.div`
 `;
 
 const Paamelding = props => {
-
   const [navn, updateName] = useState('');
   const [epost, updateEmail] = useState('');
   const [linjeforening, updateLinje] = useState('');
@@ -87,7 +86,6 @@ const Paamelding = props => {
           </div>
         )  : <p>Arrangementet er fullt</p>
       }
-      
     </Wrapper>
   );
 }

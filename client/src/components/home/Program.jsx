@@ -5,7 +5,9 @@ const Wrapper = styled.div`
   width: 100%;
   margin: 0;
 `;
+
 const ProgramTable = styled.table`
+  word-break: break-word;
   width: 100%;
   border: 1px solid #ccc;
   border-collapse: collapse;
@@ -23,12 +25,10 @@ const ProgramTable = styled.table`
       flex: 0 0 4em;
     }
   }
-
 `;
 
 const Program = props => {
   const { events } = props;
-  // const timeslots = ['09:15','10:15','11:15','12:15','13:15','14:15','15:15'];
   const jsonRooms = [];
   const timeslots = [];
   for(let event of events) {
@@ -40,8 +40,8 @@ const Program = props => {
     if (timeslots.indexOf(t) === -1) {
       timeslots.push(t);
     }
-    timeslots.sort();
   }
+  timeslots.sort();
   jsonRooms.sort(); // name first => this sorts by room name
   const rooms = jsonRooms.map(JSON.parse);
   return (

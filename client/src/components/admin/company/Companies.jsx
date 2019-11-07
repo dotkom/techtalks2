@@ -1,64 +1,59 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Redirect } from 'react-router-dom';
 
 import Company from './Company';
 
-class Companies extends Component {
-  state = {
-    companies: [],
-    status: 'waiting',
-  };
+const Companies = props => {
+  const [companies, setCompanies] = useState([]);
+  const [status, setStatus] = useState('waiting');
 
-  async componentDidMount() {
-    const token = localStorage.getItem('token');
-    const req = {
-      method: 'POST',
-      body: JSON.stringify({
-        token,
-      }),
-      headers: {
-        'Content-Type': 'application/json',
-      },
+  useEffect(()=> {
+    const internal = async () => {
+      const token = localStorage.getItem('token');
+      const req = {
+        method: 'POST',
+        body: JSON.stringify({
+          token,
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      };
+      const res = await fetch('/db/allCompanies', req);
+      const j = await res.json();
+      const { status, bedrifter } = j;
+      setStatus(status);
+      setCompanies(bedrifter);
     };
-    const res = await fetch('/db/allCompanies', req);
-    const j = await res.json();
-    const { status, bedrifter } = j;
-    this.setState({
-      status,
-      companies: bedrifter,
-      creating: false,
-    });
+    internal();
+  }, []);
+  if (status === 'denied') {
+    return <Redirect to="/admin" />;
   }
 
-  render() {
-    const { companies, status } = this.state;
-    if (status === 'denied') {
-      return <Redirect to="/admin" />;
-    }
-    return (
-      <div>
-        <h1>Alle selskaper</h1>
-        <p>
-          <a href="/admin/importCompany">Legg til nytt selskap</a>
-        </p>
-        <table>
-          <thead>
-            <tr>
-              <th>Selskap</th>
-              <th>Logo</th>
-              <th>Sponsor?</th>
-              <th>Endre</th>
-            </tr>
-          </thead>
-          <tbody>
-            {companies.map(({ BedriftID, Navn, Logo, sponsorType }) => (
-              <Company key={BedriftID} bedriftID={BedriftID} navn={Navn} logo={Logo} sponsorType={sponsorType} />
-            ))}
-          </tbody>
-        </table>
-      </div>
-    );
-  }
+  return (
+    <div>
+      <h1>Alle selskaper</h1>
+      <p>
+        <a href="/admin/importCompany">Legg til nytt selskap</a>
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th>Selskap</th>
+            <th>Logo</th>
+            <th>Sponsor?</th>
+            <th>Endre</th>
+          </tr>
+        </thead>
+        <tbody>
+          {companies.map(({ BedriftID, Navn, Logo, sponsorType }) => (
+            <Company key={BedriftID} bedriftID={BedriftID} navn={Navn} logo={Logo} sponsorType={sponsorType} />
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
 }
 
 export default Companies;

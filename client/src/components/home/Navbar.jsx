@@ -26,25 +26,27 @@ const NavbarText = styled.h1`
   text-align: center;
 `;
 
-const Navbar = () => (
-  <NavbarWrapper>
-    <a href="#about">
-      <Knapp>
-        <NavbarText>Om Arrangementet</NavbarText>
-      </Knapp>
-    </a>
-    <a href="#program">
-      <Knapp>
-        <NavbarText>Program</NavbarText>
-      </Knapp>
-    </a>
-    <a href="#paamelding">
-      <Knapp>
-        <NavbarText>Påmelding</NavbarText>
-      </Knapp>
-    </a>
-  </NavbarWrapper>
-);
+const Navbar = () => {
+  const NavOptions = [
+    {
+      id: 'program',
+      name: 'Program'
+    },
+    {
+      id: 'paamelding',
+      name: 'Påmelding'
+    },
+    {
+      id: 'about',
+      name: 'Om Arrangementet'
+    }
+  ];
+  return (
+    <NavbarWrapper>
+      {NavOptions.map(({id,name})=><a href={`#${id}`}><Knapp><NavbarText>{name}</NavbarText></Knapp></a>)}
+    </NavbarWrapper>
+  );
+};
 
 
 export default Navbar;
