@@ -9,6 +9,9 @@ const ProgramTable = styled.table`
   width: 100%;
   border: 1px solid #ccc;
   border-collapse: collapse;
+  & thead {
+    font-size: 1em;
+  }
   & tr {
     display: flex;
     flex-flow: row nowrap;
@@ -16,7 +19,7 @@ const ProgramTable = styled.table`
   & td,th {
     border: 1px solid #ccc;
     flex: 1;
-    &:nth-child(1) {
+    &:first-child {
       flex: 0 0 4em;
     }
   }
@@ -25,15 +28,21 @@ const ProgramTable = styled.table`
 
 const Program = props => {
   const { events } = props;
-  const timeslots = ['09:15','10:15','11:15','12:15','13:15','14:15','15:15'];
+  // const timeslots = ['09:15','10:15','11:15','12:15','13:15','14:15','15:15'];
   const jsonRooms = [];
+  const timeslots = [];
   for(let event of events) {
     const jsonRoom = JSON.stringify({navn: event.stedNavn, link: event.stedLink});
     if (jsonRooms.indexOf(jsonRoom) === -1) {
       jsonRooms.push(jsonRoom);
     }
+    const t = event.tid.substring(0,5);
+    if (timeslots.indexOf(t) === -1) {
+      timeslots.push(t);
+    }
+    timeslots.sort();
   }
-  jsonRooms.sort(); // name first => this sorts by name
+  jsonRooms.sort(); // name first => this sorts by room name
   const rooms = jsonRooms.map(JSON.parse);
   return (
     <Wrapper>
@@ -43,7 +52,7 @@ const Program = props => {
           <tr>
             <th>Tid</th>
             {
-              rooms.map(({navn, link}) => <th key={navn}><a href={link}>{navn}</a></th>)
+              rooms.map(({navn, link},i) => <th key={navn}>Parallell {i+1} (<a href={link}>{navn}</a>)</th>)
             }
           </tr>
         </thead>
