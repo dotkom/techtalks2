@@ -27,7 +27,7 @@ header {
 }
 
 #logo {
-	width: 400px;
+	max-width: 40em;
 	display:block;
     margin:auto auto 100px auto;
 }
@@ -108,7 +108,7 @@ section {
 }
 
 .section-inner {
-	width: 960px;
+	max-width: 960px;
 }
 
 /* This container limits the width of the site */
@@ -164,7 +164,7 @@ section {
 
 /* Hack the bottom container to better align with the skewed thing */
 #about {
-	height: 300px;
+	min-height: 300px;
 }
 
 .signup-container {
