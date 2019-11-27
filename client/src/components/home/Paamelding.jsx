@@ -4,8 +4,6 @@ import styled from 'styled-components';
 import InputField from '../inputs/InputField';
 
 const Wrapper = styled.div`
-  width: 100%;
-  margin: 0;
   text-align: left;
   display: flex;
   flex-direction: column;

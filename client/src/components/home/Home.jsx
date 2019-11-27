@@ -8,13 +8,35 @@ import Program from './Program';
 import Paamelding from './Paamelding';
 
 const Wrapper = styled.div`
-  width: 100%;
   min-height: calc(100vh - 14em);
   max-width: 50em;
   margin: 0 auto;
   padding: 1em 0.5em;
   z-index: 0;
-  background-color: white;
+  background-color: #383c3c;
+`;
+
+const Content = styled.div`
+  display: flex;
+  flex-direction: column;
+  & > div {
+    padding: 3em;
+    flex: 1;
+  }
+  & > div:first-child {
+    margin-top: 3em;
+  }
+  & > div:last-child {
+    margin-bottom: 3em;
+  }
+  & > div:nth-child(2n+1) {
+    color: #383c3c;
+    background-color: #fff;
+    transform: skew(0deg, -8deg);
+    & > * {
+      transform: skew(0deg, 8deg);
+    }
+  }
 `;
 
 
@@ -43,10 +65,12 @@ const Home = () => {
   return (
     <Wrapper>
       <Navbar />
-      <Program events={program} />
-      <Samarbeidspartnere partners={partners} />
-      <Paamelding event={event} />
-      <About event={event} />
+      <Content>
+        <Program events={program} />
+        <Samarbeidspartnere partners={partners} />
+        <Paamelding event={event} />
+        <About event={event} />
+      </Content>
     </Wrapper>
   );
 }

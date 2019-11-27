@@ -66,7 +66,7 @@ const Event = props => {
       setDeltagere(deltagere);
     };
     internal();
-  },[]);
+  },[props]);
 
   const changeInfo = async newData => {
     const token = localStorage.getItem('token');

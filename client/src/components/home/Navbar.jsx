@@ -3,19 +3,21 @@ import styled from 'styled-components';
 
 const NavbarWrapper = styled.div`
   margin: 0px;
-  width: 100%;
-  background-color: blue;
+  flex: 1;
+  background-color: #383c3c;
   z-index: 0;
   display: flex;
   flex-flow: row wrap;
-  justify-content: center;
+  justify-content: space-around;
 `;
+
 const Knapp = styled.div`
   display: inline-block;
-  margin: 0px 1.5em;
+  padding: 1.5em;
   z-index: 1;
   &:hover {
     text-decoration: white underline;
+    background-color: rgba(255,255,255,0.1);
   }
 `;
 const NavbarText = styled.h1`
@@ -43,7 +45,7 @@ const Navbar = () => {
   ];
   return (
     <NavbarWrapper>
-      {NavOptions.map(({id,name})=><a href={`#${id}`}><Knapp><NavbarText>{name}</NavbarText></Knapp></a>)}
+      {NavOptions.map(({id,name})=><a key={id} href={`#${id}`}><Knapp><NavbarText>{name}</NavbarText></Knapp></a>)}
     </NavbarWrapper>
   );
 };

@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
-  width: 100%;
+  flex: 1;
   margin: 0;
 `;
 
@@ -11,8 +11,8 @@ const ProgramTable = styled.table`
   width: 100%;
   border: 1px solid #ccc;
   border-collapse: collapse;
-  & thead {
-    font-size: 1em;
+  & th {
+    font-size: 1.4em;
   }
   & tr {
     display: flex;
@@ -50,7 +50,7 @@ const Program = props => {
       <ProgramTable>
         <thead>
           <tr>
-            <th>Tid</th>
+            <td></td>
             {
               rooms.map(({navn, link},i) => <th key={navn}>Parallell {i+1} (<a href={link}>{navn}</a>)</th>)
             }
@@ -67,10 +67,11 @@ const Program = props => {
                     rooms.map((room,ind) => {
                       const thisEvent = rowEvents.filter(event=>event.stedNavn === room.navn);
                       if(thisEvent.length) {
-                        const {navn,beskrivelse,varighet} = thisEvent[0];
+                        const {navn,beskrivelse,varighet, bedrift} = thisEvent[0];
                         return (
                           <td key={ind} rowSpan={varighet}>
                             <h3>{navn}</h3>
+                            <p>{bedrift}</p>
                             <p>{beskrivelse}</p>
                           </td>
                         )

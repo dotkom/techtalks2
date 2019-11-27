@@ -9,6 +9,7 @@ import Validate from '../validate/Validate';
 const Wrapper = styled.div`
   margin: 0px;
   width: 100%;
+  background-color: #383c3c;
   text-align: center;
 `;
 

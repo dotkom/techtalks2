@@ -2,14 +2,21 @@ import React from 'react';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
-  margin: 0;
-  width: 100%;
+  display: flex;
+  flex-direction: column;
 `;
 
 const BigImg = styled.img`
   max-height: 20em;
   max-width: 50%;
-`
+`;
+
+const Partners = styled.div`
+  display: flex;
+  flex-flow: row wrap;
+  margin: auto;
+  justify-content: space-around;
+`;
 
 const Img = styled.img`
   max-height: 15em;
@@ -23,16 +30,6 @@ const Samarbeidspartnere = props => {
   const sølvSponsor = partners.filter(partner => partner.sponsorType === 1);
   // siden skiller for tiden ikke mellom gull- og sølvsponsorer
   const gullSølvSponsor = gullSponsor.concat(sølvSponsor);
-  const pages = [];
-  // pages inneholder partnere, i grupper på 3
-  const n = gullSølvSponsor.length;
-  for (let i = 0; i < n; i += 3) {
-    const page = [];
-    for (let j = i; j < i + 3 && j < n; j++) {
-      page.push(gullSølvSponsor[j]);
-    }
-    pages.push(page);
-  }
   return (
     <Wrapper>
       { hovedSamarbeidspartner ? (
@@ -46,22 +43,16 @@ const Samarbeidspartnere = props => {
           }
         </div>
       ) : null}
-      
       <h2>Samarbeidspartnere</h2>
-      {pages.map((page, pageno) => {
-        return (
-          <div key={pageno}>
-            {page.map(({ name, url }, partnerno) => 
-              <Img 
-                src={`https://online.ntnu.no/media/images/responsive/${url}`}
-                alt={name}
-                key={partnerno} 
-              />
-            )}
-            <br />
-          </div>
-        );
-      })}
+      <Partners>
+        {gullSølvSponsor.map(({ name, url}) => (
+          <Img
+            src={`https://online.ntnu.no/media/images/responsive/${url}`}
+            alt={name}
+            key={url} 
+          />
+        ))}
+      </Partners>
     </Wrapper>
   );
 };
