@@ -4,17 +4,18 @@ import styled from 'styled-components';
 const Wrapper = styled.div`
   width: 100wv;
   height: 15em;
-  background-color: black;
+  background-color: #383c3c;
 `;
 
-const Img = styled.img`
+const Logo = styled.img`
   margin-top: 0px;
+  width: 100%;
   max-height: 100%;
 `;
 
 const Header = () => (
   <Wrapper>
-    <Img src='/logo.svg' />
+    <Logo src='/logo.svg' />
   </Wrapper>
 );
 

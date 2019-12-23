@@ -8,8 +8,15 @@ import Footer from './components/frame/Footer';
 const Wrapper = styled.div`
   width: 100vw;
   min-height: 100vh;
-  background-color: lightgrey;
   z-index: -100;
+  background-color: #383c3c; 
+  background-size: 100%;
+  background-repeat: repeat-y;
+
+  image-rendering: crisp-edges;
+  margin: 0px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 1em;
 `;
 
 

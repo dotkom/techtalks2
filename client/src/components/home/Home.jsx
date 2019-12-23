@@ -14,6 +14,7 @@ const Wrapper = styled.div`
   padding: 1em 0.5em;
   z-index: 0;
   background-color: #383c3c;
+  color: #fff;
 `;
 
 const Content = styled.div`
@@ -30,7 +31,7 @@ const Content = styled.div`
     margin-bottom: 3em;
   }
   & > div:nth-child(2n+1) {
-    color: #383c3c;
+    color: #000;
     background-color: #fff;
     transform: skew(0deg, -8deg);
     & > * {

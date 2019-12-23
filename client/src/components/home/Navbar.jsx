@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const NavbarWrapper = styled.div`
-  margin: 0px;
+const NavbarWrapper = styled.nav`
+  margin: 0px 0px 100px;
   flex: 1;
   background-color: #383c3c;
   z-index: 0;
@@ -13,6 +13,7 @@ const NavbarWrapper = styled.div`
 
 const Knapp = styled.div`
   display: inline-block;
+  font-size: 1.2em;
   padding: 1.5em;
   z-index: 1;
   &:hover {

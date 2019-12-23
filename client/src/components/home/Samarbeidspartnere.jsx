@@ -28,8 +28,6 @@ const Samarbeidspartnere = props => {
   const [ hovedSamarbeidspartner ] = partners.filter(partner => partner.sponsorType === 3);
   const gullSponsor = partners.filter(partner => partner.sponsorType === 2);
   const sølvSponsor = partners.filter(partner => partner.sponsorType === 1);
-  // siden skiller for tiden ikke mellom gull- og sølvsponsorer
-  const gullSølvSponsor = gullSponsor.concat(sølvSponsor);
   return (
     <Wrapper>
       { hovedSamarbeidspartner ? (
@@ -45,13 +43,25 @@ const Samarbeidspartnere = props => {
       ) : null}
       <h2>Samarbeidspartnere</h2>
       <Partners>
-        {gullSølvSponsor.map(({ name, url}) => (
+        {gullSponsor.map(({ name, url }) => (
           <Img
             src={`https://online.ntnu.no/media/images/responsive/${url}`}
             alt={name}
             key={url} 
           />
         ))}
+      </Partners>
+      <h2>Øvrige bedrifter</h2>
+      <Partners>
+        {
+          sølvSponsor.map(({ name, url }) => (
+            <Img
+              src={`https://online.ntnu.no/media/images/responsive/${url}`}
+              alt={name}
+              key={url}
+            />
+          ))
+        }
       </Partners>
     </Wrapper>
   );
