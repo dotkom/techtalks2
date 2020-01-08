@@ -65,6 +65,23 @@ router.get('/home', async (_, res) => {
 
 router.post('/paamelding', async (req, res) => {
   const { navn, epost, linjeforening, alder, studieår } = req.body;
+  // Validere inputs. Enkel epost-validering: sjekk at det bare finnes én @
+  if (epost.split('').filter(c=>c === '@').length != 1) {
+    res.status(400).send(JSON.stringify({
+      error: 'Invalid email',
+      status: 'failed',
+    }));
+  } else if (alder > 150 || alder < 18) {
+    res.status(400).send(JSON.stringify({
+      error: 'Invalid age',
+      status: 'failed',
+    }));
+  } else if (studieår > 9 || studieår < 1) {
+    res.status(400).send(JSON.stringify({
+      error: 'Invalid study year',
+      status: 'failed',
+    }));
+  }
   const connection = await connect();
   const event = (await connection.execute(
     'SELECT ArrangementID, Beskrivelse, AntallPlasser, Dato FROM Arrangement ORDER BY Dato DESC LIMIT 1'
