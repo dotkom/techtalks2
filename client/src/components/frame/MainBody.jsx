@@ -12,6 +12,9 @@ const Wrapper = styled.div`
   background-color: #383c3c;
   color: #fff;
   text-align: center;
+  & a {
+    color: #0ff;
+  }
 `;
 
 const MainBody = () => (

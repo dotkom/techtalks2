@@ -4,6 +4,15 @@ const router = express.Router();
 const mysql = require('mysql2/promise');
 const md5 = require('md5');
 const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer');
+
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.MAILUSER,
+    pass: process.env.MAILPASS
+  }
+});
 
 function connect() {
   const { DBHOST, DBUSER, DBPASS, DBNAME } = process.env;
@@ -22,6 +31,24 @@ function connectPool() {
     user: DBUSER,
     password: DBPASS,
     database: DBNAME,
+  });
+}
+
+function sendConfirmation(email, hash) {
+  const { MAILUSER, MAILPASS } = process.env;
+  const mailOptions = {
+    from: `Tech Talks <ekskom@online.ntnu.no>`, // sender address
+    to: email, // list of receivers
+    subject: 'Bekreftelse av påmelding', // Subject line
+    html: `<p>For å validere påmeldingen din, trykk på denne lenken:<br/>
+    <a href="http://localhost:3000/validate?ha=${hash}">http://localhost:3000/validate?ha=${hash}<b></b></a></p>` // plain text body
+  };
+  transporter.sendMail(mailOptions, ({err, info}) => {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log(info);
+    }
   });
 }
 
@@ -71,18 +98,22 @@ router.post('/paamelding', async (req, res) => {
       error: 'Invalid email',
       status: 'failed',
     }));
+    return;
   } else if (alder > 150 || alder < 18) {
     res.status(400).send(JSON.stringify({
       error: 'Invalid age',
       status: 'failed',
     }));
+    return;
   } else if (studieår > 9 || studieår < 1) {
     res.status(400).send(JSON.stringify({
       error: 'Invalid study year',
       status: 'failed',
     }));
+    return;
   }
   const connection = await connect();
+  // TODO: valider at påmelding har åpnet og at det fortsatt er igjen flere plasser
   const event = (await connection.execute(
     'SELECT ArrangementID, Beskrivelse, AntallPlasser, Dato FROM Arrangement ORDER BY Dato DESC LIMIT 1'
   ))[0][0];
@@ -95,6 +126,7 @@ router.post('/paamelding', async (req, res) => {
   connection.end();
   const { affectedRows } = response[0];
   if (affectedRows === 1) {
+    sendConfirmation(epost, hash)
     res.json({
       status: 'succeeded',
     });
