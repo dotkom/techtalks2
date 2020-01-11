@@ -28,11 +28,13 @@ const ProgramTable = styled.table`
 `;
 
 const Program = props => {
+  // TODO: use parallell instead of room
   const { events } = props;
   const jsonRooms = [];
   const timeslots = [];
   for(let event of events) {
     const jsonRoom = JSON.stringify({navn: event.stedNavn, link: event.stedLink});
+    console.log(event.parallell);
     if (jsonRooms.indexOf(jsonRoom) === -1) {
       jsonRooms.push(jsonRoom);
     }
@@ -47,7 +49,9 @@ const Program = props => {
   return (
     <Wrapper>
       <h2 id="program">Program</h2>
-      <ProgramTable>
+      {
+        events.length ? (
+          <ProgramTable>
         <thead>
           <tr>
             <td></td>
@@ -85,6 +89,10 @@ const Program = props => {
           }
         </tbody>
       </ProgramTable>
+        ) : (
+          <h2>kommer snart</h2>
+        )
+      }
     </Wrapper>
   );
 }

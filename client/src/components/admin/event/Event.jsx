@@ -23,9 +23,8 @@ const Event = props => {
   const toggleDeltagere = () => setShowDeltagere(!showDeltagere);
   const toggleProgram = () => setShowProgram(!showProgram);
 
-  const slettDeltager = async (index) => {
+  const slettDeltager = async (PaameldingsHash) => {
     const token = localStorage.getItem('token');
-    const { PaameldingsHash } = deltagere[index];
     const req = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json'},
@@ -38,8 +37,7 @@ const Event = props => {
     const j = await res.json();
     const { status } = j;
     if(status === 'succeeded') {
-      deltagere.splice(index, 1);
-      setDeltagere(deltagere);
+      setDeltagere(deltagere.filter(deltager => deltager.PaameldingsHash !== PaameldingsHash))
     }
   }
 

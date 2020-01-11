@@ -24,11 +24,12 @@ const Participants = props => (
               <th>Studieår</th>
               <th>Verifisert?</th>
               <th>Påmeldingstidspunkt</th>
+              <th>Allergier</th>
               <th>Slett?</th>
             </tr>
           </thead>
           <tbody>
-            {props.deltagere.map(({PaameldingsHash, Navn, Epost, Linjeforening, Alder, StudieAar, Verifisert, PaameldingsTidspunkt}, index) => (
+            {props.deltagere.map(({PaameldingsHash, Navn, Epost, Linjeforening, Alder, StudieAar, Verifisert, Allergier, PaameldingsTidspunkt}, _) => (
               <tr key={PaameldingsHash}>
                 <Td>{Navn}</Td>
                 <Td>{Epost}</Td>
@@ -37,7 +38,8 @@ const Participants = props => (
                 <Td>{StudieAar}</Td>
                 <Td>{Verifisert ? 'Ja' : 'Nei'}</Td>
                 <Td>{new Date(PaameldingsTidspunkt).toLocaleString()}</Td>
-                <Td><button type="button" onClick={() => props.slettDeltager(index)}>Slett</button></Td>
+                <Td>{Allergier}</Td>
+                <Td><button type="button" onClick={() => props.slettDeltager(PaameldingsHash)}>Slett</button></Td>
               </tr>
             ))}
           </tbody>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
 import InputField from '../inputs/InputField';
@@ -17,7 +17,8 @@ const Paamelding = props => {
   const [studieår, updateYear] = useState('');
   const [allergier, updateAllergies] = useState('');
   const [status, setStatus] = useState('');
-
+  const [timeLeft, setTimeLeft] = useState(0);
+  
 
   const submitForm = async () => {
     const req = {
@@ -43,7 +44,56 @@ const Paamelding = props => {
   const { event } = props;
   const { AntallPlasser, AntallPåmeldte, PaameldingsStart } = event;
   const PaameldingsDate = new Date(PaameldingsStart);
-  console.log(PaameldingsDate);
+  
+  useEffect(() => {
+    setTimeout(()=>{
+      const ms = Math.max(0, PaameldingsDate - new Date());
+      console.log(`${ms} ms`);
+      const seconds = Math.floor(ms/1000);
+      console.log(`${seconds} seconds`)
+      setTimeLeft(seconds);
+    }, 1000);
+  }, [timeLeft, PaameldingsDate]);
+
+
+  if (PaameldingsStart === '') {
+    return (
+      <Wrapper>
+        <h2 id="paamelding">Påmelding</h2>
+        <p>Laster inn...</p>
+      </Wrapper>
+    );
+  }
+
+  if (timeLeft > 0) {
+    const seconds = timeLeft % 60;
+    const minutes = Math.floor(timeLeft / 60) % 60;
+    const hours = Math.floor(timeLeft / 3600) % 24;
+    const days = Math.floor(timeLeft / (3600 * 24));
+    const secondString = `${seconds} ${seconds === 1 ? 'sekund' : 'sekunder'}`;
+    const minuteString = `${minutes} ${minutes === 1 ? 'minutt' : 'minutter'}`;
+    const hourString = `${hours} ${hours === 1 ? 'time' : 'timer'}`;
+    const dayString = `${days} ${days === 1 ? 'dag' : 'dager'}`;
+    const list = [days, hours, minutes, seconds];
+    const stringList = [dayString, hourString, minuteString, secondString];
+    const revisedStringList = stringList.filter((_, i) => list[i] > 0);
+    if (revisedStringList.length === 1) {
+      return (
+        <Wrapper>
+          <h2 id="paamelding">Påmelding</h2>
+          <h3>Påmeldingen åpner om {revisedStringList[0]}</h3>
+        </Wrapper>
+      );
+    }
+    const final = revisedStringList.pop();
+    const finalString = `${revisedStringList.join(', ')} og ${final}`;
+    return (
+      <Wrapper>
+        <h2 id="paamelding">Påmelding</h2>
+    <h3>Påmeldingen åpner om {finalString}</h3>
+      </Wrapper>
+    );
+  }
   if (status === 'succeeded') {
     return (
       <Wrapper>

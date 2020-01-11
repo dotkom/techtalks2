@@ -35,7 +35,6 @@ function connectPool() {
 }
 
 function sendConfirmation(email, hash) {
-  const { MAILUSER, MAILPASS } = process.env;
   const mailOptions = {
     from: `Tech Talks <ekskom@online.ntnu.no>`, // sender address
     to: email, // list of receivers
@@ -67,7 +66,7 @@ router.get('/home', async (_, res) => {
         [arrID]
       ),
       pool.query(
-        'SELECT PH.Navn AS navn, PH.Klokkeslett AS tid, PH.Beskrivelse AS beskrivelse, PH.Varighet AS varighet, Rom.Navn AS stedNavn, Rom.MazemapURL AS stedLink, Bedrift.Navn AS bedrift FROM (Bedrift RIGHT JOIN (ProgramHendelse AS PH) ON Bedrift.BedriftID=PH.Bedrift) INNER JOIN Rom ON PH.RomID=Rom.RomID WHERE PH.ArrangementID = ? ORDER BY tid ASC',
+        'SELECT PH.Navn AS navn, PH.Klokkeslett AS tid, PH.Beskrivelse AS beskrivelse, PH.Varighet AS varighet, PH.Parallell AS parallell, Rom.Navn AS stedNavn, Rom.MazemapURL AS stedLink, Bedrift.Navn AS bedrift FROM (Bedrift RIGHT JOIN (ProgramHendelse AS PH) ON Bedrift.BedriftID=PH.Bedrift) INNER JOIN Rom ON PH.RomID=Rom.RomID WHERE PH.ArrangementID = ? ORDER BY tid ASC',
         [arrID]
       ),
       pool.query(
@@ -115,13 +114,20 @@ router.post('/paamelding', async (req, res) => {
   const connection = await connect();
   // TODO: valider at påmelding har åpnet (og at det fortsatt er igjen flere plasser - although dette får 2. pri, da flere plasser blir validert av )
   const event = (await connection.execute(
-    'SELECT ArrangementID, Beskrivelse, AntallPlasser, Dato FROM Arrangement ORDER BY Dato DESC LIMIT 1'
+    'SELECT ArrangementID, Beskrivelse, AntallPlasser, Dato, PaameldingsStart FROM Arrangement ORDER BY Dato DESC LIMIT 1'
   ))[0][0];
-  const arrID = event.ArrangementID;
-  const hash = md5(`${arrID}-${navn}-${epost}-${linjeforening}-${alder}-${studieår}-${new Date()}`);
+  const { PaameldingsStart, ArrangementID } = event;
+  const start = new Date(PaameldingsStart);
+  if (start > new Date()) {
+    res.status(400).json({
+      status: 'early'
+    });
+    return;
+  }
+  const hash = md5(`${ArrangementID}-${navn}-${epost}-${linjeforening}-${alder}-${studieår}-${new Date()}`);
   const response = await connection.query(
     'INSERT INTO Paameldt(PaameldingsHash, Epost, Navn, Linjeforening, Alder, StudieAar, Allergier, ArrangementID) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-    [hash, epost, navn, linjeforening, alder, studieår, allergier, arrID]
+    [hash, epost, navn, linjeforening, alder, studieår, allergier, ArrangementID]
   );
   connection.end();
   const { affectedRows } = response[0];
@@ -446,7 +452,7 @@ router.post('/adminEvent', async (req, res) => {
       pool.query('SELECT PH.HendelsesID AS id, PH.Navn AS navn, PH.Klokkeslett AS tid, PH.Beskrivelse AS beskrivelse, PH.Varighet AS varighet, Rom.Navn AS stedNavn, Rom.MazemapURL AS stedLink, Bedrift.BedriftID AS bedriftID, Bedrift.Navn AS bedriftNavn FROM ROM Inner Join (ProgramHendelse AS PH) ON Rom.RomID=PH.RomID LEFT JOIN Bedrift ON PH.Bedrift=Bedrift.BedriftID WHERE PH.ArrangementID = ? ORDER BY tid ASC, stedNavn ASC', [id]),
       pool.query('SELECT Beskrivelse, Dato, AntallPlasser, Link, PaameldingsStart FROM Arrangement WHERE ArrangementID=?', [id]),
       pool.query('SELECT COUNT(PaameldingsHash) AS AntallPåmeldte FROM Paameldt WHERE ArrangementID=? AND Verifisert=TRUE', [id]),
-      pool.query('SELECT PaameldingsHash, Navn, Epost, Linjeforening, Alder, StudieAar, Verifisert, PaameldingsTidspunkt FROM Paameldt WHERE ArrangementID=?', [id])
+      pool.query('SELECT PaameldingsHash, Navn, Epost, Linjeforening, Alder, StudieAar, Verifisert, PaameldingsTidspunkt, Allergier FROM Paameldt WHERE ArrangementID=?', [id])
     ]);
     pool.end();
     const sponsors = sponsorRes[0];
@@ -517,8 +523,8 @@ router.post('/editEvent', async (req, res) => {
   try {
     const connection = await connect();
     const response = await connection.query(
-      'UPDATE Arrangement SET Dato=?, AntallPlasser=?, Beskrivelse=?, Link=? WHERE ArrangementID=?',
-      [dato, plasser, beskrivelse, link, arrangementID]
+      'UPDATE Arrangement SET Dato=?, AntallPlasser=?, Beskrivelse=?, Link=?, PaameldingsStart=? WHERE ArrangementID=?',
+      [dato, plasser, beskrivelse, link, påmeldingsStart, arrangementID]
     );
     connection.end();
     res.json({
