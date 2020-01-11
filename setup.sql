@@ -63,6 +63,7 @@ CREATE TABLE Paameldt(
   Linjeforening TEXT NOT NULL,
   Alder INT NOT NULL,
   StudieAar INT NOT NULL,
+  Allergier TEXT,
   ArrangementID INT NOT NULL,
   Verifisert BOOLEAN DEFAULT FALSE,
   PaameldingsTidspunkt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

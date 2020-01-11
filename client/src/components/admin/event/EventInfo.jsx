@@ -17,6 +17,7 @@ const EventInfo = props => {
   const [antallPlasser, changePlasser] = useState('');
   const [link, changeLink] = useState('');
   const [dato, changeDate] = useState('');
+  const [påmeldingsStart, changeStart] = useState('');
 
 
   const cancelEditing = () => {
@@ -25,21 +26,24 @@ const EventInfo = props => {
     changePlasser('');
     changeLink('');
     changeDate('');
+    changeStart('');
   }
 
   const enableEditing = () => {
-    const { beskrivelse, antallPlasser, link, dato } = props;
+    const { beskrivelse, antallPlasser, link, dato, påmeldingsStart } = props;
     const d = new Date(dato);
+    const dStart = new Date(påmeldingsStart);
     setEditing(true);
     changeDesc(beskrivelse);
     changePlasser(antallPlasser);
     changeLink(link);
     // dato på YYYY/MM/DD-format. Offset må trekkes fra for at tidssoner ikke setter dagen tilbake med 1
     changeDate(new Date(d - 60000*d.getTimezoneOffset()).toISOString().split('T')[0]);
+    changeStart(new Date(d - 60000*dStart.getTimezoneOffset()).toISOString());
   }
 
   const saveChanges = async () => {
-    const newData = { beskrivelse, antallPlasser, link, dato };
+    const newData = { beskrivelse, antallPlasser, link, dato, påmeldingsStart };
     props.saveChanges(newData);
     cancelEditing();
   }
@@ -47,7 +51,7 @@ const EventInfo = props => {
   const { toggleEvent, showEvent, antallPåmeldte } = props;
   if(!editing) {
     // if not editing, the things that can be edited are in the props
-    const { dato, beskrivelse, antallPlasser, link } = props;
+    const { dato, beskrivelse, antallPlasser, link, påmeldingsStart } = props;
     return (
       <div>
         <button type="button" onClick={toggleEvent}>{`${showEvent ? 'Skjul' : 'Vis'} info om arrangementet`}</button>
@@ -73,6 +77,10 @@ const EventInfo = props => {
                     <th>Link</th>
                     <Td><a href={link}>{link}</a></Td>
                   </tr>
+                  <tr>
+                    <th>Påmeldingsstart</th>
+                    <Td>{new Date(påmeldingsStart).toLocaleDateString()} {new Date(påmeldingsStart).toLocaleTimeString()}</Td>
+                  </tr>
                 </tbody>
               </Table>
             </div>
@@ -84,7 +92,7 @@ const EventInfo = props => {
   // if editing, use the values in working state
   // The if is in this order (rather than `if(editing)`) for scoping reasons
   // (since 'dato' is in global scope, the props unpacking can't be)
-  // not the best of practices, but it's mostly a readability issue - will fix when the rest is done
+  // not the best of practices, but it's mostly a readability issue - will fix if/when the rest is done
   return (
     <div>
       <button type="button" onClick={toggleEvent}>{`${showEvent ? 'Skjul' : 'Vis'} info om arrangementet`}</button>
@@ -106,6 +114,9 @@ const EventInfo = props => {
                 </tr>
                 <tr>
                   <Td><InputField type="text" label="Link: " val={link} updateValue={changeLink} /></Td>
+                </tr>
+                <tr>
+                  <Td><InputField type="datetime-local" val={påmeldingsStart} updateValue={changeStart} /></Td>
                 </tr>
               </tbody>
             </Table>

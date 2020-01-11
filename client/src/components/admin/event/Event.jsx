@@ -11,7 +11,7 @@ const Event = props => {
   const [status, setStatus] = useState('waiting');
   const [sponsors, setSponsors] = useState([]);
   const [program, setProgram] = useState([]);
-  const [event, setEvent] = useState({Beskrivelse:'',Dato:null,AntallPlasser:0,AntallPåmeldte:0,Link:''});
+  const [event, setEvent] = useState({Beskrivelse:'',Dato:null,AntallPlasser:0,AntallPåmeldte:0,Link:'',PaameldingsStart:''});
   const [deltagere, setDeltagere] = useState([]);
   const [showEvent, setShowEvent] = useState(false);
   const [showSponsors, setShowSponsors] = useState(false);
@@ -70,7 +70,7 @@ const Event = props => {
 
   const changeInfo = async newData => {
     const token = localStorage.getItem('token');
-    const { dato, beskrivelse, antallPlasser, link } = newData;
+    const { dato, beskrivelse, antallPlasser, link, påmeldingsStart} = newData;
     const { id } = props;
     const req = {
       method: 'POST',
@@ -80,7 +80,8 @@ const Event = props => {
         dato,
         beskrivelse,
         plasser: antallPlasser,
-        link
+        link,
+        påmeldingsStart
       }),
       headers: {
         'Content-Type': 'application/json'
@@ -96,7 +97,8 @@ const Event = props => {
         AntallPlasser: antallPlasser,
         Dato: dato,
         Link: link,
-        Beskrivelse: beskrivelse
+        Beskrivelse: beskrivelse,
+        PaameldingsStart: påmeldingsStart
       });
     }
   }
@@ -115,7 +117,7 @@ const Event = props => {
     }
   }
 
-  const { Beskrivelse, Dato, AntallPlasser, AntallPåmeldte, Link } = event;
+  const { Beskrivelse, Dato, AntallPlasser, AntallPåmeldte, Link, PaameldingsStart } = event;
   if(status === 'denied') {
     return <Redirect to='/admin' />;
   }
@@ -138,6 +140,7 @@ const Event = props => {
         antallPlasser={AntallPlasser}
         antallPåmeldte={AntallPåmeldte}
         link={Link}
+        påmeldingsStart={PaameldingsStart}
         saveChanges={changeInfo}
       />
       <Sponsors 

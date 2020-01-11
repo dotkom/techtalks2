@@ -56,7 +56,7 @@ router.get('/home', async (_, res) => {
   try {
     const connection = await connect();
     const event =  (await connection.execute(
-      'SELECT ArrangementID, Beskrivelse, AntallPlasser, Dato FROM Arrangement ORDER BY Dato DESC LIMIT 1'
+      'SELECT ArrangementID, Beskrivelse, AntallPlasser, PaameldingsStart, Dato FROM Arrangement ORDER BY Dato DESC LIMIT 1'
     ))[0][0];
     const arrID = event.ArrangementID;;
     connection.end();
@@ -91,7 +91,7 @@ router.get('/home', async (_, res) => {
 });
 
 router.post('/paamelding', async (req, res) => {
-  const { navn, epost, linjeforening, alder, studieår } = req.body;
+  const { navn, epost, linjeforening, alder, studieår, allergier } = req.body;
   // Validere inputs. Enkel epost-validering: sjekk at det bare finnes én @
   if (epost.split('').filter(c=>c === '@').length != 1) {
     res.status(400).send(JSON.stringify({
@@ -113,15 +113,15 @@ router.post('/paamelding', async (req, res) => {
     return;
   }
   const connection = await connect();
-  // TODO: valider at påmelding har åpnet og at det fortsatt er igjen flere plasser
+  // TODO: valider at påmelding har åpnet (og at det fortsatt er igjen flere plasser - although dette får 2. pri, da flere plasser blir validert av )
   const event = (await connection.execute(
     'SELECT ArrangementID, Beskrivelse, AntallPlasser, Dato FROM Arrangement ORDER BY Dato DESC LIMIT 1'
   ))[0][0];
   const arrID = event.ArrangementID;
   const hash = md5(`${arrID}-${navn}-${epost}-${linjeforening}-${alder}-${studieår}-${new Date()}`);
   const response = await connection.query(
-    'INSERT INTO Paameldt(PaameldingsHash, Epost, Navn, Linjeforening, Alder, StudieAar, ArrangementID) VALUES (?, ?, ?, ?, ?, ?, ?)',
-    [hash, epost, navn, linjeforening, alder, studieår, arrID]
+    'INSERT INTO Paameldt(PaameldingsHash, Epost, Navn, Linjeforening, Alder, StudieAar, Allergier, ArrangementID) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+    [hash, epost, navn, linjeforening, alder, studieår, allergier, arrID]
   );
   connection.end();
   const { affectedRows } = response[0];
@@ -147,7 +147,8 @@ router.post('/validering', async (req, res) => {
     });
     return;
   }
-  const { ArrangementID } = event[0][0]
+  const { ArrangementID } = event[0][0];
+  // check if event is full
   const eventData = await connection.query(
     `SELECT Arrangement.ArrangementID AS ArrangementID, Arrangement.AntallPlasser AS AntallPlasser, COALESCE(SUM(Paameldt.Verifisert), 0) AS AntallVerifiserte
     FROM Arrangement LEFT JOIN Paameldt ON Arrangement.ArrangementID=Paameldt.ArrangementID
@@ -443,7 +444,7 @@ router.post('/adminEvent', async (req, res) => {
     const [ sponsorRes, programRes, eventRes, påmeldtRes, deltagereRes ] = await Promise.all([
       pool.query('SELECT Bedrift.BedriftID AS BedriftID, Bedrift.Navn AS navn, Bedrift.Logo AS logo, Sponsor.SponsorType AS sponsorType FROM Bedrift INNER JOIN Sponsor ON Bedrift.BedriftID=Sponsor.BedriftID WHERE Sponsor.ArrangementID = ?', [id]),
       pool.query('SELECT PH.HendelsesID AS id, PH.Navn AS navn, PH.Klokkeslett AS tid, PH.Beskrivelse AS beskrivelse, PH.Varighet AS varighet, Rom.Navn AS stedNavn, Rom.MazemapURL AS stedLink, Bedrift.BedriftID AS bedriftID, Bedrift.Navn AS bedriftNavn FROM ROM Inner Join (ProgramHendelse AS PH) ON Rom.RomID=PH.RomID LEFT JOIN Bedrift ON PH.Bedrift=Bedrift.BedriftID WHERE PH.ArrangementID = ? ORDER BY tid ASC, stedNavn ASC', [id]),
-      pool.query('SELECT Beskrivelse, Dato, AntallPlasser, Link FROM Arrangement WHERE ArrangementID=?', [id]),
+      pool.query('SELECT Beskrivelse, Dato, AntallPlasser, Link, PaameldingsStart FROM Arrangement WHERE ArrangementID=?', [id]),
       pool.query('SELECT COUNT(PaameldingsHash) AS AntallPåmeldte FROM Paameldt WHERE ArrangementID=? AND Verifisert=TRUE', [id]),
       pool.query('SELECT PaameldingsHash, Navn, Epost, Linjeforening, Alder, StudieAar, Verifisert, PaameldingsTidspunkt FROM Paameldt WHERE ArrangementID=?', [id])
     ]);
@@ -470,7 +471,7 @@ router.post('/adminEvent', async (req, res) => {
 })
 
 router.post('/newEvent', async (req, res) => {
-  const { token, dato, antallPlasser, beskrivelse } = req.body;
+  const { token, dato, antallPlasser, beskrivelse, påmeldingsStart } = req.body;
   try {
     const { JWTKEY } = process.env;
     jwt.verify(token, JWTKEY);
@@ -483,8 +484,8 @@ router.post('/newEvent', async (req, res) => {
   try {
     const connection = await connect();
     const response = await connection.query(
-      'INSERT INTO Arrangement(Dato, AntallPlasser, Beskrivelse) VALUES (?, ?, ?)',
-      [dato, antallPlasser, beskrivelse]
+      'INSERT INTO Arrangement(Dato, AntallPlasser, Beskrivelse, PaameldingsStart) VALUES (?, ?, ?, ?)',
+      [dato, antallPlasser, beskrivelse, påmeldingsStart]
     );
     connection.end();
     const { insertId } = response;
@@ -502,7 +503,7 @@ router.post('/newEvent', async (req, res) => {
 });
 
 router.post('/editEvent', async (req, res) => {
-  const { token, arrangementID, dato, plasser, beskrivelse, link } = req.body;
+  const { token, arrangementID, dato, plasser, beskrivelse, link, påmeldingsStart } = req.body;
   try {
     const { JWTKEY } = process.env;
     jwt.verify(token, JWTKEY);

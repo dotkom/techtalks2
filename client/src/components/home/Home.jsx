@@ -48,7 +48,8 @@ const Home = () => {
     ArrangementID: 0,
     Beskrivelse: '',
     AntallPlasser: 0,
-    AntallPåmeldte: 0
+    AntallPåmeldte: 0,
+    PaameldingsStart: ''
   });
 
   useEffect(()=>{

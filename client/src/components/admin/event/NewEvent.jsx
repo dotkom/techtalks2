@@ -7,6 +7,7 @@ const NewEvent = props => {
   const [dato, changeDate] = useState('');
   const [antallPlasser, changePlasser] = useState('');
   const [beskrivelse, changeDesc] = useState('');
+  const [påmeldingsStart, changeStart] = useState('');
   const [status, setStatus] = useState('default');
 
   const submit = async () => {
@@ -18,6 +19,7 @@ const NewEvent = props => {
         dato,
         antallPlasser,
         beskrivelse,
+        påmeldingsStart,
         token,
       }),
       headers: {
@@ -53,6 +55,13 @@ const NewEvent = props => {
         val={beskrivelse}
         updateValue={changeDesc}
         type="textarea"
+      />
+      <InputField
+        label="Påmeldingsstart: "
+        id="eventStart"
+        val={påmeldingsStart}
+        updateValue={changeStart}
+        type="datetime-local"
       />
       <button type="button" onClick={submit}>
         Lag arrangement

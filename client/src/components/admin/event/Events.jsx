@@ -24,7 +24,7 @@ const Events = props => {
       setStatus(status);
     };
     internal();
-  })
+  }, []);
   if (status === 'denied') {
     return <Redirect to="/admin" />;
   }

@@ -15,14 +15,11 @@ const Paamelding = props => {
   const [linjeforening, updateLinje] = useState('');
   const [alder, updateAge] = useState('');
   const [studieår, updateYear] = useState('');
+  const [allergier, updateAllergies] = useState('');
   const [status, setStatus] = useState('');
 
 
   const submitForm = async () => {
-    console.log(`navn: ${navn}`);
-    console.log(`linje: ${linjeforening}`);
-    console.log(`alder: ${alder}`);
-    console.log(`studieår: ${studieår}`);
     const req = {
       method: 'POST',
       body: JSON.stringify({
@@ -31,6 +28,7 @@ const Paamelding = props => {
         linjeforening,
         alder,
         studieår,
+        allergier
       }),
       headers: {
         'Content-Type': 'application/json',
@@ -43,7 +41,9 @@ const Paamelding = props => {
   }
 
   const { event } = props;
-  const { AntallPlasser, AntallPåmeldte } = event;
+  const { AntallPlasser, AntallPåmeldte, PaameldingsStart } = event;
+  const PaameldingsDate = new Date(PaameldingsStart);
+  console.log(PaameldingsDate);
   if (status === 'succeeded') {
     return (
       <Wrapper>
@@ -79,6 +79,13 @@ const Paamelding = props => {
               label="Studieår: "
               id="paameldingStudieaar"
               val={studieår}
+            />
+            <InputField
+              type="text"
+              updateValue={updateAllergies}
+              label="Allergier: "
+              id="paameldingAllergier"
+              val={allergier}
             />
             <button onClick={submitForm}>Meld meg på</button>
           </div>
