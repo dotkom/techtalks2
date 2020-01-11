@@ -11,6 +11,7 @@ CREATE TABLE Arrangement(
   AntallPlasser INT NOT NULL,
   Beskrivelse TEXT,
   Link TEXT,
+  PaameldingsStart DATETIME NOT NULL,
   PRIMARY KEY (ArrangementID)
 );
 
@@ -48,6 +49,7 @@ CREATE TABLE ProgramHendelse(
   Klokkeslett TIME,
   Varighet INT NOT NULL DEFAULT 1,
   RomID INT,
+  Parallell INT NOT NULL,
   FOREIGN KEY (ArrangementID) REFERENCES Arrangement(ArrangementID),
   FOREIGN KEY (Bedrift, ArrangementID) REFERENCES Sponsor(BedriftID, ArrangementID),
   FOREIGN KEY (RomID) REFERENCES Rom(RomID),

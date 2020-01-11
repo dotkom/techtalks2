@@ -140,6 +140,27 @@ router.post('/paamelding', async (req, res) => {
 router.post('/validering', async (req, res) => {
   const { hash } = req.body;
   const connection = await connect();
+  const event = await connection.query('SELECT ArrangementID FROM Paameldt WHERE PaameldingsHash=?', [hash]);
+  if (event[0].length === 0) {
+    res.status(500).json({
+      status: 'failed',
+    });
+    return;
+  }
+  const { ArrangementID } = event[0][0]
+  const eventData = await connection.query(
+    `SELECT Arrangement.ArrangementID AS ArrangementID, Arrangement.AntallPlasser AS AntallPlasser, COALESCE(SUM(Paameldt.Verifisert), 0) AS AntallVerifiserte
+    FROM Arrangement LEFT JOIN Paameldt ON Arrangement.ArrangementID=Paameldt.ArrangementID
+    WHERE Arrangement.ArrangementID=?`, [ArrangementID]
+  );
+  const { AntallPlasser, AntallVerifiserte } = eventData[0][0];
+  console.log(`${AntallVerifiserte} av ${AntallPlasser} mulige verifisert`);
+  if (AntallVerifiserte >= AntallPlasser) {
+    res.status(400).json({
+      status: 'full'
+    });
+    return;
+  }
   const response = await connection.query('UPDATE Paameldt SET Verifisert=TRUE WHERE PaameldingsHash=?', [hash]);
   connection.end();
   const { affectedRows, changedRows } = response[0];

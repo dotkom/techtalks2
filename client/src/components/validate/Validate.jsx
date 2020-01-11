@@ -41,6 +41,13 @@ const Validate = props => {
       </Wrapper>
     );
   }
+  if (status === 'full') {
+    return (
+      <Wrapper>
+        <h2>Arrangementet er dessverre fullt</h2>
+      </Wrapper>
+    )
+  }
   if (status === 'failed') {
     return (
       <Wrapper>
