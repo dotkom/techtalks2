@@ -6,11 +6,17 @@ const md5 = require('md5');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 
+const key = require('./key.json');
+
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  service: 'smtp.gmail.com',
+  port: 465,
+  secure: true,
   auth: {
+    type: 'OAuth2',
     user: process.env.MAILUSER,
-    pass: process.env.MAILPASS
+    serviceClient: key.client_id,
+    privateKey: key.private_key
   }
 });
 
@@ -40,7 +46,7 @@ function sendConfirmation(email, hash) {
     to: email, // list of receivers
     subject: 'Bekreftelse av påmelding', // Subject line
     html: `<p>For å validere påmeldingen din, trykk på denne lenken:<br/>
-    <a href="http://localhost:3000/validate?ha=${hash}">http://localhost:3000/validate?ha=${hash}<b></b></a></p>` // plain text body
+    <a href="http://alexandersen.me:3000/validate?ha=${hash}">http://alexandersen.me:3000/validate?ha=${hash}<b></b></a></p>` // plain text body
   };
   transporter.sendMail(mailOptions, ({err, info}) => {
     if (err) {

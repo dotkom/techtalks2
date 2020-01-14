@@ -22,5 +22,8 @@ client/yarn-error.log*
 # env variables
 api/.env
 
+# mail keys
+api/key.json
+
 # Cotnainer-specific
 docker/*/sql/
