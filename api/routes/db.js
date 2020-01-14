@@ -6,19 +6,30 @@ const md5 = require('md5');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 
-const key = require('./key.json');
+const key = require('../key.json');
 
-const transporter = nodemailer.createTransport({
-  service: 'smtp.gmail.com',
-  port: 465,
-  secure: true,
-  auth: {
-    type: 'OAuth2',
-    user: process.env.MAILUSER,
-    serviceClient: key.client_id,
-    privateKey: key.private_key
+const createTransporter = async () => {
+  const { MAILUSER } = process.env;
+  const transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
+    auth: {
+      type: 'OAuth2',
+      user: MAILUSER,
+      serviceClient: key.client_id,
+      privateKey: key.private_key
+    }
+  });
+  try {
+    await transporter.verify();
+    return transporter;
+  } catch (err) {
+    console.log(err);
+    return null;
   }
-});
+}
+
 
 function connect() {
   const { DBHOST, DBUSER, DBPASS, DBNAME } = process.env;
@@ -40,15 +51,22 @@ function connectPool() {
   });
 }
 
-function sendConfirmation(email, hash) {
+async function sendConfirmation(email, hash) {
+  const { MAILUSER } = process.env;
+  const transporter = await createTransporter();
+  if (transporter === null) {
+    return;
+  }
   const mailOptions = {
-    from: `Tech Talks <ekskom@online.ntnu.no>`, // sender address
+    from: `Tech Talks <${MAILUSER}>`, // sender address
     to: email, // list of receivers
     subject: 'Bekreftelse av påmelding', // Subject line
     html: `<p>For å validere påmeldingen din, trykk på denne lenken:<br/>
-    <a href="http://alexandersen.me:3000/validate?ha=${hash}">http://alexandersen.me:3000/validate?ha=${hash}<b></b></a></p>` // plain text body
+    <a href="http://techtalks.no/validate?ha=${hash}"><b>http://techtalks.no/validate?ha=${hash}</b></a></p>` // plain text body
   };
-  transporter.sendMail(mailOptions, ({err, info}) => {
+  transporter.sendMail(mailOptions, (response) => {
+    const {err, info} = response;
+    console.log(response);
     if (err) {
       console.log(err);
     } else {
