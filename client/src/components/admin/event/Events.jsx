@@ -51,6 +51,7 @@ const Events = props => {
           ))}
         </tbody>
       </table>
+      <p>Vil du lage et nytt arrangement, kan du gjøre det <a href="/admin/newEvent">her</a></p>
     </div>
   );
 };

@@ -68,7 +68,8 @@ const Event = props => {
 
   const changeInfo = async newData => {
     const token = localStorage.getItem('token');
-    const { dato, beskrivelse, antallPlasser, link, påmeldingsStart} = newData;
+    const { dato, beskrivelse, antallPlasser, link, påmeldingsStart } = newData;
+    const { antallPåmeldte } = event;
     const { id } = props;
     const req = {
       method: 'POST',
@@ -96,7 +97,8 @@ const Event = props => {
         Dato: dato,
         Link: link,
         Beskrivelse: beskrivelse,
-        PaameldingsStart: påmeldingsStart
+        PaameldingsStart: påmeldingsStart,
+        AntallPåmeldte
       });
     }
   }
