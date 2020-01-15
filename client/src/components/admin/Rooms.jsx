@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
+import { post } from '../../utils/apiCalls.js';
+
 const Rooms = () => {
   const [rooms, setRooms] = useState([]);
   const [status, setStatus] = useState('waiting');
@@ -8,15 +10,11 @@ const Rooms = () => {
     const internal = async () => {
       const token = localStorage.getItem('token');
       const req = {
-        method: 'POST',
         body: JSON.stringify({
           token
-        }),
-        headers: {
-          'Content-Type': 'application/json'
-        }
+        })
       };
-      const res = await fetch('/db/getRooms', req);
+      const res = await post('/db/getRooms', req);
       const j = await res.json();
       const { status, rooms } = j;
       console.log(j);

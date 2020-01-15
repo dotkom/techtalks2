@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Redirect } from 'react-router-dom';
 
+import { post } from '../../../utils/apiCalls.js';
 import InputField from '../../inputs/InputField';
 
 const Company = props => {
@@ -29,7 +30,6 @@ const Company = props => {
     const token = localStorage.getItem('token');
     const { bedriftID, sponsorType, handleUpdate } = props;
     const req = {
-      method: 'POST',
       body: JSON.stringify({
         token,
         bedriftID,
@@ -37,12 +37,9 @@ const Company = props => {
         logo: eLogo,
         oldSponsorType: sponsorType,
         sponsorType: eType,
-      }),
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      })
     };
-    const res = await fetch('/db/editCompany', req);
+    const res = await post('/db/editCompany', req);
     const j = await res.json();
     const { status } = j;
     if (status === 'denied' || status === 'failed') {

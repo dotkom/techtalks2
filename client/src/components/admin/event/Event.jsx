@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Redirect } from 'react-router-dom';
 
+import { post } from '../../../utils/apiCalls.js';
 import EventInfo from './EventInfo.jsx';
 import Sponsors from './Sponsors.jsx';
 import Participants from './Participants.jsx';
@@ -26,18 +27,16 @@ const Event = props => {
   const slettDeltager = async (PaameldingsHash) => {
     const token = localStorage.getItem('token');
     const req = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json'},
       body: JSON.stringify({
         PaameldingsHash,
         token
       })
     };
-    const res = await fetch('/db/deleteParticipant', req);
+    const res = await post('/db/deleteParticipant', req);
     const j = await res.json();
     const { status } = j;
     if(status === 'succeeded') {
-      setDeltagere(deltagere.filter(deltager => deltager.PaameldingsHash !== PaameldingsHash))
+      setDeltagere(deltagere.filter(deltager => deltager.PaameldingsHash !== PaameldingsHash));
     }
   }
 
@@ -46,16 +45,12 @@ const Event = props => {
       const token = localStorage.getItem('token');
       const { id } = props;
       const req = {
-        method: 'POST',
         body: JSON.stringify({
           token,
           id
         }),
-        headers: {
-          'Content-Type': 'application/json'
-        }
       };
-      const res = await fetch('/db/adminEvent', req);
+      const res = await post('/db/adminEvent', req);
       const { status, sponsors, program, event, deltagere } = await res.json();
       setStatus(status);
       setSponsors(sponsors);
@@ -69,10 +64,9 @@ const Event = props => {
   const changeInfo = async newData => {
     const token = localStorage.getItem('token');
     const { dato, beskrivelse, antallPlasser, link, påmeldingsStart } = newData;
-    const { antallPåmeldte } = event;
+    const { AntallPåmeldte } = event;
     const { id } = props;
     const req = {
-      method: 'POST',
       body: JSON.stringify({
         token,
         arrangementID: id,
@@ -81,12 +75,9 @@ const Event = props => {
         plasser: antallPlasser,
         link,
         påmeldingsStart
-      }),
-      headers: {
-        'Content-Type': 'application/json'
-      }
+      })
     };
-    const res = await fetch('/db/editEvent', req);
+    const res = await post('/db/editEvent', req);
     const j = await res.json();
     const { status } = j;
     if (status === 'denied') {
@@ -105,12 +96,8 @@ const Event = props => {
 
   const deleteProgramEvent = async idToDelete => {
     const token = localStorage.getItem('token');
-    const req = {
-      method: 'POST',
-      body: JSON.stringify({token, id: idToDelete}),
-      headers: {'Content-Type': 'application/json'}
-    };
-    const res = await fetch('/db/deleteProgramEvent', req);
+    const req = { body: JSON.stringify({ token, id: idToDelete }) };
+    const res = await post('/db/deleteProgramEvent', req);
     const { status } = await res.json();
     if (status === 'ok') {
       setProgram(program.filter(p=>p.id!==idToDelete));

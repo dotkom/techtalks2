@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { post } from '../../utils/apiCalls.js';
+
 const Wrapper = styled.div``;
 
 const Validate = props => {
@@ -10,15 +12,11 @@ const Validate = props => {
     const internal = async ()=> {
       const ha = new URL(window.location.href).searchParams.get('ha');
       const req = {
-        method: 'POST',
         body: JSON.stringify({
           hash: ha,
-        }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        })
       };
-      const res = await fetch('db/validering', req);
+      const res = await post('db/validering', req);
       const jsoned = await res.json();
       const { status } = jsoned;
       setStatus(status);

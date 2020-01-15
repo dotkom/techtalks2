@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Redirect } from 'react-router-dom';
 
+import { post } from '../../../utils/apiCalls.js';
 import InputField from '../../inputs/InputField';
 
 const NewCompany = props => {
@@ -12,19 +13,15 @@ const NewCompany = props => {
   const submitCompany = async () => {
     const token = localStorage.getItem('token');
     const req = {
-      method: 'POST',
       body: JSON.stringify({
         token,
         navn: name,
         logo,
         isSponsor,
-      }),
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      })
     };
     setStatus('waiting',);
-    const res = await fetch('/db/newCompany', req);
+    const res = await post('/db/newCompany', req);
     const j = await res.json();
     const { status } = j;
     setStatus(status);

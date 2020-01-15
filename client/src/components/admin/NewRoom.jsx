@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Redirect } from 'react-router-dom';
 
+
+import { post } from '../../utils/apiCalls.js';
 import InputField from '../inputs/InputField.jsx';
 
 const NewRoom = props => {
@@ -12,18 +14,14 @@ const NewRoom = props => {
   const submit = async () => {
     const token = localStorage.getItem('token');
     const req  = {
-      method: 'POST',
       body: JSON.stringify({
         token,
         name,
         mazemap,
         building
-      }),
-      headers: {
-        'Content-Type': 'application/json'
-      }
+      })
     }
-    const res = await fetch('/db/newRoom', req); 
+    const res = await post('/db/newRoom', req); 
     const j = await res.json();
     changeStatus(j.status);
   }

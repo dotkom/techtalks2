@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
-import InputField from '../inputs/InputField';
+import { post } from '../../utils/apiCalls.js';
+import InputField from '../inputs/InputField.jsx';
 
 const Wrapper = styled.div`
   text-align: left;
@@ -22,7 +23,6 @@ const Paamelding = props => {
 
   const submitForm = async () => {
     const req = {
-      method: 'POST',
       body: JSON.stringify({
         navn,
         epost,
@@ -31,11 +31,8 @@ const Paamelding = props => {
         studieår,
         allergier
       }),
-      headers: {
-        'Content-Type': 'application/json',
-      },
     };
-    const res = await fetch('db/paamelding', req);
+    const res = await post('db/paamelding', req);
     const jsoned = await res.json();
     console.log(jsoned);
     setStatus(jsoned.status);

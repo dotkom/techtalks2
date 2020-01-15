@@ -28,24 +28,14 @@ const ProgramTable = styled.table`
 `;
 
 const Program = props => {
-  // TODO: use parallell instead of room
   const { events } = props;
-  const jsonRooms = [];
-  const timeslots = [];
-  for(let event of events) {
-    const jsonRoom = JSON.stringify({navn: event.stedNavn, link: event.stedLink});
-    console.log(event.parallell);
-    if (jsonRooms.indexOf(jsonRoom) === -1) {
-      jsonRooms.push(jsonRoom);
-    }
-    const t = event.tid.substring(0,5);
-    if (timeslots.indexOf(t) === -1) {
-      timeslots.push(t);
-    }
+  const timeslots = ['09:15',  '10:15', '11:15', '12:15', '13:15', '14:15', '15:15'];
+  const antallParalleller = events.reduce((a, b) => Math.max(a, b.parallell), 0);
+  const parallells = [];
+  for(let i = 1; i <= antallParalleller; i++) {
+    parallells.push(i);
   }
-  timeslots.sort();
-  jsonRooms.sort(); // name first => this sorts by room name
-  const rooms = jsonRooms.map(JSON.parse);
+  
   return (
     <Wrapper>
       <h2 id="program">Program</h2>
@@ -56,7 +46,7 @@ const Program = props => {
           <tr>
             <td></td>
             {
-              rooms.map(({navn, link},i) => <th key={navn}>Parallell {i+1} (<a href={link}>{navn}</a>)</th>)
+              parallells.map(i => <th key={i}>Parallell {i}</th>)
             }
           </tr>
         </thead>
@@ -68,13 +58,17 @@ const Program = props => {
                 <tr key={timeslot}>
                   <td>{timeslot}</td>
                   {
-                    rooms.map((room,ind) => {
-                      const thisEvent = rowEvents.filter(event=>event.stedNavn === room.navn);
+                    parallells.map(parallell => {
+                      const thisEvent = rowEvents.filter(event=>event.parallell === parallell);
                       if(thisEvent.length) {
-                        const {navn,beskrivelse,varighet, bedrift} = thisEvent[0];
+                        const { navn,beskrivelse,varighet, bedrift, stedNavn, stedLink } = thisEvent[0];
                         return (
-                          <td key={ind} rowSpan={varighet}>
-                            <h3>{navn}</h3>
+                          <td key={parallell} rowSpan={varighet}>
+                            <h3>
+                              {navn}
+                              <br />
+                              <a href={stedLink}>{stedNavn}</a>
+                            </h3>
                             <p>{bedrift}</p>
                             <p>{beskrivelse}</p>
                           </td>

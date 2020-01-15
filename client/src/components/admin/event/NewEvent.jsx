@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Redirect } from 'react-router-dom';
 
+import { post } from '../../../utils/apiCalls.js';
+
 import InputField from '../../inputs/InputField';
 
 const NewEvent = props => {
@@ -14,19 +16,15 @@ const NewEvent = props => {
     setStatus('waiting');
     const token = localStorage.getItem('token');
     const req = {
-      method: 'POST',
       body: JSON.stringify({
         dato,
         antallPlasser,
         beskrivelse,
         påmeldingsStart,
         token,
-      }),
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      })
     };
-    const res = await fetch('/db/newEvent', req);
+    const res = await post('/db/newEvent', req);
     const j = await res.json();
     const { status } = j;
     setStatus(status);

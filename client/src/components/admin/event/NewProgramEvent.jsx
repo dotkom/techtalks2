@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Redirect } from 'react-router-dom';
 
+import { post } from '../../../utils/apiCalls.js';
+
 import InputField from '../../inputs/InputField.jsx';
 import DropdownMenu from '../../inputs/DropdownMenu.jsx';
 
@@ -20,16 +22,12 @@ const NewProgramEvent = props => {
       const { arrangementID } = props;
       const token = localStorage.getItem('token');
       const req = {
-        method: 'POST',
         body: JSON.stringify({
           token,
           arrangementID
-        }),
-        headers: {
-          'Content-Type': 'application/json'
-        }
+        })
       };
-      const res = await fetch('/db/preCreateProgram', req);
+      const res = await post('/db/preCreateProgram', req);
       const j = await res.json();
       console.log(j);
       const { status, sponsors, rom } = j;
@@ -50,7 +48,6 @@ const NewProgramEvent = props => {
     const { bedriftID, navn, beskrivelse, klokkeslett, romID } = this.state;
     const { arrangementID } = this.props;
     const req = {
-      method: 'POST',
       body: JSON.stringify({
         token,
         bedriftID: bedriftID || null,
@@ -59,12 +56,9 @@ const NewProgramEvent = props => {
         beskrivelse,
         klokkeslett,
         romID
-      }),
-      headers: {
-        'Content-Type': 'application/json'
-      }
+      })
     };
-    const res = await fetch('/db/createProgramEvent', req);
+    const res = await post('/db/createProgramEvent', req);
     const { status } = await res.json();
     setStatus(status);
   }

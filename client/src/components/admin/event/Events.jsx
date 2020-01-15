@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Redirect } from 'react-router-dom';
 
+import { post } from '../../../utils/apiCalls.js';
+
 const Events = props => {
   const [events, setEvents] = useState([]);
   const [status, setStatus] = useState('waiting');
@@ -9,15 +11,11 @@ const Events = props => {
     const internal = async () => {
       const token = localStorage.getItem('token');
       const req = {
-        method: 'POST',
         body: JSON.stringify({
           token,
-        }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        })
       };
-      const res = await fetch('/db/allEvents', req);
+      const res = await post('/db/allEvents', req);
       const j = await res.json();
       const { status, events } = j;
       setEvents(events);

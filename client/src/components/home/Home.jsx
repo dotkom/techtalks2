@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
+import { get } from '../../utils/apiCalls.js';
 import Navbar from './Navbar';
 import About from './About';
 import Samarbeidspartnere from './Samarbeidspartnere';
@@ -54,7 +55,7 @@ const Home = () => {
 
   useEffect(()=>{
     const internal = async () => {
-      const response = await fetch('/db/home');
+      const response = await get('/db/home');
       const jsoned = await response.json();
       const { partners, program, event } = jsoned;
       setPartners(partners);

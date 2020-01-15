@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Redirect } from 'react-router-dom';
 
+import { post } from '../../../utils/apiCalls.js';
 import Company from './Company';
 
 const Companies = props => {
@@ -11,15 +12,11 @@ const Companies = props => {
     const internal = async () => {
       const token = localStorage.getItem('token');
       const req = {
-        method: 'POST',
         body: JSON.stringify({
           token,
-        }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        })
       };
-      const res = await fetch('/db/allCompanies', req);
+      const res = await post('/db/allCompanies', req);
       const j = await res.json();
       const { status, bedrifter } = j;
       setStatus(status);

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Redirect } from 'react-router-dom';
 
+import { post } from '../../../utils/apiCalls.js';
 import InputField from '../../inputs/InputField.jsx';
 
 const Wrapper = styled.div`
@@ -42,17 +43,13 @@ const ImportCompany = props => {
     const imageID = parts[parts.length - 1];
     const token = localStorage.getItem('token');
     const req = {
-      method: 'POST',
       body: JSON.stringify({
         token,
         navn: name,
         logo: imageID
-      }),
-      headers: {
-        'Content-Type': 'application/json'
-      }
+      })
     }
-    const res = await fetch('/db/newCompany', req);
+    const res = await post('/db/newCompany', req);
     const j = await res.json();
     if(j.status === 'succeeded') {
       setStatus('succeeded');
