@@ -5,6 +5,7 @@ import { post } from '../../../utils/apiCalls.js';
 
 import InputField from '../../inputs/InputField.jsx';
 import DropdownMenu from '../../inputs/DropdownMenu.jsx';
+import DropdownRange from '../../inputs/DropdownRange.jsx';
 
 
 const NewProgramEvent = props => {
@@ -14,8 +15,10 @@ const NewProgramEvent = props => {
   const [bedriftID, changeSponsor] = useState(0);
   const [navn, changeName] = useState('');
   const [beskrivelse, changeDescription] = useState('');
-  const [klokkeslett, changeTime] = useState('00:00');
+  const [klokkeslett, changeTime] = useState(0);
   const [romID, changeRoom] = useState(0);
+  const [parallell, setParallell] = useState(1);
+  const [varighet, setVarighet] = useState(1);
 
   useEffect(()=>{
     const internal = async () => {
@@ -40,13 +43,12 @@ const NewProgramEvent = props => {
       }
     };
     internal();
-  })
+  }, [props]);
 
 
   const submit = async () => {
     const token = localStorage.getItem('token');
-    const { bedriftID, navn, beskrivelse, klokkeslett, romID } = this.state;
-    const { arrangementID } = this.props;
+    const { arrangementID } = props;
     const req = {
       body: JSON.stringify({
         token,
@@ -54,8 +56,10 @@ const NewProgramEvent = props => {
         arrangementID,
         navn,
         beskrivelse,
-        klokkeslett,
-        romID
+        klokkeslett: `${klokkeslett}:15`,
+        romID,
+        parallell,
+        varighet
       })
     };
     const res = await post('/db/createProgramEvent', req);
@@ -75,7 +79,7 @@ const NewProgramEvent = props => {
     return <Redirect to="/admin" />;
   }
   if(status === 'succeeded') {
-    return <Redirect to={`/admin/event?id=${this.props.arrangementID}`} />;
+    return <Redirect to={`/admin/event?id=${props.arrangementID}`} />;
   }
   // might add some feedback on fail
   return (
@@ -102,11 +106,26 @@ const NewProgramEvent = props => {
         val={beskrivelse}
         updateValue={changeDescription}
       />
+      <DropdownRange
+        defaultValue={0}
+        defaultName="Klokkeslett"
+        from={9}
+        to={15}
+        value={klokkeslett}
+        suffix={':15'}
+        onChange={changeTime}
+      />
       <InputField
-        type="time"
-        label="Klokkeslett: "
-        val={klokkeslett}
-        updateValue={changeTime}
+        type="number"
+        label="Parallell: "
+        val={parallell}
+        updateValue={setParallell}
+      />
+      <InputField
+        type="number"
+        label="Varighet: "
+        val={varighet}
+        updateValue={setVarighet}
       />
       <DropdownMenu
         defaultValue={0}

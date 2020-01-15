@@ -23,7 +23,7 @@ const Company = props => {
   }
 
   const cancelEditing = () => {
-    this.setEditing(false);
+    setEditing(false);
   }
 
   const submitEdit = async () => {

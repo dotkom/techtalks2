@@ -682,7 +682,7 @@ router.post('/preCreateProgram', async (req, res) => {
 });
 
 router.post('/createProgramEvent', async (req, res) => {
-  const { token, arrangementID, bedriftID, navn, beskrivelse, romID, klokkeslett } = req.body;
+  const { token, arrangementID, bedriftID, navn, beskrivelse, romID, klokkeslett, parallell, varighet } = req.body;
   try {
     const { JWTKEY } = process.env;
     jwt.verify(token, JWTKEY);
@@ -696,8 +696,8 @@ router.post('/createProgramEvent', async (req, res) => {
   try {
     const connection = await connect();
     await connection.query(
-      'INSERT INTO ProgramHendelse(ArrangementID, Bedrift, Navn, Beskrivelse, RomID, Klokkeslett) VALUES (?, ?, ?, ?, ?, ?)',
-      [arrangementID, bedriftID, navn, beskrivelse, romID, klokkeslett]
+      'INSERT INTO ProgramHendelse(ArrangementID, Bedrift, Navn, Beskrivelse, RomID, Klokkeslett, Parallell, Varighet) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      [arrangementID, bedriftID, navn, beskrivelse, romID, klokkeslett, parallell, varighet]
     );
     res.json({
       status: 'succeeded'
