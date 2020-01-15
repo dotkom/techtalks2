@@ -15,7 +15,6 @@ const ProgramTable = styled.table`
     font-size: 1.4em;
   }
   & tr {
-    display: flex;
     flex-flow: row nowrap;
   }
   & td,th {
@@ -23,6 +22,7 @@ const ProgramTable = styled.table`
     flex: 1;
     &:first-child {
       flex: 0 0 4em;
+      width: 4em;
     }
   }
 `;
@@ -42,47 +42,47 @@ const Program = props => {
       {
         events.length ? (
           <ProgramTable>
-        <thead>
-          <tr>
-            <td></td>
-            {
-              parallells.map(i => <th key={i}>Parallell {i}</th>)
-            }
-          </tr>
-        </thead>
-        <tbody>
-          {
-            timeslots.map((timeslot, _)=>{
-              const rowEvents = events.filter(event=>event.tid.startsWith(timeslot));
-              return (
-                <tr key={timeslot}>
-                  <td>{timeslot}</td>
-                  {
-                    parallells.map(parallell => {
-                      const thisEvent = rowEvents.filter(event=>event.parallell === parallell);
-                      if(thisEvent.length) {
-                        const { navn,beskrivelse,varighet, bedrift, stedNavn, stedLink } = thisEvent[0];
-                        return (
-                          <td key={parallell} rowSpan={varighet}>
-                            <h3>
-                              {navn}
-                              <br />
-                              <a href={stedLink}>{stedNavn}</a>
-                            </h3>
-                            <p>{bedrift}</p>
-                            <p>{beskrivelse}</p>
-                          </td>
-                        )
+            <thead>
+              <tr>
+                <td></td>
+                {
+                  parallells.map(i => <th key={i}>Parallell {i}</th>)
+                }
+              </tr>
+            </thead>
+            <tbody>
+              {
+                timeslots.map((timeslot, timeIndex)=>{
+                  const rowEvents = events.filter(event=>event.tid.startsWith(timeslot));
+                  return (
+                    <tr key={timeslot}>
+                      <td>{timeslot}</td>
+                      {
+                        parallells.map(parallell => {
+                          const thisEvent = rowEvents.filter(event=>event.parallell === parallell);
+                          if(thisEvent.length) {
+                            const { navn, beskrivelse, varighet, bedrift, stedNavn, stedLink } = thisEvent[0];
+                            return (
+                              <td key={parallell} rowSpan={varighet}>
+                                <h3>
+                                  {navn}
+                                  <br />
+                                  <a href={stedLink}>{stedNavn}</a>
+                                </h3>
+                                <p>{bedrift}</p>
+                                <p>{beskrivelse}</p>
+                              </td>
+                            )
+                          }  
+                          return null;                    
+                        })
                       }
-                      return null;
-                    })
-                  }
-                </tr>
-              )
-            })
-          }
-        </tbody>
-      </ProgramTable>
+                    </tr>
+                  )
+                })
+              }
+            </tbody>
+          </ProgramTable>
         ) : (
           <h2>kommer snart</h2>
         )

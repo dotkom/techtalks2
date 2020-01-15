@@ -32,7 +32,6 @@ const NewProgramEvent = props => {
       };
       const res = await post('/db/preCreateProgram', req);
       const j = await res.json();
-      console.log(j);
       const { status, sponsors, rom } = j;
       if(status === 'succeeded') {
         setSponsors(sponsors);

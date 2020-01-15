@@ -17,7 +17,6 @@ const Rooms = () => {
       const res = await post('/db/getRooms', req);
       const j = await res.json();
       const { status, rooms } = j;
-      console.log(j);
       setStatus(status);
       setRooms(rooms);
     };

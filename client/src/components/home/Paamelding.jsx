@@ -34,7 +34,6 @@ const Paamelding = props => {
     };
     const res = await post('db/paamelding', req);
     const jsoned = await res.json();
-    console.log(jsoned);
     setStatus(jsoned.status);
   }
 
@@ -45,9 +44,7 @@ const Paamelding = props => {
   useEffect(() => {
     setTimeout(()=>{
       const ms = Math.max(0, PaameldingsDate - new Date());
-      console.log(`${ms} ms`);
       const seconds = Math.floor(ms/1000);
-      console.log(`${seconds} seconds`)
       setTimeLeft(seconds);
     }, 1000);
   }, [timeLeft, PaameldingsDate]);
