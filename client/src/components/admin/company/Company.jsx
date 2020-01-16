@@ -47,7 +47,7 @@ const Company = props => {
     } else {
       setStatus(status);
       setEditing(false);
-      handleUpdate({Navn:eNavn,Logo:eLogo,eType});
+      handleUpdate({Navn:eNavn,Logo:eLogo,sponsorType: eType});
     };
   }
 
