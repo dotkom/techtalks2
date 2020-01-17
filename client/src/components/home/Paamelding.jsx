@@ -32,7 +32,7 @@ const Paamelding = props => {
         allergier
       }),
     };
-    const res = await post('db/paamelding', req);
+    const res = await post('/db/paamelding', req);
     const jsoned = await res.json();
     setStatus(jsoned.status);
   }

@@ -16,7 +16,7 @@ const Validate = props => {
           hash: ha,
         })
       };
-      const res = await post('db/validering', req);
+      const res = await post('/db/validering', req);
       const jsoned = await res.json();
       const { status } = jsoned;
       setStatus(status);
