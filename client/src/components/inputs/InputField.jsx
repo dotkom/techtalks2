@@ -16,7 +16,7 @@ const InputField = props => {
     <div>
       <label htmlFor={id}>
         <span>{label}</span>
-        <input key={id} type={type} onChange={e => updateValue(e.target.value)} id={id} value={val} disabled={disabled} />
+        <input key={id} type={type} onChange={e => updateValue(type === "checkbox" ? e.target.checked : e.target.value)} id={id} value={val} disabled={disabled} />
       </label>
     </div>
   );

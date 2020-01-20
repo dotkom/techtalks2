@@ -61,9 +61,9 @@ const Program = props => {
                         parallells.map(parallell => {
                           const thisEvent = rowEvents.filter(event=>event.parallell === parallell);
                           if(thisEvent.length) {
-                            const { navn, beskrivelse, varighet, bedrift, stedNavn, stedLink } = thisEvent[0];
+                            const { navn, beskrivelse, varighet, bedrift, stedNavn, stedLink, alleParalleller } = thisEvent[0];
                             return (
-                              <td key={parallell} rowSpan={varighet}>
+                              <td key={parallell} rowSpan={varighet} colSpan={alleParalleller ? antallParalleller : 1}>
                                 <h3>
                                   {navn}
                                   <br />

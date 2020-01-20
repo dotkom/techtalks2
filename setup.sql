@@ -50,6 +50,7 @@ CREATE TABLE ProgramHendelse(
   Varighet INT NOT NULL DEFAULT 1,
   RomID INT,
   Parallell INT NOT NULL,
+  AlleParalleller BOOLEAN NOT NULL DEFAULT FALSE,
   FOREIGN KEY (ArrangementID) REFERENCES Arrangement(ArrangementID),
   FOREIGN KEY (Bedrift, ArrangementID) REFERENCES Sponsor(BedriftID, ArrangementID),
   FOREIGN KEY (RomID) REFERENCES Rom(RomID),

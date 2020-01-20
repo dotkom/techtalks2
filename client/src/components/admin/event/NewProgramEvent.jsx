@@ -18,6 +18,7 @@ const NewProgramEvent = props => {
   const [klokkeslett, changeTime] = useState(0);
   const [romID, changeRoom] = useState(0);
   const [parallell, setParallell] = useState(1);
+  const [alleParalleller, setAlleParalleller] = useState(false);
   const [varighet, setVarighet] = useState(1);
 
   useEffect(()=>{
@@ -58,6 +59,7 @@ const NewProgramEvent = props => {
         klokkeslett: `${klokkeslett}:15`,
         romID,
         parallell,
+        alleParalleller,
         varighet
       })
     };
@@ -125,6 +127,12 @@ const NewProgramEvent = props => {
         label="Varighet: "
         val={varighet}
         updateValue={setVarighet}
+      />
+      <InputField
+        type="checkbox"
+        label="Alle paralleller? "
+        val={alleParalleller}
+        updateValue={setAlleParalleller}
       />
       <DropdownMenu
         defaultValue={0}
