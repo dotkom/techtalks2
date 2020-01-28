@@ -266,7 +266,7 @@ router.post('/allCompanies', async (req, res) => {
       `SELECT Bedrift.BedriftID AS BedriftID, Bedrift.Navn AS Navn, Bedrift.Logo AS Logo, Sponsor.SponsorType AS sponsorType
       FROM Bedrift LEFT JOIN Sponsor ON Bedrift.BedriftID=Sponsor.BedriftID
       WHERE Sponsor.ArrangementID=? OR Sponsor.ArrangementID IS NULL
-      GROUP BY Bedrift.BedriftID`,
+      GROUP BY ArrangementID, Bedrift.BedriftID`,
       [arrID]
     );
     const bedrifter = results[0];

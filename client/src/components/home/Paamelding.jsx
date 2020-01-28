@@ -4,7 +4,12 @@ import styled from 'styled-components';
 import { post } from '../../utils/apiCalls.js';
 import InputField from '../inputs/InputField.jsx';
 
-const Wrapper = styled.div`
+const OuterWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const InnerWrapper = styled.div`
   text-align: left;
   display: flex;
   flex-direction: column;
@@ -52,10 +57,10 @@ const Paamelding = props => {
 
   if (PaameldingsStart === '') {
     return (
-      <Wrapper>
+      <OuterWrapper>
         <h2 id="paamelding">Påmelding</h2>
-        <p>Laster inn...</p>
-      </Wrapper>
+        <h3>Kommer snart</h3>
+      </OuterWrapper>
     );
   }
 
@@ -73,69 +78,73 @@ const Paamelding = props => {
     const revisedStringList = stringList.filter((_, i) => list[i] > 0);
     if (revisedStringList.length === 1) {
       return (
-        <Wrapper>
+        <OuterWrapper>
           <h2 id="paamelding">Påmelding</h2>
           <h3>Påmeldingen åpner om {revisedStringList[0]}</h3>
-        </Wrapper>
+        </OuterWrapper>
       );
     }
     const final = revisedStringList.pop();
     const finalString = `${revisedStringList.join(', ')} og ${final}`;
     return (
-      <Wrapper>
+      <OuterWrapper>
         <h2 id="paamelding">Påmelding</h2>
-    <h3>Påmeldingen åpner om {finalString}</h3>
-      </Wrapper>
+        <h3>Påmeldingen åpner om {finalString}</h3>
+      </OuterWrapper>
     );
   }
   if (status === 'succeeded') {
     return (
-      <Wrapper>
+      <OuterWrapper>
         <h2 id="paamelding">Påmelding</h2>
-        <p>
-          Du vil snart få en bekreftelses e-post sendt til {epost}.
-          <br />
-          <b>OBS! Du er ikke påmeldt før du har verifisert påmeldingen din</b>
-        </p>
-      </Wrapper>
+        <InnerWrapper>
+          <p>
+            Du vil snart få en bekreftelses e-post sendt til {epost}.
+            <br />
+            <b>OBS! Du er ikke påmeldt før du har verifisert påmeldingen din</b>
+          </p>
+        </InnerWrapper>
+      </OuterWrapper>
     );
   }
   return (
-    <Wrapper>
+    <OuterWrapper>
       <h2 id="paamelding">Påmelding</h2>
-      <h3>{`${AntallPåmeldte} av ${AntallPlasser} påmeldt`}</h3>
-      { 
-        AntallPåmeldte < AntallPlasser ? (
-          <div>
-            <InputField type="text" updateValue={updateName} label="Navn: " id="paameldingNavn" val={navn} />
-            <InputField type="text" updateValue={updateEmail} label="E-post: " id="paameldingEpost" val={epost} />
-            <InputField
-              type="text"
-              updateValue={updateLinje}
-              label="Linjeforening: "
-              id="paameldingLinje"
-              val={linjeforening}
-            />
-            <InputField type="number" updateValue={updateAge} label="Alder: " id="paameldingAlder" val={alder} />
-            <InputField
-              type="number"
-              updateValue={updateYear}
-              label="Studieår: "
-              id="paameldingStudieaar"
-              val={studieår}
-            />
-            <InputField
-              type="text"
-              updateValue={updateAllergies}
-              label="Allergier: "
-              id="paameldingAllergier"
-              val={allergier}
-            />
-            <button onClick={submitForm}>Meld meg på</button>
-          </div>
-        )  : <p>Arrangementet er fullt</p>
-      }
-    </Wrapper>
+      <InnerWrapper>
+        <h3>{`${AntallPåmeldte} av ${AntallPlasser} påmeldt`}</h3>
+        { 
+          AntallPåmeldte < AntallPlasser ? (
+            <div>
+              <InputField type="text" updateValue={updateName} label="Navn: " id="paameldingNavn" val={navn} />
+              <InputField type="text" updateValue={updateEmail} label="E-post: " id="paameldingEpost" val={epost} />
+              <InputField
+                type="text"
+                updateValue={updateLinje}
+                label="Linjeforening: "
+                id="paameldingLinje"
+                val={linjeforening}
+              />
+              <InputField type="number" updateValue={updateAge} label="Alder: " id="paameldingAlder" val={alder} />
+              <InputField
+                type="number"
+                updateValue={updateYear}
+                label="Studieår: "
+                id="paameldingStudieaar"
+                val={studieår}
+              />
+              <InputField
+                type="text"
+                updateValue={updateAllergies}
+                label="Allergier: "
+                id="paameldingAllergier"
+                val={allergier}
+              />
+              <button onClick={submitForm}>Meld meg på</button>
+            </div>
+          )  : <p>Arrangementet er fullt</p>
+        }
+      </InnerWrapper>
+    </OuterWrapper>
   );
 }
 

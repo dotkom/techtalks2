@@ -4,6 +4,8 @@ import styled from 'styled-components';
 const Wrapper = styled.div`
   flex: 1;
   margin: 0;
+  display: flex;
+  flex-direction: column;
 `;
 
 const ProgramTable = styled.table`
@@ -84,7 +86,7 @@ const Program = props => {
             </tbody>
           </ProgramTable>
         ) : (
-          <h2>kommer snart</h2>
+          <h3>Kommer snart</h3>
         )
       }
     </Wrapper>
