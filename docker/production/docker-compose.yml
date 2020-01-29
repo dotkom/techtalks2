@@ -4,29 +4,36 @@ services:
     image: mysql:5.7
     ports:
       - 3306
+    environment:
+      MYSQL_USER: "${MYSQL_USER}"
+      MYSQL_DATABASE: "${MYSQL_DATABASE}"
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
     volumes:
      - ../../setup.sql:/docker-entrypoint-initdb.d/setup.sql
      - ./sql:/var/lib/mysql
-    environment:
-      MYSQL_USER: app
-      MYSQL_DATABASE: techtalks
-      MYSQL_PASSWORD: password
-      MYSQL_ROOT_PASSWORD: password
   server: # keep name for proxying to work
-    image: node
-    entrypoint: # This allows us to not need a custom dockerfile for this setup
-      - bash
-      - "-c"
-      - "npm install && npm start"
-    working_dir: /srv/techtalks-server
+    build:
+      context: ../../
+      dockerfile: docker/production/Dockerfile.backend
     environment:
       NODE_ENV: production
+      DBHOST: "mysql"
+      DBUSER: "${MYSQL_USER}"
+      DBPASS: "${MYSQL_PASSWORD}"
+      DBNAME: "${MYSQL_DATABASE}"
+      # Email information
+      MAILUSER: "${MAILUSER}"
+      MAILPASS: "${MAILPASS}"
+      # JWT
+      JWTKEY: "${JWTKEY}"
+      # Admin Login
+      AUNAME: "${AUNAME}"
+      APASS: "${APASS}"
     links:
       - mysql
     ports:
-      - 9000
-    volumes:
-      - ../../api:/srv/techtalks-server
+      - 9000:9000
   frontend:
     build:
       context: ../../
@@ -35,5 +42,3 @@ services:
       - server
     ports:
       - 80:80
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
