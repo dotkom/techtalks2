@@ -3,8 +3,11 @@ import styled from 'styled-components';
 
 const Wrapper = styled.div`
   width: 100wv;
-  height: 15em;
-  background-color: #383c3c;
+  height: 20em;
+  margin: auto;
+  max-width: 70em;
+  background-color: #181B1E;
+  z-index:10;
 `;
 
 const Logo = styled.img`
