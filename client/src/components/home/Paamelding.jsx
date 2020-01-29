@@ -23,7 +23,7 @@ const Paamelding = props => {
   const [studieår, updateYear] = useState('');
   const [allergier, updateAllergies] = useState('');
   const [status, setStatus] = useState('');
-  const [timeLeft, setTimeLeft] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(NaN);
   
 
   const submitForm = async () => {
@@ -46,6 +46,12 @@ const Paamelding = props => {
   const { AntallPlasser, AntallPåmeldte, PaameldingsStart } = event;
   const PaameldingsDate = new Date(PaameldingsStart);
   
+  useEffect(() => {
+    const ms = Math.max(0, PaameldingsDate - new Date());
+    const seconds = Math.floor(ms/1000);
+    setTimeLeft(seconds);
+  }, [PaameldingsDate])
+
   useEffect(() => {
     setTimeout(()=>{
       const ms = Math.max(0, PaameldingsDate - new Date());

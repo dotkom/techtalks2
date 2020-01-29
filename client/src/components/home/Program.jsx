@@ -31,7 +31,15 @@ const ProgramTable = styled.table`
 
 const Program = props => {
   const { events } = props;
-  const timeslots = ['09:15',  '10:15', '11:15', '12:15', '13:15', '14:15', '15:15'];
+  const times = events.map(({tid}) => tid.substring(0, 5));
+  const timeslots = [];
+  //try to find all unique timeslots
+  times.sort();
+  times.forEach((time) => {
+    if(timeslots.length === 0 || timeslots[timeslots.length - 1] !== time) {
+      timeslots.push(time);
+    }
+  });
   const antallParalleller = events.reduce((a, b) => Math.max(a, b.parallell), 0);
   const parallells = [];
   for(let i = 1; i <= antallParalleller; i++) {
