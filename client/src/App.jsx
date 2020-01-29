@@ -27,13 +27,6 @@ const BallContainer = styled.img`
   width: 100%;
 `;
 
-const FancyLines = styled.img`
-  width: 100%;
-  bottom: 10em;
-  position: absolute;
-  z-index: -1;
-`;
-
 
 function App() {
   return (

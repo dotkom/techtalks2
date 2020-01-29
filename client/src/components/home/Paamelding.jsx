@@ -201,16 +201,16 @@ const Paamelding = props => {
         <CenteredH2>Også påmelding hos:</CenteredH2>
         <LinjeforeningContainer>
           <LinjeforeningWrapper href="https://online.ntnu.no/events/795/tech-talks-2020/">
-            <img src="https://online.ntnu.no/static/img/online_logo.svg" />
+            <img src="https://online.ntnu.no/static/img/online_logo.svg" alt="Logo for linjeforeningen Online"/>
             <p>Online(For informatikk)</p>
           </LinjeforeningWrapper>
           <LinjeforeningWrapper href="https://abakus.no/events/2602">
-            <img src="https://abakus.no/7df72c5a291dc020b1d5d191ba50d871.png" />
+            <img src="https://abakus.no/7df72c5a291dc020b1d5d191ba50d871.png" alt="Logo for linjeforeningen Abakus"/>
             <p>Abakus(For Datateknologi og Kybernetikk)</p>
           </LinjeforeningWrapper>
           <LinjeforeningWrapper href="https://tihlde.org/arrangementer/73/">
-            <img src={thildeLogo} />
-            <p>Thilde(Dataingeniør, Digital infrastruktur og cybersikkerhet, Digital forretningsutvikling og Digital samhandling)</p>
+            <img src={thildeLogo} alt="Logo for linjeforeningen Tihlde"/>
+            <p>Tihlde(Dataingeniør, Digital infrastruktur og cybersikkerhet, Digital forretningsutvikling og Digital samhandling)</p>
           </LinjeforeningWrapper>
         </LinjeforeningContainer>
       </FlexInner>
