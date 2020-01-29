@@ -7,6 +7,7 @@ client/.pnp.js
 
 # production
 client/build
+docker/production/.env
 
 # misc
 .DS_Store

@@ -213,6 +213,7 @@ router.post('/validering', async (req, res) => {
 router.post('/adminLogin', (req, res) => {
   const { username, password } = req.body;
   const { AUNAME, APASS } = process.env;
+  console.log(`From env: ${AUNAME} ${APASS}`)
   if (username === AUNAME && password === APASS) {
     const key = process.env.JWTKEY;
     const token = jwt.sign({ foo: 'bar' }, key, { expiresIn: '30m' });

@@ -35,11 +35,25 @@ steps:
         from_secret: docker_username
       password:
         from_secret: docker_password
-      repo: registry.online.ntnu.no/dotkom/techtalks2
+      repo: registry.online.ntnu.no/dotkom/techtalks2/backend
+      registry: registry.online.ntnu.no
+      dockerfile: docker/production/Dockerfile.backend
+      auto_tag: true
+  - name: publish-frontend
+    image: plugins/docker
+    secrets: [docker_username, docker_password, sentry_dsn]
+    when:
+      event: push
+      branch: master
+      status: success
+    settings:
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
+      repo: registry.online.ntnu.no/dotkom/techtalks2/frontend
       registry: registry.online.ntnu.no
       dockerfile: docker/production/Dockerfile.nginx
-      build_args:
-        - SENTRY_DSN
       auto_tag: true
 # TODO deploy! :D
 # client/build må lastes opp og serveres med nginx satt opp for å servere react

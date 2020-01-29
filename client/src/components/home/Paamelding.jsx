@@ -154,9 +154,12 @@ const Paamelding = props => {
         <h2 id="paamelding">Påmelding</h2>
         <p>
           Du vil snart få en bekreftelses e-post sendt til {epost}.
-          <br />
+        </p>
+        <div>
+        <p>
           <b>OBS! Du er ikke påmeldt før du har verifisert påmeldingen din</b>
         </p>
+        </div>
       </Wrapper>
     );
   }
