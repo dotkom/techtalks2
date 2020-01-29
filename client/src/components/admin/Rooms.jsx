@@ -4,7 +4,7 @@ import { post } from '../../utils/apiCalls.js';
 
 const Rooms = () => {
   const [rooms, setRooms] = useState([]);
-  const [status, setStatus] = useState('waiting');
+  const [_, setStatus] = useState('waiting');
 
   useEffect(()=>{
     const internal = async () => {
