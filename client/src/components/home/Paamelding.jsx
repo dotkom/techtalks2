@@ -209,8 +209,8 @@ const Paamelding = props => {
             <p>Abakus(For Datateknologi og Kybernetikk)</p>
           </LinjeforeningWrapper>
           <LinjeforeningWrapper href="https://tihlde.org/arrangementer/73/">
-            <img src={thildeLogo} alt="Logo for linjeforeningen Thilde"/>
-            <p>Thilde(Dataingeniør, Digital infrastruktur og cybersikkerhet, Digital forretningsutvikling og Digital samhandling)</p>
+            <img src={thildeLogo} alt="Logo for linjeforeningen Tihlde"/>
+            <p>Tihlde(Dataingeniør, Digital infrastruktur og cybersikkerhet, Digital forretningsutvikling og Digital samhandling)</p>
           </LinjeforeningWrapper>
         </LinjeforeningContainer>
       </FlexInner>
