@@ -3,7 +3,15 @@ import styled from 'styled-components';
 
 import { post } from '../../utils/apiCalls.js';
 
-const Wrapper = styled.div``;
+const Wrapper = styled.div`
+max-width: 70em;
+  margin: 0 auto;
+  z-index: 0;
+  background-color: #181B1E;
+  box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+
+  color: #fff;
+  `;
 
 const Validate = props => {
   const [status, setStatus] = useState('waiting');

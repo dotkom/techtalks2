@@ -9,7 +9,6 @@ import Program from './Program';
 import Paamelding from './Paamelding';
 
 const Wrapper = styled.div`
-  min-height: calc(100vh - 14em);
   max-width: 70em;
   margin: 0 auto;
   z-index: 0;
@@ -25,6 +24,7 @@ const Content = styled.div`
   & > div {
     padding: 3em;
     flex: 1;
+    border-bottom: 1px solid #333333;
   }
   & > div:first-child {
     /*margin-top: 3em; */
@@ -42,7 +42,6 @@ const Content = styled.div`
     }*/
   }
   & > div:nth-child(2n) {
-    box-shadow: 0 0 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
     z-index: 2;
   }
 `;

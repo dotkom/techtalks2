@@ -9,7 +9,7 @@ const Wrapper = styled.div`
   width: 100vw;
   min-height: 100vh;
   z-index: -100;
-  background-color: #488582; 
+  background-color: #292929; 
   background-size: 100%;
   background-repeat: repeat-y;
   position: absolute;
@@ -17,18 +17,14 @@ const Wrapper = styled.div`
   margin: 0px;
   font-family: 'Roboto', sans-serif;
   font-size: 1em;
-  background-image: url("/dots.svg");
-  background-repeat: repeat;
+  overflow: hidden;
+
 `;
 
-const BallContainer = styled.svg`
-position: absolute;
+const BallContainer = styled.img`
+  position: absolute;
   z-index:-1;
-  top: -75em;
-  left: 50%;
   width: 100%;
-  height: 200em;
-  transform: translate(-50%, -50%);
 `;
 
 const FancyLines = styled.img`
@@ -42,7 +38,7 @@ const FancyLines = styled.img`
 function App() {
   return (
     <Wrapper>
-      <FancyLines src="/fancyLines.svg" />
+      <BallContainer src="/triangle.svg" />
       <Header />
       <MainBody />
       <Footer />
