@@ -29,12 +29,11 @@ services:
       - ../../api:/srv/techtalks-server
   frontend:
     build:
-      context: .
-      dockerfile: Dockerfile.nginx
+      context: ../../
+      dockerfile: docker/production/Dockerfile.nginx
     links:
       - server
     ports:
       - 80:80
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
-      - ../../client/build:/var/www/techtalks-frontend

@@ -2,4 +2,9 @@ FROM alpine:3.8
 
 RUN apk add --no-cache nginx
 
+RUN apk add --update --no-cache nodejs npm
+
+COPY ./client/ /tmp
+RUN cd /tmp && npm install && npm run build && mv build /var/www/techtalks-frontend
+
 ENTRYPOINT nginx
