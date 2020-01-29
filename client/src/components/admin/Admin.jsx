@@ -12,13 +12,23 @@ import NewProgramEvent from './event/NewProgramEvent.jsx';
 import ImportCompany from './company/ImportCompany.jsx';
 import Rooms from './Rooms.jsx'
 import NewRoom from './NewRoom.jsx'
+import styled from 'styled-components';
 
+const Wrapper = styled.div`
+  max-width: 70em;
+  margin: 0 auto;
+  z-index: 0;
+  background-color: #181B1E;
+  box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+
+  color: #fff;
+`;
 
 const Admin = props => {
   const U = new URL(window.location.href);
   const params = U.searchParams;
   return (
-    <div>
+    <Wrapper>
       <BrowserRouter>
         <Route path='/admin/' exact component={AdminLogin} />
         <Route path='/admin/main' component={AdminPanel} />
@@ -32,7 +42,7 @@ const Admin = props => {
         <Route path='/admin/rooms' component={Rooms} />
         <Route path='/admin/newRoom' component={NewRoom} />
       </BrowserRouter>
-    </div>
+    </Wrapper>
   );
 }
 

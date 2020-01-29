@@ -9,12 +9,12 @@ import Program from './Program';
 import Paamelding from './Paamelding';
 
 const Wrapper = styled.div`
-  min-height: calc(100vh - 14em);
-  max-width: 50em;
+  max-width: 70em;
   margin: 0 auto;
-  padding: 1em 0.5em;
   z-index: 0;
-  background-color: #383c3c;
+  background-color: #181B1E;
+  box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+
   color: #fff;
 `;
 
@@ -24,20 +24,25 @@ const Content = styled.div`
   & > div {
     padding: 3em;
     flex: 1;
+    border-bottom: 1px solid #333333;
   }
   & > div:first-child {
-    margin-top: 3em;
+    /*margin-top: 3em; */
   }
   & > div:last-child {
-    margin-bottom: 3em;
+    /*margin-bottom: 3em;*/
   }
   & > div:nth-child(2n+1) {
-    color: #000;
-    background-color: #fff;
-    transform: skew(0deg, -8deg);
+
+    /*color: #000;*/
+    /*background-color: #fff;*/
+    /*transform: skew(0deg, -8deg);
     & > * {
       transform: skew(0deg, 8deg);
-    }
+    }*/
+  }
+  & > div:nth-child(2n) {
+    z-index: 2;
   }
 `;
 

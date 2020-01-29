@@ -10,7 +10,7 @@ const UL = styled.ul`
 
 const AdminPanel = () => (
   <div>
-    <h1>Hey there fella, what would you like to do?</h1>
+    <h1>Congratulations, hacker! You now have full control of the Tech Talks site! what would you like to do?</h1>
     <UL>
       <li>
         <a href="/admin/companies">Se selskaper</a>
@@ -20,6 +20,9 @@ const AdminPanel = () => (
       </li>
       <li>
         <a href="/admin/rooms">Se rom</a>
+      </li>
+      <li>
+        <a href="https://i.kym-cdn.com/photos/images/newsfeed/000/771/614/c2d.jpg">Explode</a>
       </li>
     </UL>
   </div>

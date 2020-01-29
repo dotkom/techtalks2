@@ -11,17 +11,20 @@ const Wrapper = styled.div`
 const ProgramTable = styled.table`
   word-break: break-word;
   width: 100%;
-  border: 1px solid #ccc;
+  border: 1px solid #333333;
   border-collapse: collapse;
   & th {
     font-size: 1.4em;
   }
   & tr {
+    display: flex;
     flex-flow: row nowrap;
   }
   & td,th {
-    border: 1px solid #ccc;
+    border: 1px solid #333333;
     flex: 1;
+    flex-basis: 0;
+    flex-grow: 1;
     &:first-child {
       flex: 0 0 4em;
       width: 4em;

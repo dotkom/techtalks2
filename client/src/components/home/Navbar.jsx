@@ -2,13 +2,16 @@ import React from 'react';
 import styled from 'styled-components';
 
 const NavbarWrapper = styled.nav`
-  margin: 0px 0px 100px;
-  flex: 1;
-  background-color: #383c3c;
+  background-color: #181B1E;
   z-index: 0;
   display: flex;
   flex-flow: row wrap;
   justify-content: space-around;
+`;
+
+const NavbarA = styled.a`
+  flex-grow: 1;
+  flex-basis: 0;
 `;
 
 const Knapp = styled.div`
@@ -46,7 +49,7 @@ const Navbar = () => {
   ];
   return (
     <NavbarWrapper>
-      {NavOptions.map(({id,name})=><a key={id} href={`#${id}`}><Knapp><NavbarText>{name}</NavbarText></Knapp></a>)}
+      {NavOptions.map(({id,name})=><NavbarA key={id} href={`#${id}`}><Knapp><NavbarText>{name}</NavbarText></Knapp></NavbarA>)}
     </NavbarWrapper>
   );
 };
