@@ -1,0 +1,50 @@
+name: Publish
+on:
+  push:
+    branches:
+      - master
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      #Required to send data to github
+      - uses: actions/checkout@v1
+      #Installing Deps
+      - name: Deps for Backend
+        working-directory: ./api
+        run: npm install
+      - name: Deps for Frontend
+        working-directory: ./client
+        run: npm install
+      #Linting Code
+      - name: Linting Backend
+        working-directory: ./api
+        run: npm run lint
+      - name: Linting Frontend
+        working-directory: ./client
+        run: npm run lint
+      #Compiling Code
+      - name: Compile Frontend
+        working-directory: ./client
+        run: npm run-script build
+      #Publish to registry
+      - name: Publish backend to registry
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: techtalks/backend
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          registry: registry.online.ntnu.no
+          tag_names: true
+          workdir: ./
+          dockerfile: ./docker/production/Dockerfile.node
+      - name: Publish frontend to registry
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: techtalks/frontend
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          registry: registry.online.ntnu.no
+          tag_names: true
+          workdir: ./
+          dockerfile: ./docker/production/Dockerfile.nginx
