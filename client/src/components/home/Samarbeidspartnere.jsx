@@ -24,7 +24,6 @@ const Partners = styled.div`
 const Img = styled.img`
   max-height: 15em;
   max-width: 30%;
-  background-color: white;
   margin: 0.5em 0.2em;
   padding: 0.2em;
 `;
