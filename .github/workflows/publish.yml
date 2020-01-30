@@ -19,10 +19,10 @@ jobs:
       #Linting Code
       - name: Linting Backend
         working-directory: ./api
-        run: npm run lint
+        run: npm run lint-eslint
       - name: Linting Frontend
         working-directory: ./client
-        run: npm run lint
+        run: npm run lint-eslint
       #Compiling Code
       - name: Compile Frontend
         working-directory: ./client
