@@ -9,9 +9,10 @@ const Wrapper = styled.div`
 const BigImg = styled.img`
   max-height: 20em;
   max-width: 50%;
-  background-color: white;
   margin: 0.5em;
   padding: 1em;
+  filter: brightness(0) invert(1);
+  image-rendering: smooth;
 `;
 
 const Partners = styled.div`
@@ -24,8 +25,11 @@ const Partners = styled.div`
 const Img = styled.img`
   max-height: 15em;
   max-width: 30%;
+  height: auto;
   margin: 0.5em 0.2em;
   padding: 0.2em;
+  filter: brightness(0) invert(1);
+  image-rendering: smooth;
 `;
 
 const Samarbeidspartnere = props => {

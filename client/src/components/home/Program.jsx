@@ -51,7 +51,6 @@ const Program = props => {
   
   return (
     <Wrapper>
-      <h2 id="program">Program</h2>
       {
         events.length ? (
           <ProgramTable>

@@ -6,6 +6,7 @@ import Navbar from './Navbar';
 import About from './About';
 import Samarbeidspartnere from './Samarbeidspartnere';
 import Program from './Program';
+import Overview from './Overview';
 import Paamelding from './Paamelding';
 
 const Wrapper = styled.div`
@@ -74,6 +75,7 @@ const Home = () => {
     <Wrapper>
       <Navbar />
       <Content>
+        <Overview events={program} />
         <Program events={program} />
         <Samarbeidspartnere partners={partners} />
         <Paamelding event={event} />

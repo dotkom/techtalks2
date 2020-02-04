@@ -207,7 +207,7 @@ const Paamelding = props => {
           </LinjeforeningWrapper>
           <LinjeforeningWrapper href="https://abakus.no/events/2602">
             <img src="https://abakus.no/7df72c5a291dc020b1d5d191ba50d871.png" alt="Logo for linjeforeningen Abakus"/>
-            <p>Abakus(For Datateknologi og Kybernetikk)</p>
+            <p>Abakus(For Datateknologi og Kommunikasjonsteknologi)</p>
           </LinjeforeningWrapper>
           <LinjeforeningWrapper href="https://tihlde.org/arrangementer/73/">
             <img src={thildeLogo} alt="Logo for linjeforeningen Tihlde"/>
