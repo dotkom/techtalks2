@@ -23,7 +23,7 @@ function ProgramElement(title, place, time, needsRegistration) {
               <h2>{title}</h2>
               <p>{place}</p>
               <p>{time}</p>
-              <p>{ needsRegistration ? (<b>Krver påmelding</b>) : (<b>Åpent for alle</b>)}</p>
+              <p>{ needsRegistration ? (needsRegistration == 2 ? (<b>Krver egen påmelding</b>) : (<b>Krver påmelding</b>)) : (<b>Åpent for alle</b>)}</p>
               </PartContainer>);
 }
 
@@ -41,7 +41,7 @@ const Overview = props => {
       {
         fullEvents.length ? (
           fullEvents.map(event =>{
-            return ProgramElement(event.navn, event.stedNavn, event.tid, true);
+            return ProgramElement(event.navn, event.stedNavn, event.tid, event.navn.toLowerCase().indexOf("frokost") !== -1 ? 2 : 1);
           })
         ) : (
           <h3>Laster...</h3>
