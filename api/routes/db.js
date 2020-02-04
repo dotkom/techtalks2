@@ -4,31 +4,8 @@ const router = express.Router();
 const mysql = require('mysql2/promise');
 const md5 = require('md5');
 const jwt = require('jsonwebtoken');
-const nodemailer = require('nodemailer');
 
-const key = require('../key.json');
-
-const createTransporter = async () => {
-  const { MAILUSER } = process.env;
-  const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 465,
-    secure: true,
-    auth: {
-      type: 'OAuth2',
-      user: MAILUSER,
-      serviceClient: key.client_id,
-      privateKey: key.private_key
-    }
-  });
-  try {
-    await transporter.verify();
-    return transporter;
-  } catch (err) {
-    console.log(err);
-    return null;
-  }
-}
+const sendMail = require('./sendEmail.js');
 
 
 function connect() {
@@ -52,25 +29,16 @@ function connectPool() {
 }
 
 async function sendConfirmation(email, hash) {
-  const { MAILUSER } = process.env;
-  const transporter = await createTransporter();
-  if (transporter === null) {
-    return;
-  }
   const mailOptions = {
-    from: `Tech Talks <${MAILUSER}>`, // sender address
     to: email, // list of receivers
     subject: 'Bekreftelse av påmelding', // Subject line
     html: `<p>For å validere påmeldingen din, trykk på denne lenken:<br/>
     <a href="http://techtalks.no/validate?ha=${hash}"><b>http://techtalks.no/validate?ha=${hash}</b></a></p>` // plain text body
   };
-  transporter.sendMail(mailOptions, (response) => {
-    const {err, info} = response;
-    console.log(response);
+  sendMail(mailOptions, (response) => {
+    const { err } = response; // don't need the message for now
     if (err) {
       console.log(err);
-    } else {
-      console.log(info);
     }
   });
 }
@@ -156,7 +124,7 @@ router.post('/paamelding', async (req, res) => {
   connection.end();
   const { affectedRows } = response[0];
   if (affectedRows === 1) {
-    sendConfirmation(epost, hash)
+    sendConfirmation(epost, hash);
     res.json({
       status: 'succeeded',
     });
@@ -213,7 +181,6 @@ router.post('/validering', async (req, res) => {
 router.post('/adminLogin', (req, res) => {
   const { username, password } = req.body;
   const { AUNAME, APASS } = process.env;
-  console.log(`From env: ${AUNAME} ${APASS}`)
   if (username === AUNAME && password === APASS) {
     const key = process.env.JWTKEY;
     const token = jwt.sign({ foo: 'bar' }, key, { expiresIn: '30m' });
@@ -288,7 +255,6 @@ router.post('/allCompanies', async (req, res) => {
 
 router.post('/newCompany', async (req, res) => {
   const { token, navn, logo, lokaltBilde, sponsorType } = req.body;
-  console.log(JSON.stringify({navn, logo, lokaltBilde, sponsorType}));
   const isImageLocal = lokaltBilde ? true : false;  // force boolean value, also if undefined
   try {
     const { JWTKEY } = process.env;

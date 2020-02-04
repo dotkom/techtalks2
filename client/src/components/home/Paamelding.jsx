@@ -104,7 +104,7 @@ const Paamelding = props => {
     }, 1000);
   }, [timeLeft, PaameldingsDate]);
 
-  if (PaameldingsStart === "" || timeLeft === NaN) {
+  if (PaameldingsStart === "" || isNaN(timeLeft)) {
     return (
       <Wrapper>
         <h2 id="paamelding">Påmelding</h2>
