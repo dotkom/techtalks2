@@ -18,6 +18,7 @@ const Companies = props => {
       };
       const res = await post('/db/allCompanies', req);
       const j = await res.json();
+      console.log(j);
       const { status, bedrifter } = j;
       setStatus(status);
       setCompanies(bedrifter);
@@ -39,7 +40,9 @@ const Companies = props => {
     <div>
       <h1>Alle selskaper</h1>
       <p>
-        <a href="/admin/importCompany">Legg til nytt selskap</a>
+        <a href="/admin/newCompany">Legg til nytt selskap</a>
+        <br />
+        <a href="/admin/importCompany">Importer selskap fra OW</a>
       </p>
       <table>
         <thead>
@@ -51,12 +54,13 @@ const Companies = props => {
           </tr>
         </thead>
         <tbody>
-          {companies.map(({ BedriftID, Navn, Logo, sponsorType }, index) => (
+          {companies.map(({ BedriftID, Navn, Logo, sponsorType, local }, index) => (
             <Company
               key={BedriftID}
               bedriftID={BedriftID}
               navn={Navn}
               logo={Logo}
+              local={local}
               sponsorType={sponsorType}
               handleUpdate={values=>updateCompany(index, values)}
             />

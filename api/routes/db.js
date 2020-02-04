@@ -86,7 +86,7 @@ router.get('/home', async (_, res) => {
     const pool = connectPool();
     const [partnersResponse, programResponse, paameldteResponse] = await Promise.all([
       pool.query(
-        'SELECT Bedrift.Navn AS name, Bedrift.Logo AS url, Sponsor.SponsorType as sponsorType FROM Bedrift INNER JOIN Sponsor ON Bedrift.BedriftID=Sponsor.BedriftID WHERE Sponsor.ArrangementID = ? ORDER BY sponsorType DESC',
+        'SELECT Bedrift.Navn AS name, Bedrift.Logo AS url, Bedrift.LokaltBilde AS local, Sponsor.SponsorType as sponsorType FROM Bedrift INNER JOIN Sponsor ON Bedrift.BedriftID=Sponsor.BedriftID WHERE Sponsor.ArrangementID = ? ORDER BY sponsorType DESC',
         [arrID]
       ),
       pool.query(
@@ -264,7 +264,7 @@ router.post('/allCompanies', async (req, res) => {
     ))[0][0];
     const arrID = event.ArrangementID;
     const results = await connection.query(
-      `SELECT Bedrift.BedriftID AS BedriftID, Bedrift.Navn AS Navn, Bedrift.Logo AS Logo, Sponsor.SponsorType AS sponsorType
+      `SELECT Bedrift.BedriftID AS BedriftID, Bedrift.Navn AS Navn, Bedrift.Logo AS Logo, Bedrift.LokaltBilde AS local, Sponsor.SponsorType AS sponsorType
       FROM Bedrift LEFT JOIN Sponsor ON Bedrift.BedriftID=Sponsor.BedriftID
       WHERE Sponsor.ArrangementID=? OR Sponsor.ArrangementID IS NULL
       GROUP BY ArrangementID, Bedrift.BedriftID`,
@@ -287,7 +287,9 @@ router.post('/allCompanies', async (req, res) => {
 });
 
 router.post('/newCompany', async (req, res) => {
-  const { token, navn, logo, sponsorType } = req.body;
+  const { token, navn, logo, lokaltBilde, sponsorType } = req.body;
+  console.log(JSON.stringify({navn, logo, lokaltBilde, sponsorType}));
+  const isImageLocal = lokaltBilde ? true : false;  // force boolean value, also if undefined
   try {
     const { JWTKEY } = process.env;
     jwt.verify(token, JWTKEY);
@@ -299,7 +301,7 @@ router.post('/newCompany', async (req, res) => {
   }
   try {
     const connection = await connect();
-    const response = await connection.query('INSERT INTO Bedrift(Navn, Logo) VALUES (?, ?)', [navn, logo]);
+    const response = await connection.query('INSERT INTO Bedrift(Navn, Logo, LokaltBilde) VALUES (?, ?, ?)', [navn, logo, isImageLocal]);
     if (sponsorType) {
       const { insertId } = response;
       const arrID =  (await connection.execute('SELECT ArrangementID FROM Arrangement ORDER BY Dato DESC LIMIT 1'))[0][0]
@@ -323,7 +325,8 @@ router.post('/newCompany', async (req, res) => {
 });
 
 router.post('/editCompany', async (req, res) => {
-  const { token, bedriftID, navn, logo, sponsorType, oldSponsorType } = req.body;
+  const { token, bedriftID, navn, logo, sponsorType, oldSponsorType, lokaltBilde } = req.body;
+  const isImageLocal = lokaltBilde ? true : false;
   try {
     const { JWTKEY } = process.env;
     jwt.verify(token, JWTKEY);
@@ -335,9 +338,10 @@ router.post('/editCompany', async (req, res) => {
   }
   try {
     const connection = await connect();
-    const response = await connection.query('UPDATE Bedrift SET Navn=?, Logo=? WHERE BedriftID=?', [
+    const response = await connection.query('UPDATE Bedrift SET Navn=?, Logo=?, LokaltBilde=? WHERE BedriftID=?', [
       navn,
       logo,
+      isImageLocal,
       bedriftID
     ]);
     const isSponsor = sponsorType > 0;
@@ -473,7 +477,7 @@ router.post('/adminEvent', async (req, res) => {
   try {
     const pool = connectPool();
     const [ sponsorRes, programRes, eventRes, påmeldtRes, deltagereRes ] = await Promise.all([
-      pool.query('SELECT Bedrift.BedriftID AS BedriftID, Bedrift.Navn AS navn, Bedrift.Logo AS logo, Sponsor.SponsorType AS sponsorType FROM Bedrift INNER JOIN Sponsor ON Bedrift.BedriftID=Sponsor.BedriftID WHERE Sponsor.ArrangementID = ?', [id]),
+      pool.query('SELECT Bedrift.BedriftID AS BedriftID, Bedrift.Navn AS navn, Bedrift.Logo AS logo, Bedrift.LokaltBilde AS local, Sponsor.SponsorType AS sponsorType FROM Bedrift INNER JOIN Sponsor ON Bedrift.BedriftID=Sponsor.BedriftID WHERE Sponsor.ArrangementID = ?', [id]),
       pool.query('SELECT PH.HendelsesID AS id, PH.Navn AS navn, PH.Klokkeslett AS tid, PH.Beskrivelse AS beskrivelse, PH.Varighet AS varighet, PH.Parallell AS parallell, PH.AlleParalleller AS alleParalleller, Rom.Navn AS stedNavn, Rom.MazemapURL AS stedLink, Bedrift.BedriftID AS bedriftID, Bedrift.Navn AS bedriftNavn FROM Rom Inner Join (ProgramHendelse AS PH) ON Rom.RomID=PH.RomID LEFT JOIN Bedrift ON PH.Bedrift=Bedrift.BedriftID WHERE PH.ArrangementID = ? ORDER BY tid ASC, stedNavn ASC', [id]),
       pool.query('SELECT Beskrivelse, Dato, AntallPlasser, Link, PaameldingsStart FROM Arrangement WHERE ArrangementID=?', [id]),
       pool.query('SELECT COUNT(PaameldingsHash) AS AntallPåmeldte FROM Paameldt WHERE ArrangementID=? AND Verifisert=TRUE', [id]),

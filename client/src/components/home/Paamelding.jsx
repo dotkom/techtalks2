@@ -74,7 +74,6 @@ const Paamelding = props => {
   const [timeLeft, setTimeLeft] = useState(NaN);
 
   
-
   const submitForm = async () => {
     const req = {
       body: JSON.stringify({
@@ -105,8 +104,7 @@ const Paamelding = props => {
     }, 1000);
   }, [timeLeft, PaameldingsDate]);
 
-  console.log(event);
-  if (PaameldingsStart === "") {
+  if (PaameldingsStart === "" || timeLeft === NaN) {
     return (
       <Wrapper>
         <h2 id="paamelding">Påmelding</h2>

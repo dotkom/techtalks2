@@ -38,18 +38,18 @@ const Samarbeidspartnere = props => {
       </Wrapper>
     );
   }
-  const [ hovedSamarbeidspartner ] = partners.filter(partner => partner.sponsorType === 3);
+  const [ HSP ] = partners.filter(partner => partner.sponsorType === 3);
   const gullSponsor = partners.filter(partner => partner.sponsorType === 2);
   const sølvSponsor = partners.filter(partner => partner.sponsorType === 1);
   return (
     <Wrapper>
-      { hovedSamarbeidspartner ? (
+      { HSP ? (
         <div>
           <h2>Hovedsamarbeidspartner</h2>
           {
             <BigImg 
-              src={`https://online.ntnu.no/media/images/responsive/${hovedSamarbeidspartner.url}`}
-              alt={hovedSamarbeidspartner.name} 
+              src={HSP.local ? `/img/${HSP.url}` : `https://online.ntnu.no/media/images/responsive/${HSP.url}`}
+              alt={HSP.name} 
             />
           }
         </div>
@@ -58,9 +58,9 @@ const Samarbeidspartnere = props => {
         <div>
           <h2>Samarbeidspartnere</h2>
           <Partners>
-            {gullSponsor.map(({ name, url }) => (
+            {gullSponsor.map(({ name, url, local }) => (
               <Img
-                src={`https://online.ntnu.no/media/images/responsive/${url}`}
+                src={local ? `/img/${url}` : `https://online.ntnu.no/media/images/responsive/${url}`}
                 alt={name}
                 key={url} 
               />
@@ -73,9 +73,9 @@ const Samarbeidspartnere = props => {
           <h2>Sponsorer</h2>
           <Partners>
             {
-              sølvSponsor.map(({ name, url }) => (
+              sølvSponsor.map(({ name, url, local }) => (
                 <Img
-                  src={`https://online.ntnu.no/media/images/responsive/${url}`}
+                  src={local ? `/img/${url}` : `https://online.ntnu.no/media/images/responsive/${url}`}
                   alt={name}
                   key={url}
                 />

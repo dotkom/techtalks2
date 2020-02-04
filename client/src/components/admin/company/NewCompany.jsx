@@ -7,7 +7,7 @@ import InputField from '../../inputs/InputField';
 const NewCompany = props => {
   const [name, changeName] = useState('');
   const [logo, changeLogo] = useState('');
-  const [isSponsor, changeSponsorship] = useState(false);
+  const [lokaltBilde, changeLokaltBilde] = useState(false);
   const [status, setStatus] = useState('');
 
   const submitCompany = async () => {
@@ -17,7 +17,7 @@ const NewCompany = props => {
         token,
         navn: name,
         logo,
-        isSponsor,
+        lokaltBilde,
       })
     };
     setStatus('waiting',);
@@ -37,9 +37,9 @@ const NewCompany = props => {
     <div>
       <InputField label="Navn: " id="cName" val={name} updateValue={changeName} type="text" />
       <InputField label="Logo: " id="cLogo" val={logo} updateValue={changeLogo} type="text" />
-      <label htmlFor="cSpons">
-        Sponsor
-        <input type="checkbox" id="cSpons" checked={isSponsor} onChange={e=>changeSponsorship(e.target.checked)} />
+      <label htmlFor="cLocal">
+        Lokalt bilde
+        <input type="checkbox" id="cLocal" defaultChecked={lokaltBilde} onChange={e=>changeLokaltBilde(e.target.checked)} />
       </label>
       <button type="button" onClick={submitCompany}>
         Lag selskap

@@ -2,6 +2,7 @@ CREATE TABLE Bedrift(
   BedriftID INT NOT NULL AUTO_INCREMENT,
   Navn TEXT NOT NULL,
   Logo TEXT,
+  LokaltBilde BOOLEAN DEFAULT FALSE,
   PRIMARY KEY (BedriftID)
 );
 
