@@ -46,7 +46,8 @@ const ImportCompany = props => {
       body: JSON.stringify({
         token,
         navn: name,
-        logo: imageID
+        logo: imageID,
+        lokaltBilde: false,
       })
     }
     const res = await post('/db/newCompany', req);
@@ -61,7 +62,7 @@ const ImportCompany = props => {
   }
   return (
     <Wrapper>
-      <h1>Importer et selsap fra dotkoms API</h1>
+      <h1>Importer et selskap fra Onlineweb</h1>
       <Search>
         <InputField
           label="Navn (case sensitive): "

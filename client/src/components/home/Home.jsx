@@ -6,15 +6,24 @@ import Navbar from './Navbar';
 import About from './About';
 import Samarbeidspartnere from './Samarbeidspartnere';
 import Program from './Program';
+import Overview from './Overview';
 import Paamelding from './Paamelding';
 
-const Wrapper = styled.div`
-`;
+const Wrapper = styled.div``;
 
 const Content = styled.div`
   display: flex;
   flex-direction: column;
-
+  & > div {
+    @media (min-width: 64em) {
+      padding: 3em;
+    }
+    @media (max-width: 64em) {
+      padding: 1em;
+    }
+    flex: 1;
+    border-top: 1px solid #333333;
+  }
   & > div {
     padding: 2rem;
     + div {
@@ -22,7 +31,6 @@ const Content = styled.div`
     }
   }
 `;
-
 
 const Home = () => {
   const [partners, setPartners] = useState([]);
@@ -32,10 +40,10 @@ const Home = () => {
     Beskrivelse: '',
     AntallPlasser: 0,
     AntallPåmeldte: 0,
-    PaameldingsStart: ''
+    PaameldingsStart: '',
   });
 
-  useEffect(()=>{
+  useEffect(() => {
     const internal = async () => {
       const response = await get('/db/home');
       const jsoned = await response.json();
@@ -51,6 +59,7 @@ const Home = () => {
     <Wrapper>
       <Navbar />
       <Content>
+        <Overview events={program} />
         <Program events={program} />
         <Samarbeidspartnere partners={partners} />
         <Paamelding event={event} />
@@ -58,6 +67,6 @@ const Home = () => {
       </Content>
     </Wrapper>
   );
-}
+};
 
 export default Home;

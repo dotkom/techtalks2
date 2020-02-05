@@ -31,8 +31,7 @@ services:
       DBPASS: "password"
       DBNAME: "techtalks"
       # Email information
-      #MAILUSER: ""
-      #MAILPASS: ""
+      MAILUSER: "info@techtalks.no"
       # JWT
       JWTKEY: "hitormiss"
       # Admin Login

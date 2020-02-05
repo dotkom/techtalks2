@@ -4,31 +4,8 @@ const router = express.Router();
 const mysql = require('mysql2/promise');
 const md5 = require('md5');
 const jwt = require('jsonwebtoken');
-const nodemailer = require('nodemailer');
 
-const key = require('../key.json');
-
-const createTransporter = async () => {
-  const { MAILUSER } = process.env;
-  const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 465,
-    secure: true,
-    auth: {
-      type: 'OAuth2',
-      user: MAILUSER,
-      serviceClient: key.client_id,
-      privateKey: key.private_key
-    }
-  });
-  try {
-    await transporter.verify();
-    return transporter;
-  } catch (err) {
-    console.log(err);
-    return null;
-  }
-}
+const sendMail = require('./sendEmail.js');
 
 
 function connect() {
@@ -52,25 +29,17 @@ function connectPool() {
 }
 
 async function sendConfirmation(email, hash) {
-  const { MAILUSER } = process.env;
-  const transporter = await createTransporter();
-  if (transporter === null) {
-    return;
-  }
   const mailOptions = {
-    from: `Tech Talks <${MAILUSER}>`, // sender address
     to: email, // list of receivers
     subject: 'Bekreftelse av påmelding', // Subject line
     html: `<p>For å validere påmeldingen din, trykk på denne lenken:<br/>
-    <a href="http://techtalks.no/validate?ha=${hash}"><b>http://techtalks.no/validate?ha=${hash}</b></a></p>` // plain text body
+      <a href="http://techtalks.no/validate?ha=${hash}"><b>http://techtalks.no/validate?ha=${hash}</b></a></p>
+      <p>Eventuelle spørsmål kan sendes til <a href="mailto:ekskom@online.ntnu.no">ekskom@online.ntnu.no</a></p>` // html body
   };
-  transporter.sendMail(mailOptions, (response) => {
-    const {err, info} = response;
-    console.log(response);
+  sendMail(mailOptions, (response) => {
+    const { err } = response; // don't need the message for now
     if (err) {
       console.log(err);
-    } else {
-      console.log(info);
     }
   });
 }
@@ -86,7 +55,7 @@ router.get('/home', async (_, res) => {
     const pool = connectPool();
     const [partnersResponse, programResponse, paameldteResponse] = await Promise.all([
       pool.query(
-        'SELECT Bedrift.Navn AS name, Bedrift.Logo AS url, Sponsor.SponsorType as sponsorType FROM Bedrift INNER JOIN Sponsor ON Bedrift.BedriftID=Sponsor.BedriftID WHERE Sponsor.ArrangementID = ? ORDER BY sponsorType DESC',
+        'SELECT Bedrift.Navn AS name, Bedrift.Logo AS url, Bedrift.LokaltBilde AS local, Sponsor.SponsorType as sponsorType FROM Bedrift INNER JOIN Sponsor ON Bedrift.BedriftID=Sponsor.BedriftID WHERE Sponsor.ArrangementID = ? ORDER BY sponsorType DESC',
         [arrID]
       ),
       pool.query(
@@ -156,7 +125,7 @@ router.post('/paamelding', async (req, res) => {
   connection.end();
   const { affectedRows } = response[0];
   if (affectedRows === 1) {
-    sendConfirmation(epost, hash)
+    sendConfirmation(epost, hash);
     res.json({
       status: 'succeeded',
     });
@@ -213,7 +182,6 @@ router.post('/validering', async (req, res) => {
 router.post('/adminLogin', (req, res) => {
   const { username, password } = req.body;
   const { AUNAME, APASS } = process.env;
-  console.log(`From env: ${AUNAME} ${APASS}`)
   if (username === AUNAME && password === APASS) {
     const key = process.env.JWTKEY;
     const token = jwt.sign({ foo: 'bar' }, key, { expiresIn: '30m' });
@@ -264,7 +232,7 @@ router.post('/allCompanies', async (req, res) => {
     ))[0][0];
     const arrID = event.ArrangementID;
     const results = await connection.query(
-      `SELECT Bedrift.BedriftID AS BedriftID, Bedrift.Navn AS Navn, Bedrift.Logo AS Logo, Sponsor.SponsorType AS sponsorType
+      `SELECT Bedrift.BedriftID AS BedriftID, Bedrift.Navn AS Navn, Bedrift.Logo AS Logo, Bedrift.LokaltBilde AS local, Sponsor.SponsorType AS sponsorType
       FROM Bedrift LEFT JOIN Sponsor ON Bedrift.BedriftID=Sponsor.BedriftID
       WHERE Sponsor.ArrangementID=? OR Sponsor.ArrangementID IS NULL
       GROUP BY ArrangementID, Bedrift.BedriftID`,
@@ -287,7 +255,8 @@ router.post('/allCompanies', async (req, res) => {
 });
 
 router.post('/newCompany', async (req, res) => {
-  const { token, navn, logo, sponsorType } = req.body;
+  const { token, navn, logo, lokaltBilde, sponsorType } = req.body;
+  const isImageLocal = lokaltBilde ? true : false;  // force boolean value, also if undefined
   try {
     const { JWTKEY } = process.env;
     jwt.verify(token, JWTKEY);
@@ -299,7 +268,7 @@ router.post('/newCompany', async (req, res) => {
   }
   try {
     const connection = await connect();
-    const response = await connection.query('INSERT INTO Bedrift(Navn, Logo) VALUES (?, ?)', [navn, logo]);
+    const response = await connection.query('INSERT INTO Bedrift(Navn, Logo, LokaltBilde) VALUES (?, ?, ?)', [navn, logo, isImageLocal]);
     if (sponsorType) {
       const { insertId } = response;
       const arrID =  (await connection.execute('SELECT ArrangementID FROM Arrangement ORDER BY Dato DESC LIMIT 1'))[0][0]
@@ -323,7 +292,8 @@ router.post('/newCompany', async (req, res) => {
 });
 
 router.post('/editCompany', async (req, res) => {
-  const { token, bedriftID, navn, logo, sponsorType, oldSponsorType } = req.body;
+  const { token, bedriftID, navn, logo, sponsorType, oldSponsorType, lokaltBilde } = req.body;
+  const isImageLocal = lokaltBilde ? true : false;
   try {
     const { JWTKEY } = process.env;
     jwt.verify(token, JWTKEY);
@@ -335,9 +305,10 @@ router.post('/editCompany', async (req, res) => {
   }
   try {
     const connection = await connect();
-    const response = await connection.query('UPDATE Bedrift SET Navn=?, Logo=? WHERE BedriftID=?', [
+    const response = await connection.query('UPDATE Bedrift SET Navn=?, Logo=?, LokaltBilde=? WHERE BedriftID=?', [
       navn,
       logo,
+      isImageLocal,
       bedriftID
     ]);
     const isSponsor = sponsorType > 0;
@@ -473,7 +444,7 @@ router.post('/adminEvent', async (req, res) => {
   try {
     const pool = connectPool();
     const [ sponsorRes, programRes, eventRes, påmeldtRes, deltagereRes ] = await Promise.all([
-      pool.query('SELECT Bedrift.BedriftID AS BedriftID, Bedrift.Navn AS navn, Bedrift.Logo AS logo, Sponsor.SponsorType AS sponsorType FROM Bedrift INNER JOIN Sponsor ON Bedrift.BedriftID=Sponsor.BedriftID WHERE Sponsor.ArrangementID = ?', [id]),
+      pool.query('SELECT Bedrift.BedriftID AS BedriftID, Bedrift.Navn AS navn, Bedrift.Logo AS logo, Bedrift.LokaltBilde AS local, Sponsor.SponsorType AS sponsorType FROM Bedrift INNER JOIN Sponsor ON Bedrift.BedriftID=Sponsor.BedriftID WHERE Sponsor.ArrangementID = ?', [id]),
       pool.query('SELECT PH.HendelsesID AS id, PH.Navn AS navn, PH.Klokkeslett AS tid, PH.Beskrivelse AS beskrivelse, PH.Varighet AS varighet, PH.Parallell AS parallell, PH.AlleParalleller AS alleParalleller, Rom.Navn AS stedNavn, Rom.MazemapURL AS stedLink, Bedrift.BedriftID AS bedriftID, Bedrift.Navn AS bedriftNavn FROM Rom Inner Join (ProgramHendelse AS PH) ON Rom.RomID=PH.RomID LEFT JOIN Bedrift ON PH.Bedrift=Bedrift.BedriftID WHERE PH.ArrangementID = ? ORDER BY tid ASC, stedNavn ASC', [id]),
       pool.query('SELECT Beskrivelse, Dato, AntallPlasser, Link, PaameldingsStart FROM Arrangement WHERE ArrangementID=?', [id]),
       pool.query('SELECT COUNT(PaameldingsHash) AS AntallPåmeldte FROM Paameldt WHERE ArrangementID=? AND Verifisert=TRUE', [id]),
