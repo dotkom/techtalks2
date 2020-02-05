@@ -6,23 +6,34 @@ import InputField from '../inputs/InputField.jsx';
 
 const Wrapper = styled.div`
   text-align: left;
+
   display: flex;
+
   flex-direction: row;
+  flex-flow: row wrap;
 `;
-const LinjeforeningWrapper = styled.a`
-  color: #fff;
+const LinjeforeningWrapper = styled.div`
   flex-grow: 1;
-  text-decoration: none;
-  > p {
+`;
+
+const LinjeforeningLink = styled.a`
+  width: 100%;
+  display: inline-block;
   color: #fff;
+  text-decoration: none;
+  padding: 2em;
+  
+  > p {
+    color: #fff;
   }
   > img {
-  width: 50%;
-  filter: brightness(0) invert(1);
+    width: 50%;
+    filter: brightness(0) invert(1);
   }
   :hover {
     background-color: #292929;
   }
+
 `;
 const LinjeforeningContainer = styled.div`
   display: flex;
@@ -201,17 +212,23 @@ const Paamelding = props => {
       <FlexInner>
         <CenteredH2>Også påmelding hos:</CenteredH2>
         <LinjeforeningContainer>
-          <LinjeforeningWrapper href="https://online.ntnu.no/events/795/tech-talks-2020/">
-            <img src="https://online.ntnu.no/static/img/online_logo.svg" alt="Logo for linjeforeningen Online"/>
-            <p>Online(For informatikk)</p>
+          <LinjeforeningWrapper>
+            <LinjeforeningLink href="https://online.ntnu.no/events/795/tech-talks-2020/">
+              <img src="https://online.ntnu.no/static/img/online_logo.svg" alt="Logo for linjeforeningen Online"/>
+              <p>Online(For informatikk)</p>
+            </LinjeforeningLink>
           </LinjeforeningWrapper>
-          <LinjeforeningWrapper href="https://abakus.no/events/2602">
-            <img src="https://abakus.no/7df72c5a291dc020b1d5d191ba50d871.png" alt="Logo for linjeforeningen Abakus"/>
-            <p>Abakus(For Datateknologi og Kommunikasjonsteknologi)</p>
+          <LinjeforeningWrapper>
+            <LinjeforeningLink href="https://abakus.no/events/2602">
+              <img src="https://abakus.no/7df72c5a291dc020b1d5d191ba50d871.png" alt="Logo for linjeforeningen Abakus"/>
+              <p>Abakus(For Datateknologi og Kommunikasjonsteknologi)</p>
+            </LinjeforeningLink>
           </LinjeforeningWrapper>
-          <LinjeforeningWrapper href="https://tihlde.org/arrangementer/73/">
-            <img src={thildeLogo} alt="Logo for linjeforeningen Tihlde"/>
-            <p>Tihlde(Dataingeniør, Digital infrastruktur og cybersikkerhet, Digital forretningsutvikling og Digital samhandling)</p>
+          <LinjeforeningWrapper>
+            <LinjeforeningLink href="https://tihlde.org/arrangementer/73/">
+              <img src={thildeLogo} alt="Logo for linjeforeningen Tihlde"/>
+              <p>Tihlde(Dataingeniør, Digital infrastruktur og cybersikkerhet, Digital forretningsutvikling og Digital samhandling)</p>
+            </LinjeforeningLink>
           </LinjeforeningWrapper>
         </LinjeforeningContainer>
       </FlexInner>

@@ -25,7 +25,7 @@ const Content = styled.div`
   & > div {
     padding: 3em;
     flex: 1;
-    border-bottom: 1px solid #333333;
+    border-top: 1px solid #333333;
   }
   & > div:first-child {
     /*margin-top: 3em; */

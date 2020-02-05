@@ -14,6 +14,7 @@ const Logo = styled.img`
   margin-top: 0px;
   width: 100%;
   max-height: 100%;
+  background-color: #181B1E;
 `;
 
 const Header = () => (

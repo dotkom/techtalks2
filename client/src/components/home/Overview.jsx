@@ -6,6 +6,7 @@ const Wrapper = styled.div`
   margin: 0;
   display: flex;
   flex-direction: row;
+  flex-flow: row wrap;
 `;
 
 const PartContainer = styled.div`
@@ -16,14 +17,21 @@ const PartContainer = styled.div`
   flex-basis: 0;
   flex-grow: 1;
   padding: 2em;
+  min-height: 20em;
 `
+
+const InnerContainer = styled.div`
+margin: auto;
+`;
 
 function ProgramElement(title, place, time, needsRegistration) {
   return (<PartContainer key={title}>
-              <h2>{title}</h2>
-              <p>{place}</p>
-              <p>{time}</p>
-              <p>{ needsRegistration ? (needsRegistration == 2 ? (<b>Krver egen påmelding</b>) : (<b>Krver påmelding</b>)) : (<b>Åpent for alle</b>)}</p>
+              <InnerContainer>
+                <h2>{title}</h2>
+                <p>{place}</p>
+                <p>{time}</p>
+                <p>{ needsRegistration ? (needsRegistration === 2 ? (<b>Krver egen påmelding</b>) : (<b>Krver påmelding</b>)) : (<b>Åpent for alle</b>)}</p>
+                </InnerContainer>
               </PartContainer>);
 }
 

@@ -7,6 +7,7 @@ const NavbarWrapper = styled.nav`
   display: flex;
   flex-flow: row wrap;
   justify-content: space-around;
+  
 `;
 
 const NavbarA = styled.a`
@@ -30,6 +31,7 @@ const NavbarText = styled.h1`
   margin-bottom: 0px;
   font-size: 1.5em;
   text-align: center;
+  font-weight: 900;
 `;
 
 const Navbar = () => {
