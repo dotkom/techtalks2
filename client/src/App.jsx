@@ -8,11 +8,9 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 1rem;
   max-width: 70rem;
   margin: 0 auto;
 `;
-
 
 function App() {
   return (
