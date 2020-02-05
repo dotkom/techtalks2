@@ -6,14 +6,13 @@ import Home from '../home/Home';
 import Admin from '../admin/Admin';
 import Validate from '../validate/Validate';
 
-
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: #181B1E;
+  background: #181b1e;
   text-align: center;
-  box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
 `;
 
 const Logo = styled.img`
@@ -22,7 +21,7 @@ const Logo = styled.img`
 
 const MainBody = () => (
   <Wrapper>
-    <Logo src="/logo.svg" alt="Techtalks"/>
+    <Logo src="/logo.svg" alt="Techtalks" />
     <BrowserRouter>
       <Route exact path="/" component={Home} />
       <Route path="/admin" component={Admin} />

@@ -21,51 +21,62 @@ const PartContainer = styled.div`
   flex-grow: 1;
   padding: 2em;
   min-height: 20em;
-`
+`;
 
 const InnerContainer = styled.div`
-margin: auto;
+  margin: auto;
 `;
 
 function ProgramElement(title, place, time, needsRegistration) {
-  return (<PartContainer key={title}>
-              <InnerContainer>
-                <h2>{title}</h2>
-                <p>{place}</p>
-                <p>{time}</p>
-                <p>{ needsRegistration ? (needsRegistration === 2 ? (<b>Krver egen påmelding</b>) : (<b>Krver påmelding</b>)) : (<b>Åpent for alle</b>)}</p>
-                </InnerContainer>
-              </PartContainer>);
+  return (
+    <PartContainer key={title}>
+      <InnerContainer>
+        <h2>{title}</h2>
+        <p>{place}</p>
+        <p>{time}</p>
+        <p>
+          {needsRegistration ? (
+            needsRegistration === 2 ? (
+              <b>Krver egen påmelding</b>
+            ) : (
+              <b>Krver påmelding</b>
+            )
+          ) : (
+            <b>Åpent for alle</b>
+          )}
+        </p>
+      </InnerContainer>
+    </PartContainer>
+  );
 }
 
-const Overview = props => {
+const Overview = (props) => {
   const { events } = props;
 
-  const fullEvents = events.filter(event => {
+  const fullEvents = events.filter((event) => {
     return event.alleParalleller === 1;
   });
 
   console.log(fullEvents);
-  
+
   return (
     <Wrapper>
-      {
-        fullEvents.length ? (
-          fullEvents.map(event =>{
-            return ProgramElement(event.navn, event.stedNavn, event.tid, event.navn.toLowerCase().indexOf("frokost") !== -1 ? 2 : 1);
-          })
-        ) : (
-          <h3>Laster...</h3>
-        )
-      }
-      {
-        ProgramElement("Foredrag og workshops", "Realfagbygget og IT-bygget", "10:00 til 16:00", false)
-      }
-      {
-        ProgramElement("Middag", "Scandic Nidelven", "19:00", true)
-      }
+      {fullEvents.length ? (
+        fullEvents.map((event) => {
+          return ProgramElement(
+            event.navn,
+            event.stedNavn,
+            event.tid,
+            event.navn.toLowerCase().indexOf('frokost') !== -1 ? 2 : 1
+          );
+        })
+      ) : (
+        <h3>Laster...</h3>
+      )}
+      {ProgramElement('Foredrag og workshops', 'Realfagbygget og IT-bygget', '10:00 til 16:00', false)}
+      {ProgramElement('Middag', 'Scandic Nidelven', '19:00', true)}
     </Wrapper>
   );
-}
+};
 
 export default Overview;
