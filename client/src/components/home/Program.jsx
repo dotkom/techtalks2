@@ -26,8 +26,8 @@ const ProgramTable = styled.table`
     flex-basis: 0;
     flex-grow: 1;
     &:first-child {
-      flex: 0 0 4em;
-      width: 4em;
+      flex: 0 0 3em;
+      width: 3em;
     }
   }
 `;

@@ -10,9 +10,12 @@ const Wrapper = styled.div`
 `;
 
 const PartContainer = styled.div`
-  :not(:first-child) {
-    /*border-left: 1px solid #333333; */
+  @media (min-width: 64em) {
+    :not(:first-child) {
+      border-left: 1px solid #333333;
+    }
   }
+  min-width: 10em;
   flex: 1;
   flex-basis: 0;
   flex-grow: 1;

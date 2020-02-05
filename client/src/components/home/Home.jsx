@@ -23,7 +23,12 @@ const Content = styled.div`
   display: flex;
   flex-direction: column;
   & > div {
-    padding: 3em;
+    @media (min-width: 64em) {
+      padding: 3em;
+    }
+    @media not (min-width: 64em) {
+      padding: 1em;
+    }
     flex: 1;
     border-top: 1px solid #333333;
   }
