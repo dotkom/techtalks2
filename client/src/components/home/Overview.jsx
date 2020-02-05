@@ -37,9 +37,9 @@ function ProgramElement(title, place, time, needsRegistration) {
         <p>
           {needsRegistration ? (
             needsRegistration === 2 ? (
-              <b>Krver egen påmelding</b>
+              <b>Krever egen påmelding</b>
             ) : (
-              <b>Krver påmelding</b>
+              <b>Krever påmelding</b>
             )
           ) : (
             <b>Åpent for alle</b>
