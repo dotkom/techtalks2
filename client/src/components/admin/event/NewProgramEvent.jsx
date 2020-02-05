@@ -15,7 +15,7 @@ const NewProgramEvent = props => {
   const [bedriftID, changeSponsor] = useState(0);
   const [navn, changeName] = useState('');
   const [beskrivelse, changeDescription] = useState('');
-  const [klokkeslett, changeTime] = useState(0);
+  const [klokkeslett, changeTime] = useState("13:00");
   const [romID, changeRoom] = useState(0);
   const [parallell, setParallell] = useState(1);
   const [alleParalleller, setAlleParalleller] = useState(false);
@@ -56,7 +56,7 @@ const NewProgramEvent = props => {
         arrangementID,
         navn,
         beskrivelse,
-        klokkeslett: `${klokkeslett}:15`,
+        klokkeslett: `${klokkeslett}`,
         romID,
         parallell,
         alleParalleller,
@@ -107,14 +107,11 @@ const NewProgramEvent = props => {
         val={beskrivelse}
         updateValue={changeDescription}
       />
-      <DropdownRange
-        defaultValue={0}
-        defaultName="Klokkeslett"
-        from={9}
-        to={15}
-        value={klokkeslett}
-        suffix={':15'}
-        onChange={changeTime}
+      <InputField
+        type="text"
+        label="Klokkeslett: "
+        val={klokkeslett}
+        updateValue={changeTime}
       />
       <InputField
         type="number"
