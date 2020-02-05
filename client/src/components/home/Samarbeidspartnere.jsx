@@ -9,9 +9,10 @@ const Wrapper = styled.div`
 const BigImg = styled.img`
   max-height: 20em;
   max-width: 50%;
-  background-color: white;
   margin: 0.5em;
   padding: 1em;
+  filter: brightness(0) invert(1);
+  image-rendering: smooth;
 `;
 
 const Partners = styled.div`
@@ -22,10 +23,19 @@ const Partners = styled.div`
 `;
 
 const Img = styled.img`
-  max-height: 15em;
-  max-width: 30%;
   margin: 0.5em 0.2em;
   padding: 0.2em;
+  filter: brightness(0) invert(1);
+  image-rendering: smooth;
+
+  display: inline-block;
+  width: 100%;
+  height: auto;
+`;
+
+const ImgSizeGuardian = styled.div`
+  max-width: 30%;
+  max-height: 15em;
 `;
 
 const Samarbeidspartnere = props => {
@@ -59,11 +69,13 @@ const Samarbeidspartnere = props => {
           <h2>Samarbeidspartnere</h2>
           <Partners>
             {gullSponsor.map(({ name, url, local }) => (
-              <Img
-                src={local ? `/img/${url}` : `https://online.ntnu.no/media/images/responsive/${url}`}
-                alt={name}
-                key={url} 
-              />
+              <ImgSizeGuardian>
+                <Img
+                  src={local ? `/img/${url}` : `https://online.ntnu.no/media/images/responsive/${url}`}
+                  alt={name}
+                  key={url} 
+                />
+              </ImgSizeGuardian>
             ))}
           </Partners>
         </div>
@@ -74,11 +86,13 @@ const Samarbeidspartnere = props => {
           <Partners>
             {
               sølvSponsor.map(({ name, url, local }) => (
-                <Img
-                  src={local ? `/img/${url}` : `https://online.ntnu.no/media/images/responsive/${url}`}
-                  alt={name}
-                  key={url}
-                />
+                <ImgSizeGuardian>
+                  <Img
+                    src={local ? `/img/${url}` : `https://online.ntnu.no/media/images/responsive/${url}`}
+                    alt={name}
+                    key={url}
+                  />
+                </ImgSizeGuardian>
               ))
             }
           </Partners>

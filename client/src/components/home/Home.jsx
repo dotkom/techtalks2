@@ -6,6 +6,7 @@ import Navbar from './Navbar';
 import About from './About';
 import Samarbeidspartnere from './Samarbeidspartnere';
 import Program from './Program';
+import Overview from './Overview';
 import Paamelding from './Paamelding';
 
 const Wrapper = styled.div`
@@ -22,9 +23,14 @@ const Content = styled.div`
   display: flex;
   flex-direction: column;
   & > div {
-    padding: 3em;
+    @media (min-width: 64em) {
+      padding: 3em;
+    }
+    @media not (min-width: 64em) {
+      padding: 1em;
+    }
     flex: 1;
-    border-bottom: 1px solid #333333;
+    border-top: 1px solid #333333;
   }
   & > div:first-child {
     /*margin-top: 3em; */
@@ -74,6 +80,7 @@ const Home = () => {
     <Wrapper>
       <Navbar />
       <Content>
+        <Overview events={program} />
         <Program events={program} />
         <Samarbeidspartnere partners={partners} />
         <Paamelding event={event} />

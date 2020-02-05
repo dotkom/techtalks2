@@ -17,7 +17,7 @@ const About = props => {
         <div>
           <p>{Beskrivelse}</p>
           <p>
-            {D < new Date() ? 'Siste tech talks var ' : 'Neste tech talks er '}
+            {D < new Date() ? 'Siste Tech Talks var ' : 'Neste Tech Talks er '}
             {DatoString}
           </p>
         </div>
