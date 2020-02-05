@@ -1,16 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const Wrapper = styled.div`
-  width: 100wv;
-  padding: 1em;
+
+const Wrapper = styled.footer`
+  margin-top: 2rem;
+  width: 100%;
 `;
 
 const P = styled.p`
-  /* width: 400px; */
   text-align: center;
-  max-width: 100%;
-  color: white;
 `;
 
 const Footer = () => (

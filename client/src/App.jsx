@@ -1,39 +1,23 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import Header from './components/frame/Header';
-import MainBody from './components/frame/MainBody';
+import Content from './components/frame/Content';
 import Footer from './components/frame/Footer';
 
 const Wrapper = styled.div`
-  width: 100vw;
-  min-height: 100vh;
-  z-index: -100;
-  background-color: #292929; 
-  background-size: 100%;
-  background-repeat: repeat-y;
-  position: absolute;
-  image-rendering: crisp-edges;
-  margin: 0px;
-  font-family: 'Roboto', sans-serif;
-  font-size: 1em;
-  overflow: hidden;
-
-`;
-
-const BallContainer = styled.img`
-  position: absolute;
-  z-index:-1;
-  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  max-width: 70rem;
+  margin: 0 auto;
 `;
 
 
 function App() {
   return (
     <Wrapper>
-      <BallContainer src="/triangle.svg" />
-      <Header />
-      <MainBody />
+      <Content />
       <Footer />
     </Wrapper>
   );
