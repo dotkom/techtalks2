@@ -26,13 +26,12 @@ const createTransporter = async () => {
 };
 
 const sendMail = async (options, callback) => {
-  const { MAILUSER } = process.env;
   const transporter = await createTransporter();
   if (transporter === null) {
     return;
   }
   const mailOptions = {
-    from: `Tech Talks <${MAILUSER}>`, // sender address
+    from: `Tech Talks <info@techtalks.no>`, // sender address
     ...options
   };
   transporter.sendMail(mailOptions, callback);

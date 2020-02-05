@@ -33,7 +33,8 @@ async function sendConfirmation(email, hash) {
     to: email, // list of receivers
     subject: 'Bekreftelse av påmelding', // Subject line
     html: `<p>For å validere påmeldingen din, trykk på denne lenken:<br/>
-    <a href="http://techtalks.no/validate?ha=${hash}"><b>http://techtalks.no/validate?ha=${hash}</b></a></p>` // plain text body
+      <a href="http://techtalks.no/validate?ha=${hash}"><b>http://techtalks.no/validate?ha=${hash}</b></a></p>
+      <p>Eventuelle spørsmål kan sendes til <a href="mailto:ekskom@online.ntnu.no">ekskom@online.ntnu.no</a></p>` // html body
   };
   sendMail(mailOptions, (response) => {
     const { err } = response; // don't need the message for now
