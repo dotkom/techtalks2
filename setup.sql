@@ -72,3 +72,23 @@ CREATE TABLE Paameldt(
   FOREIGN KEY (ArrangementID) REFERENCES Arrangement(ArrangementID),
   PRIMARY KEY (PaameldingsHash)
 );
+
+CREATE TABLE ExternalParticipant(
+  UUID CHAR(64) NOT NULL,
+  Navn TEXT NOT NULL,
+  PRIMARY KEY (UUID)
+);
+
+CREATE TABLE CardParticipantMapping(
+  CardID CHAR(32) NOT NULL,
+  ParticipantName TEXT NOT NULL,
+  PRIMARY KEY (CardID)
+);
+
+CREATE TABLE CardEventMapping(
+  CardID CHAR(32) NOT NULL,
+  ParticipantName TEXT NOT NULL,
+  ParalellNo INT NOT NULL,
+  ScanTime DATETIME DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (CardID)
+);

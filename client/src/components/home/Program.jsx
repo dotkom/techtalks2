@@ -82,7 +82,12 @@ const Program = props => {
                                   <a href={stedLink}>{stedNavn}</a>
                                 </h3>
                                 <p>{bedrift}</p>
-                                <p>{beskrivelse}</p>
+                                <p>
+                                  { beskrivelse.split("\n").map(line => { 
+                                    return (<p>{line}</p>);
+                                    }) 
+                                  }
+                                </p>
                               </td>
                             )
                           }  

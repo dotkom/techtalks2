@@ -7,6 +7,8 @@ const jwt = require('jsonwebtoken');
 
 const sendMail = require('./sendEmail.js');
 
+const uuid = require('uuid');
+
 
 function connect() {
   const { DBHOST, DBUSER, DBPASS, DBNAME } = process.env;
@@ -752,6 +754,90 @@ router.post('/removeSponsor', async (req, res) => {
       status: 'failed',
     });
     console.log('Error while removing sponsor');
+    console.log(error);
+  }
+});
+
+//External people
+router.post('/externalParticipants', async (req, res) => {
+  const { token, arrangementID, bedriftID } = req.body;
+  try {
+    const { JWTKEY } = process.env;
+    jwt.verify(token, JWTKEY);
+  } catch (error) {
+    res.json({
+      status: 'denied'
+    });
+    return;
+  }
+  try {
+    const connection = await connect();
+    const people =  (await connection.execute(
+      'SELECT UUID, Navn FROM ExternalParticipant'
+    ))[0];
+    connection.end();
+
+    res.json(people);
+  } catch (error) {
+    console.log('Could not fetch homepage');
+    console.log(error);
+  }
+});
+
+router.post('/createExternalParticipants', async (req, res) => {
+  const { token, Navn } = req.body;
+  try {
+    const { JWTKEY } = process.env;
+    jwt.verify(token, JWTKEY);
+  } catch (error) {
+    res.json({
+      status: 'denied'
+    });
+    return;
+  }
+  try {
+    const connection = await connect();
+    const participants =  (await connection.query(
+      'SELECT Navn FROM ExternalParticipant WHERE Navn LIKE ?', [Navn.toLowerCase()]
+    ))[0];
+    if(participants.length != 0) {
+      res.json({status: "Already exists"});
+      return;
+    }
+    const people =  (await connection.query(
+      'INSERT INTO ExternalParticipant(UUID, Navn) VALUES (?, ?);', [uuid.v4(), Navn.toLowerCase()]
+    ))[0];
+    connection.end();
+
+    res.json({status: "yes"});
+  } catch (error) {
+    console.log('Could not fetch homepage');
+    console.log(error);
+  }
+});
+
+router.post('/externalParticipants/:uuid', async (req, res) => {
+  const { token, arrangementID, bedriftID } = req.body;
+  try {
+    const { JWTKEY } = process.env;
+    jwt.verify(token, JWTKEY);
+  } catch (error) {
+    res.json({
+      status: 'denied'
+    });
+    return;
+  }
+  try {
+    const uuid = req.params.uuid;
+    const connection = await connect();
+    const people =  (await connection.query(
+      'DELETE FROM ExternalParticipant WHERE UUID=?', [uuid] 
+    ))[0];
+    connection.end();
+
+    res.json(people);
+  } catch (error) {
+    console.log('Could not fetch homepage');
     console.log(error);
   }
 });

@@ -22,3 +22,10 @@ export const get = async (url) => {
   return fetch(`${apiHost}${url}`, req);
 }
 
+export const del = async (url) => {
+  const req = {
+    method: 'GET',
+    mode: 'no-cors'
+  };
+  return fetch(`${apiHost}${url}`, req);
+}

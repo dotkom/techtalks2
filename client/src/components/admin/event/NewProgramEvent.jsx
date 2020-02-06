@@ -102,7 +102,7 @@ const NewProgramEvent = props => {
         updateValue={changeName}
       />
       <InputField
-        type="text"
+        type="textarea"
         label="Beskrivelse: "
         val={beskrivelse}
         updateValue={changeDescription}

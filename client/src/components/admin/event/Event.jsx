@@ -6,6 +6,7 @@ import EventInfo from './EventInfo.jsx';
 import Sponsors from './Sponsors.jsx';
 import Participants from './Participants.jsx';
 import Program from './Program.jsx';
+import ExternalParticipants from './ExternalParticipants.jsx';
 
 
 const Event = props => {
@@ -18,11 +19,13 @@ const Event = props => {
   const [showSponsors, setShowSponsors] = useState(false);
   const [showDeltagere, setShowDeltagere] = useState(false);
   const [showProgram, setShowProgram] = useState(false);
+  const [showExternalParticipants, setShowExternalParticipants] = useState(false);
 
   const toggleEvent = () => setShowEvent(!showEvent);
   const toggleSponsors = () => setShowSponsors(!showSponsors);
   const toggleDeltagere = () => setShowDeltagere(!showDeltagere);
   const toggleProgram = () => setShowProgram(!showProgram);
+  const toggleExternalParticipants = () => setShowExternalParticipants(!showExternalParticipants);
 
   const slettDeltager = async (PaameldingsHash) => {
     const token = localStorage.getItem('token');
@@ -147,6 +150,10 @@ const Event = props => {
         program={program}
         id={props.id}
         deleteProgramEvent={deleteProgramEvent}
+      />
+      <ExternalParticipants
+        toggleExternalParticipants={toggleExternalParticipants}
+        showExternalParticipants={showExternalParticipants}
       />
     </div>
   );
