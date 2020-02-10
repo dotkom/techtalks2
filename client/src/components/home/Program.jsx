@@ -1,6 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 
+import ProgramHendelse from './ProgramHendelse';
+
 const Wrapper = styled.div`
   flex: 1;
   margin: 0;
@@ -64,7 +66,7 @@ const Program = props => {
             </thead>
             <tbody>
               {
-                timeslots.map((timeslot, timeIndex)=>{
+                timeslots.map((timeslot)=>{
                   const rowEvents = events.filter(event=>event.tid.startsWith(timeslot));
                   return (
                     <tr key={timeslot}>
@@ -73,23 +75,7 @@ const Program = props => {
                         parallells.map(parallell => {
                           const thisEvent = rowEvents.filter(event=>event.parallell === parallell);
                           if(thisEvent.length) {
-                            const { navn, beskrivelse, varighet, bedrift, stedNavn, stedLink, alleParalleller } = thisEvent[0];
-                            return (
-                              <td key={parallell} rowSpan={varighet} colSpan={alleParalleller ? antallParalleller : 1}>
-                                <h3>
-                                  {navn}
-                                  <br />
-                                  <a href={stedLink}>{stedNavn}</a>
-                                </h3>
-                                <p>{bedrift}</p>
-                                <p>
-                                  { beskrivelse.split("\n").map(line => { 
-                                    return (<p>{line}</p>);
-                                    }) 
-                                  }
-                                </p>
-                              </td>
-                            )
+                            return <ProgramHendelse key={parallell} event={thisEvent[0]} antallParalleller={antallParalleller} />;
                           }  
                           return null;                    
                         })
