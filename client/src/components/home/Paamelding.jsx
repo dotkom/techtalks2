@@ -198,12 +198,14 @@ const Paamelding = props => {
                 val={studieår}
               />
               <InputField
+                disabled
                 type="text"
                 updateValue={updateAllergies}
                 label="Allergier: "
                 id="paameldingAllergier"
                 val={allergier}
               />
+              <p><i>Da det er under en uke igjen, kan vi dessverre ikke tilrettelegge for allergier.</i></p>
               <SexyButton onClick={submitForm}>Meld meg på</SexyButton>
             </div>
           )  : <p>Arrangementet er fullt. Er du med i en linjeforening? Sjekk om de har en egen påmelding der.</p>
