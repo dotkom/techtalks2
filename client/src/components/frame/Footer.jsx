@@ -18,7 +18,7 @@ const A = styled.a`
 
 const Footer = () => (
   <Wrapper>
-    <P>Tech Talks - et arrangement i regi av Ekskursjonskomitenn Online.</P>
+    <P>Tech Talks - et arrangement i regi av Ekskursjonskomiteen Online.</P>
     <P>Orgnr. 920 939 627</P>
     <P>
       <A href="mailto: ekskom@online.ntnu.no">ekskom@online.ntnu.no</A>
