@@ -45,6 +45,17 @@ const Program = props => {
       timeslots.push(time);
     }
   });
+  const periods = [];
+  for(let i = 0; i < timeslots.length - 1; i++) {
+    periods.push({
+      start: timeslots[i],
+      stop: timeslots[i +1],
+    });
+  }
+  periods.push({
+    start: timeslots[timeslots.length - 1],
+    stop: '16:00',
+  });
   const antallParalleller = events.reduce((a, b) => Math.max(a, b.parallell), 0);
   const parallells = [];
   for(let i = 1; i <= antallParalleller; i++) {
@@ -66,11 +77,11 @@ const Program = props => {
             </thead>
             <tbody>
               {
-                timeslots.map((timeslot)=>{
-                  const rowEvents = events.filter(event=>event.tid.startsWith(timeslot));
+                periods.map(({ start, stop })=>{
+                  const rowEvents = events.filter(event=>event.tid.startsWith(start));
                   return (
-                    <tr key={timeslot}>
-                      <td>{timeslot}</td>
+                    <tr key={start}>
+                      <td>{start}-{stop}</td>
                       {
                         parallells.map(parallell => {
                           const thisEvent = rowEvents.filter(event=>event.parallell === parallell);
