@@ -12,6 +12,10 @@ const ProgramHendelse = (props) => {
   const handleClick = ()=>setShowDetails(v=>!v);
 
   const { navn, beskrivelse, varighet, bedrift, stedNavn, stedLink, alleParalleller } = event;
+   
+  const beskrivelseSplitted = beskrivelse.split("\n");
+  const DESCRIPTION_MAX = 200;
+  let soFar = 0;
   return (
     <td rowSpan={varighet} colSpan={alleParalleller ? antallParalleller : 1}>
       <Header onClick={handleClick}>
@@ -21,15 +25,32 @@ const ProgramHendelse = (props) => {
       </Header>
       <p>{bedrift}</p>
       {
-        showDetails ? (
-          <p>
-            { beskrivelse.split("\n").map(line => { 
-              return (<p>{line}</p>);
+        beskrivelse.length < DESCRIPTION_MAX ? 
+           (<p>{beskrivelseSplitted.map(line => { 
+            return (<p>{line}</p>);
+            })}</p>)
+          
+        : showDetails ? 
+           (<p>{beskrivelseSplitted.map(line => { 
+            return (<p>{line}</p>);
+            }) }
+          
+          { 
+            (<a onClick={handleClick}>Les mindre</a>)
+          }
+          </p>)
+         : 
+          (<p>
+            { (beskrivelse.slice(0, DESCRIPTION_MAX)+"...").split("\n").map(line => { 
+                return (<p>{line}</p>);
               }) 
             }
-          </p>
-        ) : null
-      } 
+            { 
+              <a onClick={handleClick}>Les mer</a>
+            }
+          </p>)
+        
+      }
     </td>
   );
 };
