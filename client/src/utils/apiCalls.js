@@ -29,3 +29,26 @@ export const del = async (url) => {
   };
   return fetch(`${apiHost}${url}`, req);
 }
+
+export const blippGet = async (url, token) => {
+  console.log(token);
+  const req = {
+    method: 'GET',
+    headers: {
+      'x-blipp-token': token
+    }
+  };
+  return fetch(`${apiHost}/db/blipp${url}`, req);
+}
+
+export const blippPost = async (url, request, token) => {
+  const req = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-blipp-token': token
+    },
+    ...request
+  };
+  return fetch(`${apiHost}/db/blipp${url}`, req);
+}

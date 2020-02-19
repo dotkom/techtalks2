@@ -1,4 +1,5 @@
 const express = require('express');
+const fs = require('fs');
 
 const router = express.Router();
 const mysql = require('mysql2/promise');
@@ -8,6 +9,10 @@ const jwt = require('jsonwebtoken');
 const sendMail = require('./sendEmail.js');
 
 const uuid = require('uuid');
+
+var norwegianWords = fs.readFileSync('./ordliste_aspell.txt', 'utf8').split('\n');
+
+console.log(norwegianWords.length + " words");
 
 
 function connect() {
@@ -841,5 +846,263 @@ router.post('/externalParticipants/:uuid', async (req, res) => {
     console.log(error);
   }
 });
+
+router.post('/blippTokens', async (req, res) => {
+  const { token } = req.body;
+  try {
+    const { JWTKEY } = process.env;
+    jwt.verify(token, JWTKEY);
+  } catch (error) {
+    res.json({
+      status: 'denied'
+    });
+    return;
+  }
+  try {
+    const connection = await connect();
+    const tokens =  (await connection.query(
+      'SELECT * FROM BlipBlopTokens;'
+    ))[0];
+    connection.end();
+
+    res.json(tokens);
+  } catch (error) {
+    console.log('Could not fetch tokens');
+    console.log(error);
+  }
+});
+
+const adjectives = ["Sur", "Orange", "Gul", "Rød", "Turkis", "Sjalu"];
+const nouns = ["Glassmanet", "Potet", "Bil", "Hageslange", "Trimpet", ""]
+
+router.post('/blippTokens/create', async (req, res) => {
+  const { token, paralellNo } = req.body;
+  try {
+    const { JWTKEY } = process.env;
+    jwt.verify(token, JWTKEY);
+  } catch (error) {
+    res.json({
+      status: 'denied'
+    });
+    return;
+  }
+  try {
+    //Make a token
+    let newToken = "";
+    for(let i = 0; i < 3; i++) {
+      newToken += " "+norwegianWords[Math.floor(Math.random()*norwegianWords.length)];
+    }
+    newToken = newToken.replace(/[^\x00-\x7F]/g, "").trim();
+    const connection = await connect();
+    const tokens =  (await connection.query(
+      'INSERT INTO BlipBlopTokens(`Token`, `Paralell`) VALUES (?, ?);', [newToken, paralellNo]
+    ))[0];
+    connection.end();
+
+    res.json({status: "yes"});
+  } catch (error) {
+    console.log('Could not fetch tokens');
+    console.log(error);
+  }
+});
+
+router.post('/blippTokens/delete', async (req, res) => {
+  const { token, blippToken } = req.body;
+  try {
+    const { JWTKEY } = process.env;
+    jwt.verify(token, JWTKEY);
+  } catch (error) {
+    res.json({
+      status: 'denied'
+    });
+    return;
+  }
+  try {
+    const connection = await connect();
+    const participants =  (await connection.query(
+      'SELECT Token FROM BlipBlopTokens WHERE Token LIKE ?', [blippToken]
+    ))[0];
+    if(participants.length == 0) {
+      res.json({status: "Doesn't exist"});
+      return;
+    }
+
+    const tokens =  (await connection.query(
+      'DELETE FROM BlipBlopTokens WHERE `Token` = ?;', [blippToken]
+    ))[0];
+    connection.end();
+
+    res.json({status: "yes"});
+  } catch (error) {
+    console.log('Could not fetch tokens');
+    console.log(error);
+  }
+});
+
+router.post('/scanStatus', async (req, res) => {
+  const { token } = req.body;
+  try {
+    const { JWTKEY } = process.env;
+    jwt.verify(token, JWTKEY);
+  } catch (error) {
+    res.json({
+      status: 'denied'
+    });
+    return;
+  }
+
+  const connection = await connect();
+  let externalNames =  (await connection.query(
+    'SELECT Navn FROM ExternalParticipant ;'
+  ))[0];
+  let internalNames =  (await connection.query(
+    'SELECT Navn FROM Paameldt WHERE Verifisert=TRUE;'
+  ))[0];
+
+  internalNames = internalNames.map((name) => {return name.Navn.toLowerCase()});
+
+  externalNames = externalNames.map((name) => { return name.Navn.toLowerCase()});
+
+  let names = externalNames.concat(internalNames).unique().sort();
+
+  let result = [];
+
+  for(let i = 0; i < names.length; i++) {
+    let checks =  (await connection.query(
+      'SELECT UUID, ScanTime, ParalellNo FROM ParticipantEventMapping WHERE ParticipantName = ?;', [names[i]]
+    ))[0];
+    result.push({
+      name: names[i],
+      scans: checks
+    });
+  }
+
+  res.json(result);
+  connection.end();
+
+});
+
+//Blip blop
+
+const blippRouter = express.Router();
+
+blippRouter.use("/", async (req, res, next) => {
+  const token = req.headers["x-blipp-token"];
+  if(typeof token === "undefined") {
+    res.status(404).send("Not found");
+    console.log("No token!");
+    return;
+  }
+  console.log(`Blipp blopp middleware. Token: ${token}`);
+
+  const connection = await connect();
+  const tokens =  (await connection.query(
+    'SELECT Token FROM BlipBlopTokens WHERE Token LIKE ?', [token]
+  ))[0];
+  if(tokens.length == 0) {
+    res.status(404).send("Not found");
+    console.log("Wrong token!");
+    return;
+  }
+  connection.end();
+  next();
+});
+
+
+blippRouter.get('/check', async (req, res) => {
+  const token = req.headers["x-blipp-token"];
+  const connection = await connect();
+  const tokens =  (await connection.query(
+    'SELECT Token, Paralell FROM BlipBlopTokens WHERE Token LIKE ?', [token]
+  ))[0];
+  res.json(tokens[0]);
+  connection.end();
+});
+
+blippRouter.get('/nfc/:nfcId', async (req, res) => {
+  const nfcId = req.params.nfcId;
+  const connection = await connect();
+  const tokens =  (await connection.query(
+    'SELECT CardID, ParticipantName FROM CardParticipantMapping WHERE CardID LIKE ?', [nfcId]
+  ))[0];
+  res.json(tokens.length==0 ? {CardID: nfcId} : tokens[0]);
+  connection.end();
+
+});
+
+blippRouter.post('/nfc/:nfcId', async (req, res) => {
+  const nfcId = req.params.nfcId;
+  const { userName } = req.body;
+  const connection = await connect();
+  const tokens =  (await connection.query(
+    'SELECT CardID, ParticipantName FROM CardParticipantMapping WHERE CardID LIKE ?', [nfcId]
+  ))[0];
+  
+  if(tokens.length != 0) {
+    res.status(400).send("Object already exists");
+  }
+
+  await connection.query('INSERT INTO CardParticipantMapping(`CardID`, `ParticipantName`) VALUES (?, ?)', [nfcId, userName]);
+
+  res.json({success: true});
+  connection.end();
+
+});
+
+blippRouter.post('/passing/:nfcId', async (req, res) => {
+  const nfcId = req.params.nfcId;
+  const { userName } = req.body;
+  const connection = await connect();
+
+  //We have to get the parallell
+  const token = req.headers["x-blipp-token"];
+  const paralell =  (await connection.query(
+    'SELECT Paralell FROM BlipBlopTokens WHERE Token LIKE ?', [token]
+  ))[0];
+
+  console.log(paralell);
+
+  await connection.query('INSERT INTO ParticipantEventMapping(`UUID`, `ParticipantName`, `ParalellNo`) VALUES (?, ?, ?)', [uuid.v4(), userName, paralell[0].Paralell]);
+
+  res.json({success: true});
+  connection.end();
+
+});
+
+Array.prototype.unique = function() {
+    var a = this.concat();
+    for(var i=0; i<a.length; ++i) {
+        for(var j=i+1; j<a.length; ++j) {
+            if(a[i] === a[j])
+                a.splice(j--, 1);
+        }
+    }
+
+    return a;
+};
+
+blippRouter.get('/participants', async (req, res) => {
+  const nfcId = req.params.nfcId;
+  const connection = await connect();
+  let externalNames =  (await connection.query(
+    'SELECT Navn FROM ExternalParticipant ;'
+  ))[0];
+  let internalNames =  (await connection.query(
+    'SELECT Navn FROM Paameldt WHERE Verifisert=TRUE;'
+  ))[0];
+
+  internalNames = internalNames.map((name) => {return name.Navn.toLowerCase()});
+
+  externalNames = externalNames.map((name) => { return name.Navn.toLowerCase()});
+
+  const names = externalNames.concat(internalNames).unique();
+
+  res.json(names);
+  connection.end();
+
+});
+
+
+router.use('/blipp', blippRouter);
 
 module.exports = router;

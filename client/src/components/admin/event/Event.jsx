@@ -7,6 +7,8 @@ import Sponsors from './Sponsors.jsx';
 import Participants from './Participants.jsx';
 import Program from './Program.jsx';
 import ExternalParticipants from './ExternalParticipants.jsx';
+import BlippTokens from './BlippTokens.jsx';
+import ScanStatus from './ScanStatus.jsx';
 
 
 const Event = props => {
@@ -20,12 +22,16 @@ const Event = props => {
   const [showDeltagere, setShowDeltagere] = useState(false);
   const [showProgram, setShowProgram] = useState(false);
   const [showExternalParticipants, setShowExternalParticipants] = useState(false);
+  const [showBlippTokens, setShowBlippTokens] = useState(false);
+  const [showScanStatus, setShowScanStatus] = useState(false);
 
   const toggleEvent = () => setShowEvent(!showEvent);
   const toggleSponsors = () => setShowSponsors(!showSponsors);
   const toggleDeltagere = () => setShowDeltagere(!showDeltagere);
   const toggleProgram = () => setShowProgram(!showProgram);
   const toggleExternalParticipants = () => setShowExternalParticipants(!showExternalParticipants);
+  const toggleBlippTokens = () => setShowBlippTokens(!showBlippTokens);
+  const toggleScanStatus = () => setShowScanStatus(!showScanStatus);
 
   const slettDeltager = async (PaameldingsHash) => {
     const token = localStorage.getItem('token');
@@ -154,6 +160,14 @@ const Event = props => {
       <ExternalParticipants
         toggleExternalParticipants={toggleExternalParticipants}
         showExternalParticipants={showExternalParticipants}
+      />
+      <BlippTokens
+        toggleBlippTokens={toggleBlippTokens}
+        showBlippTokens={showBlippTokens}
+      />
+      <ScanStatus
+        toggleScanStatus={toggleScanStatus}
+        showScanStatus={showScanStatus}
       />
     </div>
   );

@@ -4,6 +4,7 @@ import { BrowserRouter, Route } from 'react-router-dom';
 
 import Home from '../home/Home';
 import Admin from '../admin/Admin';
+import Blipp from '../blipp/Blipp';
 import Validate from '../validate/Validate';
 
 const Wrapper = styled.div`
@@ -25,6 +26,7 @@ const MainBody = () => (
     <BrowserRouter>
       <Route exact path="/" component={Home} />
       <Route path="/admin" component={Admin} />
+      <Route path="/blipp" component={Blipp} />
       <Route path="/validate" component={Validate} />
     </BrowserRouter>
   </Wrapper>

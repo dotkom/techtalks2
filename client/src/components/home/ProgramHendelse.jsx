@@ -6,6 +6,10 @@ const Header = styled.h3`
   padding: 0.3em;
 `;
 
+const ClickA = styled.a`
+  cursor: pointer;
+`;
+
 const ProgramHendelse = (props) => {
   const { event, antallParalleller } = props;
   const [showDetails, setShowDetails] = useState(false);
@@ -36,7 +40,7 @@ const ProgramHendelse = (props) => {
             }) }
           
           { 
-            (<a onClick={handleClick}>Les mindre</a>)
+            (<ClickA onClick={handleClick}>Les mindre</ClickA>)
           }
           </p>)
          : 
@@ -46,7 +50,7 @@ const ProgramHendelse = (props) => {
               }) 
             }
             { 
-              <a onClick={handleClick}>Les mer</a>
+              <ClickA onClick={handleClick}>Les mer</ClickA>
             }
           </p>)
         
