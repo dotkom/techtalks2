@@ -1,14 +1,14 @@
 branch-defaults:
   eb:
-    environment: techtalks
+    environment: techtalks-dev
     group_suffix: null
 environment-defaults:
   techtalks-dev:
-    branch: eb
-    repository: https://github.com/dotkom/techtalks2
+    branch: null
+    repository: null
 global:
   application_name: techtalks
-  branch: eb
+  branch: null
   default_ec2_keyname: testkey
   default_platform: 64bit Amazon Linux 2 v5.2.0 running Node.js 12
   default_region: eu-west-1
@@ -17,6 +17,6 @@ global:
   platform_name: null
   platform_version: null
   profile: null
-  repository: https://github.com/dotkom/techtalks2
+  repository: null
   sc: git
   workspace_type: Application
