@@ -1,0 +1,56 @@
+version: '3.3'
+services:
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: techtalks
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
+      MYSQL_ROOT_PASSWORD: admin
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+    volumes:
+      - type: volume
+        source: db-data
+        target: /var/lib/mysql
+      - type: bind
+        source: ./setup.sql
+        target: /docker-entrypoint-initdb.d/setup.sql
+
+
+  backend:
+    build:
+      context: backend
+    restart: always
+    entrypoint: npm run dev
+    environment:
+      TECHTALKS_ADMIN_NAME: admin
+      TECHTALKS_ADMIN_PASSWORD: admin
+      TECHTALKS_DB_HOST: db
+      TECHTALKS_DB_NAME: techtalks
+      TECHTALKS_DB_USER: admin
+      TECHTALKS_DB_PASSWORD: admin
+      TECHTALKS_JWT_KEY: testkey
+    ports:
+      - 8080:8080
+    volumes:
+      - type: bind
+        source: ./backend
+        target: /srv/app
+
+  frontend:
+    build:
+      context: frontend
+    restart: always
+    ports:
+      - 3000:3000
+    volumes:
+      - type: bind
+        source: ./frontend
+        target: /srv/app
+    stdin_open: true
+volumes:
+  db-data:

@@ -1,0 +1,14 @@
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro&display=swap');
+
+body {
+  color: white;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Source Sans Pro', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: linear-gradient(160deg, #488582 60%, #292929 60.1%);
+}
+
+a {
+  color: #0ff;
+}
