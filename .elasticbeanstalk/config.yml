@@ -1,6 +1,6 @@
 branch-defaults:
   eb:
-    environment: techtalks-dev
+    environment: techtalks
     group_suffix: null
 environment-defaults:
   techtalks-dev:
@@ -10,7 +10,7 @@ global:
   application_name: techtalks
   branch: null
   default_ec2_keyname: testkey
-  default_platform: Node.js
+  default_platform: 64bit Amazon Linux 2 v5.2.0 running Node.js 12
   default_region: eu-west-1
   include_git_submodules: true
   instance_profile: null
