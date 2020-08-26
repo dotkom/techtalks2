@@ -7,7 +7,7 @@
   },
   "homepage": ".",
   "scripts": {
-    "start": "node ./bin/www",
+    "start": "node app.js",
     "lint-eslint": "eslint .",
     "lint-eslint:fix": "eslint . --fix",
     "lint-prettier": "prettier-check './**/*.js'",

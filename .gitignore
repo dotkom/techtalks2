@@ -1,30 +1,7 @@
-# dependencies
-*/node_modules/
-api/node_modules/
-client/.pnp
-client/.pnp.js
+node_modules/
+public/
 
-# production
-client/build
-docker/production/.env
+frontend/node_modules/
+frontend/build/
 
-# misc
-.DS_Store
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-client/npm-debug.log*
-cient/yarn-debug.log*
-client/yarn-error.log*
-
-# env variables
-api/.env
-
-# mail keys
-api/key.json
-
-# Cotnainer-specific
-docker/*/sql/
-node_modules
+.elasticbeanstalk/
