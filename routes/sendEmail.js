@@ -1,10 +1,9 @@
 const nodemailer = require('nodemailer');
 
-const key = require('../key.json');
-
-
 const createTransporter = async () => {
   const { MAILUSER } = process.env;
+  const { GMAIL_OAUTH_PRIVATE_KEY } = process.env;
+  const { GMAIL_OAUTH_CLIENT_ID } = process.env;
   const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 465,
@@ -12,8 +11,8 @@ const createTransporter = async () => {
     auth: {
       type: 'OAuth2',
       user: MAILUSER,
-      serviceClient: key.client_id,
-      privateKey: key.private_key
+      serviceClient: GMAIL_OAUTH_CLIENT_ID,
+      privateKey: GMAIL_OAUTH_PRIVATE_KEY,
     }
   });
   try {
