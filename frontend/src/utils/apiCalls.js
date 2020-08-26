@@ -2,7 +2,7 @@
 // can be this so long as proxy works, but will be easier to handle if proxy has to be dropped in prod
 // might also need to set up CORS in order to fetch directly from localhost:9000
 //const apiHost = 'http://localhost:3000';
-const apiHost = "api";
+const apiHost = "/api";
 
 export const post = async (url, request) => {
   const req = {

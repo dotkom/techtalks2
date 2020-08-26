@@ -21,3 +21,5 @@ If this is the first time deploying this application create a new eb application
 Then you have to create an environemnt with ```eb create```
 
 If you already have an application and environment just run ```eb deploy```. 
+
+The environment variables has to be set in the AWS Console. You can find them under ***Configuration*** then ***Software** and ***Environment properties***.
