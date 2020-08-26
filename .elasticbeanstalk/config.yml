@@ -1,6 +1,6 @@
 branch-defaults:
   eb:
-    environment: techtalks-dev
+    environment: techtalks
     group_suffix: null
 environment-defaults:
   techtalks-dev:
