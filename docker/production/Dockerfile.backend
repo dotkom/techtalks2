@@ -1,8 +1,0 @@
-FROM node
-
-COPY ./api/ /srv/techtalks-backend
-RUN cd /srv/techtalks-backend && npm install
-
-WORKDIR /srv/techtalks-backend
-ENTRYPOINT ["bash", "-c"]
-CMD ["npm start"]
