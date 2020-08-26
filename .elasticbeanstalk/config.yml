@@ -9,7 +9,7 @@ environment-defaults:
 global:
   application_name: techtalks
   branch: null
-  default_ec2_keyname: null
+  default_ec2_keyname: testkey
   default_platform: Node.js
   default_region: eu-west-1
   include_git_submodules: true
