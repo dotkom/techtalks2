@@ -7,14 +7,13 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
-      - name: Cache frontend dependencies
+      - name: Cache node dependencies
         uses: actions/cache@v2
         with:
           path: ~/.npm
-          key: ${{ runner.os }}-node-frontend-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-node-frontend
-          working-directory: ./frontend
+            ${{ runner.os }}-node
       
       - name: Install frontend dependencies
         run: npm install
@@ -38,13 +37,13 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       
-      - name: Cache server dependencies
+      - name: Cache node dependencies
         uses: actions/cache@v2
         with:
           path: ~/.npm
-          key: ${{ runner.os }}-node-server-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-node-server
+            ${{ runner.os }}-node
 
       - name: Install server dependencies
         run: npm install

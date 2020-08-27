@@ -32,3 +32,28 @@ If you already have an application and environment just run ```eb deploy```.
 The environment variables have to be set in the AWS Console. You can find them under ***Configuration*** then ***Software*** and ***Environment properties***.
 
 You also need to setup a MySQL database to be able to use the application. A script called ***setup.sql*** is provided in project root containing the necessary tables. 
+
+### Environment variables
+#### Database
+```
+DBHOST="database.online.ntnu.no"
+DBUSER="admin"
+DBPASS="thisisapassword"
+DBNAME="techtalks"
+```
+
+#### Email information
+```
+MAILUSER="ekskom@online.ntnu.no"
+```
+
+#### JWT
+```
+JWTKEY="Thisisnotaverygoodkey"
+```
+
+#### Admin Login
+```
+AUNAME="admin"
+APASS="password1234"
+```
