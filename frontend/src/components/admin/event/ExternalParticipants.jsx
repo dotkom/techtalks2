@@ -19,12 +19,11 @@ const UploadArea = styled.div`
   min-width: 5em;
 `;
 
-
-const ExternalParticipants = props => {
+const ExternalParticipants = (props) => {
   const [participants, setParticipants] = useState([]);
   const [loadBlob, setLoadBlob] = useState({});
 
-  const [importProcess, setImportProcess] = useState("");
+  const [importProcess, setImportProcess] = useState('');
 
   const [parseReady, setParseReady] = useState(false);
 
@@ -35,7 +34,7 @@ const ExternalParticipants = props => {
       const req = {
         body: JSON.stringify({
           token,
-          id
+          id,
         }),
       };
       const res = await post('/db/externalParticipants', req);
@@ -44,10 +43,9 @@ const ExternalParticipants = props => {
     };
     internal();
   }
-  useEffect(()=>{
+  useEffect(() => {
     updateExternalParticipants();
-  },[props]);
-
+  }, [props]);
 
   async function deleteParticipant(participantUUID) {
     console.log(participantUUID);
@@ -56,7 +54,7 @@ const ExternalParticipants = props => {
     const req = {
       body: JSON.stringify({
         token,
-        id
+        id,
       }),
     };
     const res = await post(`/db/externalParticipants/${participantUUID}`, req);
@@ -64,7 +62,7 @@ const ExternalParticipants = props => {
   }
 
   async function importBlob() {
-    for(let i = 0; i < loadBlob.length; i++) {
+    for (let i = 0; i < loadBlob.length; i++) {
       console.log(loadBlob[i]);
       const internal = async () => {
         const token = localStorage.getItem('token');
@@ -72,25 +70,27 @@ const ExternalParticipants = props => {
         const req = {
           body: JSON.stringify({
             token,
-            Navn
+            Navn,
           }),
         };
         const res = await post('/db/createExternalParticipants', req);
       };
       await internal();
-      setImportProcess(`${i+1} / ${loadBlob.length}`)
+      setImportProcess(`${i + 1} / ${loadBlob.length}`);
     }
     updateExternalParticipants();
   }
 
   return (
     <div>
-      <button type='button' onClick={props.toggleExternalParticipants}>{`${props.showExternalParticipants ? 'Skjul' : 'Vis'} eksterne påmeldte`}</button>
-      { props.showExternalParticipants ? (
+      <button type="button" onClick={props.toggleExternalParticipants}>{`${
+        props.showExternalParticipants ? 'Skjul' : 'Vis'
+      } eksterne påmeldte`}</button>
+      {props.showExternalParticipants ? (
         <div>
           <UploadArea>
             <Files
-              onChange={file => {
+              onChange={(file) => {
                 const fileReader = new FileReader();
 
                 fileReader.onload = (event) => {
@@ -100,13 +100,20 @@ const ExternalParticipants = props => {
                   setParseReady(true);
                 };
                 fileReader.readAsText(file[0]);
-
               }}
-             >
-               Dra en fil hit eller klikk for klargjøring av fil for importering
-               <p>(Onlineweb-format)</p>
-             </Files>
-             {parseReady? (importProcess!==""?(<p>{importProcess}</p>): (<button onClick={importBlob}>Importer deltagere</button>)):(<p>venter fil</p>)}
+            >
+              Dra en fil hit eller klikk for klargjøring av fil for importering
+              <p>(Onlineweb-format)</p>
+            </Files>
+            {parseReady ? (
+              importProcess !== '' ? (
+                <p>{importProcess}</p>
+              ) : (
+                <button onClick={importBlob}>Importer deltagere</button>
+              )
+            ) : (
+              <p>venter fil</p>
+            )}
           </UploadArea>
           <Table>
             <thead>
@@ -116,22 +123,30 @@ const ExternalParticipants = props => {
               </tr>
             </thead>
             <tbody>
-              {
-                participants.map(participant => {
-                  return (<tr>
+              {participants.map((participant) => {
+                return (
+                  <tr>
                     <td>{participant.Navn}</td>
-                    <td><button onClick= {() => { deleteParticipant(participant.UUID) }}>Slett</button></td>
-                  </tr>);
-                })
-              }
+                    <td>
+                      <button
+                        onClick={() => {
+                          deleteParticipant(participant.UUID);
+                        }}
+                      >
+                        Slett
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </Table>
         </div>
-      ) : <br/>
-      }
+      ) : (
+        <br />
+      )}
     </div>
-  )
+  );
 };
-
 
 export default ExternalParticipants;

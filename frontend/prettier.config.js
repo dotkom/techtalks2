@@ -1,5 +1,6 @@
-const config = require('../prettier.config');
-
 module.exports = {
-  ...config,
+  singleQuote: true,
+  trailingComma: 'es5',
+  printWidth: 120,
+  arrowParens: 'always',
 };

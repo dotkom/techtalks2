@@ -11,33 +11,31 @@ const Td = styled.td`
 
 const Sponsors = (props) => (
   <div>
-    <button type='button' onClick={props.toggleSponsors}>{`${props.showSponsors ? 'Skjul' : 'Vis'} sponsorer`}</button>
-      {
-        props.showSponsors ? (
-          <Table>
-            <thead>
-              <tr>
-                <th>BedriftID</th>
-                <th>Navn</th>
-                <th>Logo</th>
-                <th>Type</th>
-              </tr>
-            </thead>
-            <tbody>
-              {
-                props.sponsors.map(({BedriftID, navn, logo, sponsorType}) => (
-                  <tr key={BedriftID}>
-                    <Td>{BedriftID}</Td>
-                    <Td>{navn}</Td>
-                    <Td>{logo}</Td>
-                    <Td>{['Sølv','Gull','HSP'][sponsorType-1]}</Td>
-                  </tr>
-                ))
-              }
-            </tbody>
-          </Table>
-        ) : <br/>
-      }
+    <button type="button" onClick={props.toggleSponsors}>{`${props.showSponsors ? 'Skjul' : 'Vis'} sponsorer`}</button>
+    {props.showSponsors ? (
+      <Table>
+        <thead>
+          <tr>
+            <th>BedriftID</th>
+            <th>Navn</th>
+            <th>Logo</th>
+            <th>Type</th>
+          </tr>
+        </thead>
+        <tbody>
+          {props.sponsors.map(({ BedriftID, navn, logo, sponsorType }) => (
+            <tr key={BedriftID}>
+              <Td>{BedriftID}</Td>
+              <Td>{navn}</Td>
+              <Td>{logo}</Td>
+              <Td>{['Sølv', 'Gull', 'HSP'][sponsorType - 1]}</Td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+    ) : (
+      <br />
+    )}
   </div>
 );
 

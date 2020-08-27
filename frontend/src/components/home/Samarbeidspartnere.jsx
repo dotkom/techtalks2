@@ -38,9 +38,9 @@ const ImgSizeGuardian = styled.div`
   max-height: 15em;
 `;
 
-const Samarbeidspartnere = props => {
+const Samarbeidspartnere = (props) => {
   const { partners } = props;
-  if(partners.length === 0) {
+  if (partners.length === 0) {
     return (
       <Wrapper>
         <h2>Samarbeidspartnere</h2>
@@ -48,23 +48,23 @@ const Samarbeidspartnere = props => {
       </Wrapper>
     );
   }
-  const [ HSP ] = partners.filter(partner => partner.sponsorType === 3);
-  const gullSponsor = partners.filter(partner => partner.sponsorType === 2);
-  const sølvSponsor = partners.filter(partner => partner.sponsorType === 1);
+  const [HSP] = partners.filter((partner) => partner.sponsorType === 3);
+  const gullSponsor = partners.filter((partner) => partner.sponsorType === 2);
+  const sølvSponsor = partners.filter((partner) => partner.sponsorType === 1);
   return (
     <Wrapper>
-      { HSP ? (
+      {HSP ? (
         <div>
           <h2>Hovedsamarbeidspartner</h2>
           {
-            <BigImg 
+            <BigImg
               src={HSP.local ? `/img/${HSP.url}` : `https://online.ntnu.no/media/images/responsive/${HSP.url}`}
-              alt={HSP.name} 
+              alt={HSP.name}
             />
           }
         </div>
       ) : null}
-      { gullSponsor.length > 0 ? (
+      {gullSponsor.length > 0 ? (
         <div>
           <h2>Samarbeidspartnere</h2>
           <Partners>
@@ -73,28 +73,26 @@ const Samarbeidspartnere = props => {
                 <Img
                   src={local ? `/img/${url}` : `https://online.ntnu.no/media/images/responsive/${url}`}
                   alt={name}
-                  key={url} 
+                  key={url}
                 />
               </ImgSizeGuardian>
             ))}
           </Partners>
         </div>
       ) : null}
-      { sølvSponsor.length > 0 ? (
+      {sølvSponsor.length > 0 ? (
         <div>
           <h2>Sponsorer</h2>
           <Partners>
-            {
-              sølvSponsor.map(({ name, url, local }) => (
-                <ImgSizeGuardian>
-                  <Img
-                    src={local ? `/img/${url}` : `https://online.ntnu.no/media/images/responsive/${url}`}
-                    alt={name}
-                    key={url}
-                  />
-                </ImgSizeGuardian>
-              ))
-            }
+            {sølvSponsor.map(({ name, url, local }) => (
+              <ImgSizeGuardian>
+                <Img
+                  src={local ? `/img/${url}` : `https://online.ntnu.no/media/images/responsive/${url}`}
+                  alt={name}
+                  key={url}
+                />
+              </ImgSizeGuardian>
+            ))}
           </Partners>
         </div>
       ) : null}

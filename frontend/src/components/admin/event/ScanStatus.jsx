@@ -20,22 +20,26 @@ const UploadArea = styled.div`
 `;
 
 const ScanContainer = styled.div`
-  border: 1px solid #00B8B2;
+  border: 1px solid #00b8b2;
 
   i {
-  font-size: 0.7em;
+    font-size: 0.7em;
   }
 `;
 
 function UserScanHistory(scan) {
-  return (<ScanContainer>
-    <p>Parallell {scan.ParalellNo}</p>
-    <p>{scan.ScanTime}</p>
-    <p><i>{scan.UUID}</i></p>
-  </ScanContainer>)
+  return (
+    <ScanContainer>
+      <p>Parallell {scan.ParalellNo}</p>
+      <p>{scan.ScanTime}</p>
+      <p>
+        <i>{scan.UUID}</i>
+      </p>
+    </ScanContainer>
+  );
 }
 
-const ScanStatus = props => {
+const ScanStatus = (props) => {
   const [users, setUsers] = useState([]);
 
   function updateTokens() {
@@ -44,7 +48,7 @@ const ScanStatus = props => {
       const { id } = props;
       const req = {
         body: JSON.stringify({
-          token
+          token,
         }),
       };
       const res = await post('/db/scanStatus', req);
@@ -53,15 +57,16 @@ const ScanStatus = props => {
     };
     internal();
   }
-  useEffect(()=>{
+  useEffect(() => {
     updateTokens();
-  },[props]);
-
+  }, [props]);
 
   return (
     <div>
-      <button type='button' onClick={props.toggleScanStatus}>{`${props.showScanStatus ? 'Skjul' : 'Vis'} scanne-status`}</button>
-      { props.showScanStatus ? (
+      <button type="button" onClick={props.toggleScanStatus}>{`${
+        props.showScanStatus ? 'Skjul' : 'Vis'
+      } scanne-status`}</button>
+      {props.showScanStatus ? (
         <div>
           <Table>
             <thead>
@@ -71,25 +76,31 @@ const ScanStatus = props => {
               </tr>
             </thead>
             <tbody>
-              {
-                users.map(user => {
-                  return (<tr>
-                    <td><code>{user.name}</code></td>
+              {users.map((user) => {
+                return (
+                  <tr>
                     <td>
-                      { user.scans.length==0 ? null : user.scans.map((scan) => { return UserScanHistory(scan); }) }
+                      <code>{user.name}</code>
+                    </td>
+                    <td>
+                      {user.scans.length == 0
+                        ? null
+                        : user.scans.map((scan) => {
+                            return UserScanHistory(scan);
+                          })}
                       <i>{user.scans.length} scanninger</i>
                     </td>
-                  </tr>);
-                })
-              }
+                  </tr>
+                );
+              })}
             </tbody>
           </Table>
         </div>
-      ) : <br/>
-      }
+      ) : (
+        <br />
+      )}
     </div>
-  )
+  );
 };
-
 
 export default ScanStatus;

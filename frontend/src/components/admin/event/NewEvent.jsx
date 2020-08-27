@@ -5,7 +5,7 @@ import { post } from '../../../utils/apiCalls.js';
 
 import InputField from '../../inputs/InputField';
 
-const NewEvent = props => {
+const NewEvent = (props) => {
   const [dato, changeDate] = useState('');
   const [antallPlasser, changePlasser] = useState('');
   const [beskrivelse, changeDesc] = useState('');
@@ -22,13 +22,13 @@ const NewEvent = props => {
         beskrivelse,
         påmeldingsStart,
         token,
-      })
+      }),
     };
     const res = await post('/db/newEvent', req);
     const j = await res.json();
     const { status } = j;
     setStatus(status);
-  }
+  };
 
   if (status === 'denied') {
     return <Redirect to="/admin" />;
@@ -47,13 +47,7 @@ const NewEvent = props => {
         updateValue={changePlasser}
         type="number"
       />
-      <InputField
-        label="Beskrivelse: "
-        id="eventDesc"
-        val={beskrivelse}
-        updateValue={changeDesc}
-        type="textarea"
-      />
+      <InputField label="Beskrivelse: " id="eventDesc" val={beskrivelse} updateValue={changeDesc} type="textarea" />
       <InputField
         label="Påmeldingsstart: "
         id="eventStart"

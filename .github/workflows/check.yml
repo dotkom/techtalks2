@@ -19,9 +19,21 @@ jobs:
       - name: Install frontend dependencies
         run: npm install
         working-directory: ./frontend
+
+      - name: Run ESLint
+        run: npm run lint-eslint
+        working-directory: ./frontend
+        
+      - name: Run Prettier
+        run: npm run lint-prettier
+        working-directory: ./frontend
+      
+      - name: Run tests
+        run: npm test -- --watchAll=false
+        working-directory: ./frontend
   
   check-server:
-    name: Lint and test server
+    name: Lint server
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -34,5 +46,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-server
 
-      - name: install server dependencies
+      - name: Install server dependencies
         run: npm install
+
+      - name: Run ESLint
+        run: npm run lint-eslint
+
+      - name: Run Prettier
+        run: npm run lint-prettier

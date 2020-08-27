@@ -1,12 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 
-
 const UL = styled.ul`
   margin: auto;
   text-align: left;
 `;
-
 
 const AdminPanel = () => (
   <div>

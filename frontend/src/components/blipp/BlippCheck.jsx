@@ -11,25 +11,25 @@ const Wrapper = styled.div`
   margin: 0 auto;
   padding: 5em;
   z-index: 0;
-  background-color: #181B1E;
+  background-color: #181b1e;
 
   color: #fff;
 `;
 
-const BlippCheck = props => {
-  const {setCorrectToken, setTokenBlob} = props;
-  let [authToken, setUpdateToken] = useState("");
+const BlippCheck = (props) => {
+  const { setCorrectToken, setTokenBlob } = props;
+  let [authToken, setUpdateToken] = useState('');
 
   async function validateBlipp() {
     try {
       const res = await blippGet(`/check`, authToken);
-      if(res.status == 200) {
+      if (res.status == 200) {
         let json = await res.json();
         console.log(json);
         setTokenBlob(json);
         setCorrectToken(true);
       } else {
-        alert("Wrong token");
+        alert('Wrong token');
       }
       //
     } catch (err) {
@@ -41,9 +41,11 @@ const BlippCheck = props => {
     <Wrapper>
       <h2>Skriv inn blipp-token</h2>
       <InputField type="text" label="Token:" val={authToken} updateValue={setUpdateToken} />
-      <button type="button" onClick={validateBlipp}>Test</button>
+      <button type="button" onClick={validateBlipp}>
+        Test
+      </button>
     </Wrapper>
   );
-}
+};
 
 export default BlippCheck;

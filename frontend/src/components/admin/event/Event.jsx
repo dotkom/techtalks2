@@ -10,12 +10,18 @@ import ExternalParticipants from './ExternalParticipants.jsx';
 import BlippTokens from './BlippTokens.jsx';
 import ScanStatus from './ScanStatus.jsx';
 
-
-const Event = props => {
+const Event = (props) => {
   const [status, setStatus] = useState('waiting');
   const [sponsors, setSponsors] = useState([]);
   const [program, setProgram] = useState([]);
-  const [event, setEvent] = useState({Beskrivelse:'',Dato:null,AntallPlasser:0,AntallPåmeldte:0,Link:'',PaameldingsStart:''});
+  const [event, setEvent] = useState({
+    Beskrivelse: '',
+    Dato: null,
+    AntallPlasser: 0,
+    AntallPåmeldte: 0,
+    Link: '',
+    PaameldingsStart: '',
+  });
   const [deltagere, setDeltagere] = useState([]);
   const [showEvent, setShowEvent] = useState(false);
   const [showSponsors, setShowSponsors] = useState(false);
@@ -38,25 +44,25 @@ const Event = props => {
     const req = {
       body: JSON.stringify({
         PaameldingsHash,
-        token
-      })
+        token,
+      }),
     };
     const res = await post('/db/deleteParticipant', req);
     const j = await res.json();
     const { status } = j;
-    if(status === 'succeeded') {
-      setDeltagere(deltagere.filter(deltager => deltager.PaameldingsHash !== PaameldingsHash));
+    if (status === 'succeeded') {
+      setDeltagere(deltagere.filter((deltager) => deltager.PaameldingsHash !== PaameldingsHash));
     }
-  }
+  };
 
-  useEffect(()=>{
+  useEffect(() => {
     const internal = async () => {
       const token = localStorage.getItem('token');
       const { id } = props;
       const req = {
         body: JSON.stringify({
           token,
-          id
+          id,
         }),
       };
       const res = await post('/db/adminEvent', req);
@@ -68,9 +74,9 @@ const Event = props => {
       setDeltagere(deltagere);
     };
     internal();
-  },[props]);
+  }, [props]);
 
-  const changeInfo = async newData => {
+  const changeInfo = async (newData) => {
     const token = localStorage.getItem('token');
     const { dato, beskrivelse, antallPlasser, link, påmeldingsStart } = newData;
     const { AntallPåmeldte } = event;
@@ -83,8 +89,8 @@ const Event = props => {
         beskrivelse,
         plasser: antallPlasser,
         link,
-        påmeldingsStart
-      })
+        påmeldingsStart,
+      }),
     };
     const res = await post('/db/editEvent', req);
     const j = await res.json();
@@ -98,26 +104,26 @@ const Event = props => {
         Link: link,
         Beskrivelse: beskrivelse,
         PaameldingsStart: påmeldingsStart,
-        AntallPåmeldte
+        AntallPåmeldte,
       });
     }
-  }
+  };
 
-  const deleteProgramEvent = async idToDelete => {
+  const deleteProgramEvent = async (idToDelete) => {
     const token = localStorage.getItem('token');
     const req = { body: JSON.stringify({ token, id: idToDelete }) };
     const res = await post('/db/deleteProgramEvent', req);
     const { status } = await res.json();
     if (status === 'ok') {
-      setProgram(program.filter(p=>p.id!==idToDelete));
+      setProgram(program.filter((p) => p.id !== idToDelete));
     }
-  }
+  };
 
   const { Beskrivelse, Dato, AntallPlasser, AntallPåmeldte, Link, PaameldingsStart } = event;
-  if(status === 'denied') {
-    return <Redirect to='/admin' />;
+  if (status === 'denied') {
+    return <Redirect to="/admin" />;
   }
-  if(status === 'waiting') {
+  if (status === 'waiting') {
     return (
       <div>
         <h1>Info om arrangement</h1>
@@ -128,7 +134,7 @@ const Event = props => {
   return (
     <div>
       <h1>Info om arrangement</h1>
-      <EventInfo 
+      <EventInfo
         toggleEvent={toggleEvent}
         showEvent={showEvent}
         dato={Dato}
@@ -139,11 +145,7 @@ const Event = props => {
         påmeldingsStart={PaameldingsStart}
         saveChanges={changeInfo}
       />
-      <Sponsors 
-        toggleSponsors={toggleSponsors}
-        showSponsors={showSponsors}
-        sponsors={sponsors}
-      />
+      <Sponsors toggleSponsors={toggleSponsors} showSponsors={showSponsors} sponsors={sponsors} />
       <Participants
         deltagere={deltagere}
         toggleDeltagere={toggleDeltagere}
@@ -161,14 +163,8 @@ const Event = props => {
         toggleExternalParticipants={toggleExternalParticipants}
         showExternalParticipants={showExternalParticipants}
       />
-      <BlippTokens
-        toggleBlippTokens={toggleBlippTokens}
-        showBlippTokens={showBlippTokens}
-      />
-      <ScanStatus
-        toggleScanStatus={toggleScanStatus}
-        showScanStatus={showScanStatus}
-      />
+      <BlippTokens toggleBlippTokens={toggleBlippTokens} showBlippTokens={showBlippTokens} />
+      <ScanStatus toggleScanStatus={toggleScanStatus} showScanStatus={showScanStatus} />
     </div>
   );
 };

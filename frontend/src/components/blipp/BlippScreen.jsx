@@ -10,28 +10,26 @@ const Wrapper = styled.div`
   margin: 0 auto;
   padding: 5em;
   z-index: 0;
-  background-color: #181B1E;
+  background-color: #181b1e;
 
   color: #fff;
 `;
 
 const BlippInput = styled.input`
-  background-color: #080B0E;
+  background-color: #080b0e;
   min-width: 20em;
   min-height: 2.5em;
   font-size: 2em;
-  font-family:monospace;
-  color: #F89934;
-  border: 1px solid #00B8B2;
+  font-family: monospace;
+  color: #f89934;
+  border: 1px solid #00b8b2;
 `;
 
-const LoadingIndicatorWrapper = styled.div`
-
-`;
+const LoadingIndicatorWrapper = styled.div``;
 
 const CancelButton = styled.div`
-  background-color: #080B0E;
-  border: 1px solid #b80062 ;
+  background-color: #080b0e;
+  border: 1px solid #b80062;
   font-size: 2em;
 
   min-width: 5em;
@@ -39,7 +37,7 @@ const CancelButton = styled.div`
   min-height: 1.5em;
   text-align: left;
   box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
-  
+
   padding: 0.5em;
 
   flex-grow: 1;
@@ -47,7 +45,7 @@ const CancelButton = styled.div`
   margin: 0.5em;
 
   :hover {
-    border: 1px solid #F89934;
+    border: 1px solid #f89934;
     cursor: pointer;
   }
 
@@ -56,17 +54,16 @@ const CancelButton = styled.div`
   }
 `;
 
-
 const ParticipantContainer = styled.div`
-  background-color: #080B0E;
-  border: 1px solid #00B8B2;
+  background-color: #080b0e;
+  border: 1px solid #00b8b2;
   font-size: 2em;
 
   min-width: 5em;
   min-height: 1.5em;
   text-align: left;
   box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
-  
+
   padding: 0.5em;
 
   flex-grow: 1;
@@ -74,7 +71,7 @@ const ParticipantContainer = styled.div`
   margin: 0.5em;
 
   :hover {
-    border: 1px solid #F89934;
+    border: 1px solid #f89934;
     cursor: pointer;
   }
 
@@ -88,11 +85,10 @@ const ParticipantList = styled.div`
   flex-wrap: wrap;
 `;
 
+const BlippScreen = (props) => {
+  const { tokenBlob } = props;
 
-const BlippScreen = props => {
-  const {tokenBlob} = props;
-
-  let [currentNfcID, setCurrentNfcID] = useState("");
+  let [currentNfcID, setCurrentNfcID] = useState('');
   let [loading, setLoading] = useState(false);
   let [currentUser, setCurrentUser] = useState(null);
   let [success, setSuccess] = useState(false);
@@ -104,7 +100,7 @@ const BlippScreen = props => {
     let js = await res.json();
     setCurrentUser(js);
     console.log(js);
-    if(typeof js.ParticipantName !== 'undefined') {
+    if (typeof js.ParticipantName !== 'undefined') {
       triggerPassingCreation(js);
     } else {
       setLoading(false);
@@ -114,7 +110,7 @@ const BlippScreen = props => {
   function resetState() {
     setSuccess(false);
     setCurrentUser(null);
-    setCurrentNfcID("");
+    setCurrentNfcID('');
     setLoading(false);
   }
 
@@ -124,31 +120,31 @@ const BlippScreen = props => {
       setLoading(true);
       validateNfc();
     }
-  }
+  };
 
   function updateNames() {
     const internal = async () => {
       const res = await blippGet('/participants', props.tokenBlob.Token);
       let p = await res.json();
       p = p.map((participant) => {
-        let parts = participant.split(" ");
+        let parts = participant.split(' ');
         parts = parts.map((part) => {
           return part.length == 0 ? part : part[0].toUpperCase() + part.slice(1);
         });
 
-        return parts.join(" ");
-      })
+        return parts.join(' ');
+      });
       setParticipants(p.sort());
     };
     internal();
   }
-  useEffect(()=>{
+  useEffect(() => {
     updateNames();
-  },[props]);
+  }, [props]);
 
   function revertToStart() {
     setCurrentUser(null);
-    setCurrentNfcID("");
+    setCurrentNfcID('');
     setLoading(false);
   }
 
@@ -160,8 +156,8 @@ const BlippScreen = props => {
       }),
     };
     const res = await blippPost(`/passing/${currentNfcID}`, req, tokenBlob.Token);
-    if(res.status !== 200) {
-      alert("Failed to register attendance, contact staff");
+    if (res.status !== 200) {
+      alert('Failed to register attendance, contact staff');
       setLoading(false);
       setCurrentUser(null);
       setCurrentNfcID(null);
@@ -178,10 +174,10 @@ const BlippScreen = props => {
       }),
     };
     const res = await blippPost(`/nfc/${currentNfcID}`, req, tokenBlob.Token);
-    if(res.status !== 200) {
-      alert("Failed to create mapping...");
+    if (res.status !== 200) {
+      alert('Failed to create mapping...');
       setCurrentUser(null);
-      setCurrentNfcID("");
+      setCurrentNfcID('');
       setLoading(false);
     } else {
       let userObj = currentUser;
@@ -189,37 +185,63 @@ const BlippScreen = props => {
       triggerPassingCreation(userObj);
     }
   }
-  
 
-  let LoadingIndicator = (<LoadingIndicatorWrapper><p><b>Please wait...</b></p></LoadingIndicatorWrapper>);
+  let LoadingIndicator = (
+    <LoadingIndicatorWrapper>
+      <p>
+        <b>Please wait...</b>
+      </p>
+    </LoadingIndicatorWrapper>
+  );
 
   return (
     <Wrapper>
       <h2>Parallell {tokenBlob.Paralell}</h2>
-      { success ? (
-          <div>
-            <h2>Velkommen!</h2>
-            <ParticipantContainer onClick={ () => { resetState(); } }><p>Ny scan</p></ParticipantContainer>
-          </div>
-        ) : (
-        loading ? LoadingIndicator : (currentUser == null ? (
-          <BlippInput type="text" hint="NFC-ID" onChange={e => setCurrentNfcID(e.target.value)} value={currentNfcID} onKeyDown={handleKeyDown} autoFocus/>
-        ) : (
-            <div>
-              <h3>Velkommen til Tech Talks. Velg navnet ditt i listen under.</h3>
-              <CancelButton onClick={revertToStart}><p>Angre</p></CancelButton>
-              <ParticipantList>
-                {
-                  participants.map((part) => {
-                    return (<ParticipantContainer onClick={ () => { setMapping(part.toLowerCase()); } }><p>{part}</p></ParticipantContainer>)
-                  })
-                }
-              </ParticipantList>
-            </div>
-        )))
-      }
+      {success ? (
+        <div>
+          <h2>Velkommen!</h2>
+          <ParticipantContainer
+            onClick={() => {
+              resetState();
+            }}
+          >
+            <p>Ny scan</p>
+          </ParticipantContainer>
+        </div>
+      ) : loading ? (
+        LoadingIndicator
+      ) : currentUser == null ? (
+        <BlippInput
+          type="text"
+          hint="NFC-ID"
+          onChange={(e) => setCurrentNfcID(e.target.value)}
+          value={currentNfcID}
+          onKeyDown={handleKeyDown}
+          autoFocus
+        />
+      ) : (
+        <div>
+          <h3>Velkommen til Tech Talks. Velg navnet ditt i listen under.</h3>
+          <CancelButton onClick={revertToStart}>
+            <p>Angre</p>
+          </CancelButton>
+          <ParticipantList>
+            {participants.map((part) => {
+              return (
+                <ParticipantContainer
+                  onClick={() => {
+                    setMapping(part.toLowerCase());
+                  }}
+                >
+                  <p>{part}</p>
+                </ParticipantContainer>
+              );
+            })}
+          </ParticipantList>
+        </div>
+      )}
     </Wrapper>
   );
-}
+};
 
 export default BlippScreen;

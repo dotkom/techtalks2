@@ -4,17 +4,17 @@ import { Redirect } from 'react-router-dom';
 import { post } from '../../../utils/apiCalls.js';
 import Company from './Company';
 
-const Companies = props => {
+const Companies = (props) => {
   const [companies, setCompanies] = useState([]);
   const [status, setStatus] = useState('waiting');
 
-  useEffect(()=> {
+  useEffect(() => {
     const internal = async () => {
       const token = localStorage.getItem('token');
       const req = {
         body: JSON.stringify({
           token,
-        })
+        }),
       };
       const res = await post('/db/allCompanies', req);
       const j = await res.json();
@@ -62,13 +62,13 @@ const Companies = props => {
               logo={Logo}
               local={local}
               sponsorType={sponsorType}
-              handleUpdate={values=>updateCompany(index, values)}
+              handleUpdate={(values) => updateCompany(index, values)}
             />
           ))}
         </tbody>
       </table>
     </div>
   );
-}
+};
 
 export default Companies;

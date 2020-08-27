@@ -3,7 +3,7 @@ import { Redirect } from 'react-router-dom';
 
 import { post } from '../../../utils/apiCalls.js';
 
-const Events = props => {
+const Events = (props) => {
   const [events, setEvents] = useState([]);
   const [status, setStatus] = useState('waiting');
 
@@ -13,7 +13,7 @@ const Events = props => {
       const req = {
         body: JSON.stringify({
           token,
-        })
+        }),
       };
       const res = await post('/db/allEvents', req);
       const j = await res.json();
@@ -44,12 +44,16 @@ const Events = props => {
               <td>{ArrangementID}</td>
               <td>{new Date(Dato).toLocaleDateString()}</td>
               <td>{`${AntallPåmeldte} (${AntallPåmeldteTotal})/${AntallPlasser}`}</td>
-                <td><a href={`/admin/event?id=${ArrangementID}`}>Mer info</a></td>
+              <td>
+                <a href={`/admin/event?id=${ArrangementID}`}>Mer info</a>
+              </td>
             </tr>
           ))}
         </tbody>
       </table>
-      <p>Vil du lage et nytt arrangement, kan du gjøre det <a href="/admin/newEvent">her</a></p>
+      <p>
+        Vil du lage et nytt arrangement, kan du gjøre det <a href="/admin/newEvent">her</a>
+      </p>
     </div>
   );
 };

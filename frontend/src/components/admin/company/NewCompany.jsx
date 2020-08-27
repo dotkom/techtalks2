@@ -4,7 +4,7 @@ import { Redirect } from 'react-router-dom';
 import { post } from '../../../utils/apiCalls.js';
 import InputField from '../../inputs/InputField';
 
-const NewCompany = props => {
+const NewCompany = (props) => {
   const [name, changeName] = useState('');
   const [logo, changeLogo] = useState('');
   const [lokaltBilde, changeLokaltBilde] = useState(false);
@@ -18,14 +18,14 @@ const NewCompany = props => {
         navn: name,
         logo,
         lokaltBilde,
-      })
+      }),
     };
-    setStatus('waiting',);
+    setStatus('waiting');
     const res = await post('/db/newCompany', req);
     const j = await res.json();
     const { status } = j;
     setStatus(status);
-  }
+  };
   if (status === 'denied') {
     return <Redirect to="/admin" />;
   }
@@ -39,7 +39,12 @@ const NewCompany = props => {
       <InputField label="Logo: " id="cLogo" val={logo} updateValue={changeLogo} type="text" />
       <label htmlFor="cLocal">
         Lokalt bilde
-        <input type="checkbox" id="cLocal" defaultChecked={lokaltBilde} onChange={e=>changeLokaltBilde(e.target.checked)} />
+        <input
+          type="checkbox"
+          id="cLocal"
+          defaultChecked={lokaltBilde}
+          onChange={(e) => changeLokaltBilde(e.target.checked)}
+        />
       </label>
       <button type="button" onClick={submitCompany}>
         Lag selskap
@@ -47,6 +52,6 @@ const NewCompany = props => {
       {status === 'failed' ? <p>Kunne ikke opprette selskapet</p> : null}
     </div>
   );
-}
+};
 
 export default NewCompany;

@@ -1,5 +1,5 @@
 {
-  "name": "tiktok",
+  "name": "techtalks-frontend",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -16,8 +16,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "lint-eslint": "eslint ./src/**/*.{js,jsx}",
-    "lint-eslint:fix": "eslint --fix ./src/**/*.{js,jsx}",
+    "lint-eslint": "eslint .",
+    "lint-eslint:fix": "eslint --fix .",
     "lint-prettier": "prettier-check 'src/**/*.{js,jsx}'",
     "lint-prettier:fix": "prettier-check --write 'src/**/*.{js,jsx}'"
   },

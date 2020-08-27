@@ -4,7 +4,7 @@ import { Redirect } from 'react-router-dom';
 import { post } from '../../../utils/apiCalls.js';
 import InputField from '../../inputs/InputField';
 
-const Company = props => {
+const Company = (props) => {
   // const { bedriftID, navn, logo, sponsorType, local } = props;
   const [status, setStatus] = useState('default');
   const [edit, setEditing] = useState(false);
@@ -13,8 +13,8 @@ const Company = props => {
   const [eType, setSponsorship] = useState(0);
   const [eLokaltBilde, setLokaltBilde] = useState(false);
 
-  const changeSponsorship = e => setSponsorship(parseInt(e.target.value));
-  const changeLokaltBilde = e => setLokaltBilde(e.target.checked);
+  const changeSponsorship = (e) => setSponsorship(parseInt(e.target.value));
+  const changeLokaltBilde = (e) => setLokaltBilde(e.target.checked);
 
   const allowEditing = () => {
     const { navn, logo, sponsorType, local } = props;
@@ -23,11 +23,11 @@ const Company = props => {
     setSponsorship(sponsorType);
     setLokaltBilde(local);
     setEditing(true);
-  }
+  };
 
   const cancelEditing = () => {
     setEditing(false);
-  }
+  };
 
   const submitEdit = async () => {
     const token = localStorage.getItem('token');
@@ -41,7 +41,7 @@ const Company = props => {
         lokaltBilde: eLokaltBilde,
         oldSponsorType: sponsorType,
         sponsorType: eType,
-      })
+      }),
     };
     const res = await post('/db/editCompany', req);
     const j = await res.json();
@@ -51,9 +51,9 @@ const Company = props => {
     } else {
       setStatus(status);
       setEditing(false);
-      handleUpdate({Navn:eNavn, Logo:eLogo, sponsorType: eType, local: eLokaltBilde});
-    };
-  }
+      handleUpdate({ Navn: eNavn, Logo: eLogo, sponsorType: eType, local: eLokaltBilde });
+    }
+  };
 
   if (status === 'denied') {
     return <Redirect to="/admin" />;
@@ -63,20 +63,8 @@ const Company = props => {
     return (
       <tr>
         <td colSpan="4">
-          <InputField
-            label="Navn: "
-            id={`company${bedriftID}Name`}
-            updateValue={changeName}
-            val={eNavn}
-            type="text"
-          />
-          <InputField
-            label="Logo: "
-            id={`company${bedriftID}Logo`}
-            updateValue={changeLogo}
-            val={eLogo}
-            type="text"
-          />
+          <InputField label="Navn: " id={`company${bedriftID}Name`} updateValue={changeName} val={eNavn} type="text" />
+          <InputField label="Logo: " id={`company${bedriftID}Logo`} updateValue={changeLogo} val={eLogo} type="text" />
           <label htmlFor={`company${bedriftID}Spons`}>
             Sponsor?
             <select value={eType} onChange={changeSponsorship}>
@@ -102,7 +90,7 @@ const Company = props => {
   }
 
   let sponsorName = null;
-  if(sponsorType === 1) {
+  if (sponsorType === 1) {
     sponsorName = 'Sølv';
   } else if (sponsorType === 2) {
     sponsorName = 'Gull';
@@ -124,6 +112,6 @@ const Company = props => {
       </td>
     </tr>
   );
-}
+};
 
 export default Company;

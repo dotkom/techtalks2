@@ -6,22 +6,21 @@ const Wrapper = styled.div`
   height: 20em;
   margin: auto;
   max-width: 70em;
-  background-color: #181B1E;
-  z-index:10;
+  background-color: #181b1e;
+  z-index: 10;
 `;
 
 const Logo = styled.img`
   margin-top: 0px;
   width: 100%;
   max-height: 100%;
-  background-color: #181B1E;
+  background-color: #181b1e;
 `;
 
 const Header = () => (
   <Wrapper>
-    <Logo src='/logo.svg' />
+    <Logo src="/logo.svg" />
   </Wrapper>
 );
-
 
 export default Header;

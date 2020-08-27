@@ -6,13 +6,13 @@ const Rooms = () => {
   const [rooms, setRooms] = useState([]);
   //const [_, setStatus] = useState('waiting');
 
-  useEffect(()=>{
+  useEffect(() => {
     const internal = async () => {
       const token = localStorage.getItem('token');
       const req = {
         body: JSON.stringify({
-          token
-        })
+          token,
+        }),
       };
       const res = await post('/db/getRooms', req);
       const j = await res.json();
@@ -26,7 +26,9 @@ const Rooms = () => {
   return (
     <div>
       <h1>Alle rom</h1>
-      <p><a href="/admin/newRoom">Legg til nytt</a></p>
+      <p>
+        <a href="/admin/newRoom">Legg til nytt</a>
+      </p>
       <table>
         <thead>
           <tr>
@@ -49,6 +51,6 @@ const Rooms = () => {
       </table>
     </div>
   );
-}
+};
 
 export default Rooms;

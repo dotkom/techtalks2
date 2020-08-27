@@ -22,7 +22,7 @@ const Search = styled.div`
   flex-flow: row wrap;
 `;
 
-const ImportCompany = props => {
+const ImportCompany = (props) => {
   const [name, updateName] = useState('');
   const [status, setStatus] = useState('waiting');
   const [companies, setCompanies] = useState([]);
@@ -33,9 +33,9 @@ const ImportCompany = props => {
     const { results } = j;
     setStatus('loaded');
     setCompanies(results);
-  }
+  };
 
-  const addCompany = async index => {
+  const addCompany = async (index) => {
     const company = companies[index];
     const { name, image } = company;
     const { original } = image;
@@ -48,14 +48,14 @@ const ImportCompany = props => {
         navn: name,
         logo: imageID,
         lokaltBilde: false,
-      })
-    }
+      }),
+    };
     const res = await post('/db/newCompany', req);
     const j = await res.json();
-    if(j.status === 'succeeded') {
+    if (j.status === 'succeeded') {
       setStatus('succeeded');
     }
-  }
+  };
 
   if (status === 'succeeded') {
     return <Redirect to="/admin/companies" />;
@@ -64,38 +64,38 @@ const ImportCompany = props => {
     <Wrapper>
       <h1>Importer et selskap fra Onlineweb</h1>
       <Search>
-        <InputField
-          label="Navn (case sensitive): "
-          id="nameIn"
-          val={name}
-          type="text"
-          updateValue={updateName}
-        />
-        <button type="button" onClick={searchDotkom}>Søk</button>
+        <InputField label="Navn (case sensitive): " id="nameIn" val={name} type="text" updateValue={updateName} />
+        <button type="button" onClick={searchDotkom}>
+          Søk
+        </button>
       </Search>
-      
-      {
-        status === 'loaded' ? (
-          <table>
-            <thead>
-              <tr>
-                <th>Navn</th><th>Bilde</th><th>Legg til</th>
+
+      {status === 'loaded' ? (
+        <table>
+          <thead>
+            <tr>
+              <th>Navn</th>
+              <th>Bilde</th>
+              <th>Legg til</th>
+            </tr>
+          </thead>
+          <tbody>
+            {companies.map((company, index) => (
+              <tr key={index}>
+                <td>{company.name}</td>
+                <td>
+                  <Img src={`https://online.ntnu.no${company.image.original}`} />
+                </td>
+                <td>
+                  <button onClick={() => addCompany(index)}>Legg til</button>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {companies.map((company, index) => (
-                <tr key={index}>
-                  <td>{company.name}</td>
-                  <td><Img src={`https://online.ntnu.no${company.image.original}`} /></td>
-                  <td><button onClick={() => addCompany(index)}>Legg til</button></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        ) : null
-      }
+            ))}
+          </tbody>
+        </table>
+      ) : null}
     </Wrapper>
   );
-}
+};
 
 export default ImportCompany;

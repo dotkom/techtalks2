@@ -13,11 +13,11 @@ const ClickA = styled.a`
 const ProgramHendelse = (props) => {
   const { event, antallParalleller } = props;
   const [showDetails, setShowDetails] = useState(false);
-  const handleClick = ()=>setShowDetails(v=>!v);
+  const handleClick = () => setShowDetails((v) => !v);
 
   const { navn, beskrivelse, varighet, bedrift, stedNavn, stedLink, alleParalleller } = event;
-   
-  const beskrivelseSplitted = beskrivelse.split("\n");
+
+  const beskrivelseSplitted = beskrivelse.split('\n');
   const DESCRIPTION_MAX = 200;
   let soFar = 0;
   return (
@@ -28,33 +28,28 @@ const ProgramHendelse = (props) => {
         <a href={stedLink}>{stedNavn}</a>
       </Header>
       <p>{bedrift}</p>
-      {
-        beskrivelse.length < DESCRIPTION_MAX ? 
-           (<p>{beskrivelseSplitted.map(line => { 
-            return (<p>{line}</p>);
-            })}</p>)
-          
-        : showDetails ? 
-           (<p>{beskrivelseSplitted.map(line => { 
-            return (<p>{line}</p>);
-            }) }
-          
-          { 
-            (<ClickA onClick={handleClick}>Les mindre</ClickA>)
-          }
-          </p>)
-         : 
-          (<p>
-            { (beskrivelse.slice(0, DESCRIPTION_MAX)+"...").split("\n").map(line => { 
-                return (<p>{line}</p>);
-              }) 
-            }
-            { 
-              <ClickA onClick={handleClick}>Les mer</ClickA>
-            }
-          </p>)
-        
-      }
+      {beskrivelse.length < DESCRIPTION_MAX ? (
+        <p>
+          {beskrivelseSplitted.map((line) => {
+            return <p>{line}</p>;
+          })}
+        </p>
+      ) : showDetails ? (
+        <p>
+          {beskrivelseSplitted.map((line) => {
+            return <p>{line}</p>;
+          })}
+
+          {<ClickA onClick={handleClick}>Les mindre</ClickA>}
+        </p>
+      ) : (
+        <p>
+          {(beskrivelse.slice(0, DESCRIPTION_MAX) + '...').split('\n').map((line) => {
+            return <p>{line}</p>;
+          })}
+          {<ClickA onClick={handleClick}>Les mer</ClickA>}
+        </p>
+      )}
     </td>
   );
 };

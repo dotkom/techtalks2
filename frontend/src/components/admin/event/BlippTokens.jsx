@@ -19,8 +19,7 @@ const UploadArea = styled.div`
   min-width: 5em;
 `;
 
-
-const BlippTokens = props => {
+const BlippTokens = (props) => {
   const [tokens, setTokens] = useState([]);
   const [newTokenParalell, setNewTokenParalell] = useState(0);
 
@@ -31,7 +30,7 @@ const BlippTokens = props => {
       const req = {
         body: JSON.stringify({
           token,
-          id
+          id,
         }),
       };
       const res = await post('/db/blippTokens', req);
@@ -40,10 +39,9 @@ const BlippTokens = props => {
     };
     internal();
   }
-  useEffect(()=>{
+  useEffect(() => {
     updateTokens();
-  },[props]);
-
+  }, [props]);
 
   async function deleteToken(blippToken) {
     console.log(blippToken);
@@ -51,7 +49,7 @@ const BlippTokens = props => {
     const req = {
       body: JSON.stringify({
         token,
-        blippToken
+        blippToken,
       }),
     };
     const res = await post(`/db/blippTokens/delete`, req);
@@ -63,7 +61,7 @@ const BlippTokens = props => {
     const req = {
       body: JSON.stringify({
         token,
-        paralellNo: newTokenParalell
+        paralellNo: newTokenParalell,
       }),
     };
     const res = await post(`/db/blippTokens/create`, req);
@@ -72,8 +70,10 @@ const BlippTokens = props => {
 
   return (
     <div>
-      <button type='button' onClick={props.toggleBlippTokens}>{`${props.showBlippTokens ? 'Skjul' : 'Vis'} blipp-tokens`}</button>
-      { props.showBlippTokens ? (
+      <button type="button" onClick={props.toggleBlippTokens}>{`${
+        props.showBlippTokens ? 'Skjul' : 'Vis'
+      } blipp-tokens`}</button>
+      {props.showBlippTokens ? (
         <div>
           <Table>
             <thead>
@@ -83,29 +83,43 @@ const BlippTokens = props => {
               </tr>
             </thead>
             <tbody>
-              {
-                tokens.map(blippToken => {
-                  return (<tr>
-                    <td><code>{blippToken.Token}</code></td>
+              {tokens.map((blippToken) => {
+                return (
+                  <tr>
+                    <td>
+                      <code>{blippToken.Token}</code>
+                    </td>
                     <td>{blippToken.Paralell}</td>
-                    <td><button onClick= {() => { deleteToken(blippToken.Token) }}>Slett</button></td>
-                  </tr>);
-                })
-              }
+                    <td>
+                      <button
+                        onClick={() => {
+                          deleteToken(blippToken.Token);
+                        }}
+                      >
+                        Slett
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </Table>
-          <p><i>Paralell 0 betyr at token gjelder for events som varer over alle paraleller</i></p>
+          <p>
+            <i>Paralell 0 betyr at token gjelder for events som varer over alle paraleller</i>
+          </p>
           <div>
             <h2>Ny token</h2>
             <InputField type="number" label="Paralell: " val={newTokenParalell} updateValue={setNewTokenParalell} />
-            <button type="button" onClick={newParalell}>Lagre</button>
+            <button type="button" onClick={newParalell}>
+              Lagre
+            </button>
           </div>
         </div>
-      ) : <br/>
-      }
+      ) : (
+        <br />
+      )}
     </div>
-  )
+  );
 };
-
 
 export default BlippTokens;

@@ -9,13 +9,14 @@ const Td = styled.td`
   max-width: 50em;
 `;
 
-
-const Program = props => (
+const Program = (props) => (
   <div>
-    <button type='button' onClick={props.toggleProgram}>{`${props.showProgram ? 'Skjul' : 'Vis'} program`}</button>
-    { props.showProgram ? (
+    <button type="button" onClick={props.toggleProgram}>{`${props.showProgram ? 'Skjul' : 'Vis'} program`}</button>
+    {props.showProgram ? (
       <div>
-        <p>Legg til flere hendelser <a href={`/admin/newProgramEvent?id=${props.id}`}>her</a></p>
+        <p>
+          Legg til flere hendelser <a href={`/admin/newProgramEvent?id=${props.id}`}>her</a>
+        </p>
         <Table>
           <thead>
             <tr>
@@ -28,23 +29,29 @@ const Program = props => (
             </tr>
           </thead>
           <tbody>
-            {props.program.map(({id, navn, tid, beskrivelse, stedNavn, stedLink, bedriftNavn}, ind) => (
+            {props.program.map(({ id, navn, tid, beskrivelse, stedNavn, stedLink, bedriftNavn }, ind) => (
               <tr key={id}>
                 <Td>{navn}</Td>
                 <Td>{tid}</Td>
                 <Td>{bedriftNavn}</Td>
-                <Td><a href={stedLink}>{stedNavn}</a></Td>
+                <Td>
+                  <a href={stedLink}>{stedNavn}</a>
+                </Td>
                 <Td>{beskrivelse}</Td>
-                <Td><button type="button" onClick={()=>props.deleteProgramEvent(id)}>Slett</button></Td>
-              </tr>))
-            }
+                <Td>
+                  <button type="button" onClick={() => props.deleteProgramEvent(id)}>
+                    Slett
+                  </button>
+                </Td>
+              </tr>
+            ))}
           </tbody>
         </Table>
       </div>
-    ) : <br/>
-  }
+    ) : (
+      <br />
+    )}
   </div>
 );
-
 
 export default Program;
