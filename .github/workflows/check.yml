@@ -1,0 +1,38 @@
+name: Lint and Test
+on: [push]
+jobs:
+  check-frontend:
+    name: Lint and test frontend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Cache frontend dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-frontend-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-frontend
+          working-directory: ./frontend
+      
+      - name: Install frontend dependencies
+        run: npm install
+        working-directory: ./frontend
+  
+  check-server:
+    name: Lint and test server
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      
+      - name: Cache server dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-server-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-server
+
+      - name: install server dependencies
+        run: npm install

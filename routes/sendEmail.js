@@ -13,13 +13,12 @@ const createTransporter = async () => {
       user: MAILUSER,
       serviceClient: GMAIL_OAUTH_CLIENT_ID,
       privateKey: GMAIL_OAUTH_PRIVATE_KEY,
-    }
+    },
   });
   try {
     await transporter.verify();
     return transporter;
   } catch (err) {
-    console.log(err);
     return null;
   }
 };
@@ -31,9 +30,9 @@ const sendMail = async (options, callback) => {
   }
   const mailOptions = {
     from: `Tech Talks <info@techtalks.no>`, // sender address
-    ...options
+    ...options,
   };
   transporter.sendMail(mailOptions, callback);
-}
+};
 
 module.exports = sendMail;

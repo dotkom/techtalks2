@@ -1,3 +1,4 @@
+/* eslint-disable no-plusplus */
 const express = require('express');
 const fs = require('fs');
 
@@ -6,14 +7,12 @@ const mysql = require('mysql2/promise');
 const md5 = require('md5');
 const jwt = require('jsonwebtoken');
 
+const uuid = require('uuid');
 const sendMail = require('./sendEmail.js');
 
-const uuid = require('uuid');
+const norwegianWords = fs.readFileSync('./ordliste_aspell.txt', 'utf8').split('\n');
 
-var norwegianWords = fs.readFileSync('./ordliste_aspell.txt', 'utf8').split('\n');
-
-console.log(norwegianWords.length + " words");
-
+console.log(`${norwegianWords.length} words`);
 
 function connect() {
   const { DBHOST, DBUSER, DBPASS, DBNAME } = process.env;
@@ -41,7 +40,7 @@ async function sendConfirmation(email, hash) {
     subject: 'Bekreftelse av påmelding', // Subject line
     html: `<p>For å validere påmeldingen din, trykk på denne lenken:<br/>
       <a href="http://techtalks.no/validate?ha=${hash}"><b>http://techtalks.no/validate?ha=${hash}</b></a></p>
-      <p>Eventuelle spørsmål kan sendes til <a href="mailto:ekskom@online.ntnu.no">ekskom@online.ntnu.no</a></p>` // html body
+      <p>Eventuelle spørsmål kan sendes til <a href="mailto:ekskom@online.ntnu.no">ekskom@online.ntnu.no</a></p>`, // html body
   };
   sendMail(mailOptions, (response) => {
     const { err } = response; // don't need the message for now
@@ -54,10 +53,12 @@ async function sendConfirmation(email, hash) {
 router.get('/home', async (_, res) => {
   try {
     const connection = await connect();
-    const event =  (await connection.execute(
-      'SELECT ArrangementID, Beskrivelse, AntallPlasser, PaameldingsStart, Dato FROM Arrangement ORDER BY Dato DESC LIMIT 1'
-    ))[0][0];
-    const arrID = event.ArrangementID;;
+    const event = (
+      await connection.execute(
+        'SELECT ArrangementID, Beskrivelse, AntallPlasser, PaameldingsStart, Dato FROM Arrangement ORDER BY Dato DESC LIMIT 1'
+      )
+    )[0][0];
+    const arrID = event.ArrangementID;
     connection.end();
     const pool = connectPool();
     const [partnersResponse, programResponse, paameldteResponse] = await Promise.all([
@@ -92,35 +93,45 @@ router.get('/home', async (_, res) => {
 router.post('/paamelding', async (req, res) => {
   const { navn, epost, linjeforening, alder, studieår, allergier } = req.body;
   // Validere inputs. Enkel epost-validering: sjekk at det bare finnes én @
-  if (epost.split('').filter(c=>c === '@').length != 1) {
-    res.status(400).send(JSON.stringify({
-      error: 'Invalid email',
-      status: 'failed',
-    }));
+  if (epost.split('').filter((c) => c === '@').length !== 1) {
+    res.status(400).send(
+      JSON.stringify({
+        error: 'Invalid email',
+        status: 'failed',
+      })
+    );
     return;
-  } else if (alder > 150 || alder < 18) {
-    res.status(400).send(JSON.stringify({
-      error: 'Invalid age',
-      status: 'failed',
-    }));
+  }
+  if (alder > 150 || alder < 18) {
+    res.status(400).send(
+      JSON.stringify({
+        error: 'Invalid age',
+        status: 'failed',
+      })
+    );
     return;
-  } else if (studieår > 9 || studieår < 1) {
-    res.status(400).send(JSON.stringify({
-      error: 'Invalid study year',
-      status: 'failed',
-    }));
+  }
+  if (studieår > 9 || studieår < 1) {
+    res.status(400).send(
+      JSON.stringify({
+        error: 'Invalid study year',
+        status: 'failed',
+      })
+    );
     return;
   }
   const connection = await connect();
   // TODO: valider at påmelding har åpnet (og at det fortsatt er igjen flere plasser - although dette får 2. pri, da flere plasser blir validert av )
-  const event = (await connection.execute(
-    'SELECT ArrangementID, Beskrivelse, AntallPlasser, Dato, PaameldingsStart FROM Arrangement ORDER BY Dato DESC LIMIT 1'
-  ))[0][0];
+  const event = (
+    await connection.execute(
+      'SELECT ArrangementID, Beskrivelse, AntallPlasser, Dato, PaameldingsStart FROM Arrangement ORDER BY Dato DESC LIMIT 1'
+    )
+  )[0][0];
   const { PaameldingsStart, ArrangementID } = event;
   const start = new Date(PaameldingsStart);
   if (start > new Date()) {
     res.status(400).json({
-      status: 'early'
+      status: 'early',
     });
     return;
   }
@@ -158,13 +169,14 @@ router.post('/validering', async (req, res) => {
   const eventData = await connection.query(
     `SELECT Arrangement.ArrangementID AS ArrangementID, Arrangement.AntallPlasser AS AntallPlasser, COALESCE(SUM(Paameldt.Verifisert), 0) AS AntallVerifiserte
     FROM Arrangement LEFT JOIN Paameldt ON Arrangement.ArrangementID=Paameldt.ArrangementID
-    WHERE Arrangement.ArrangementID=?`, [ArrangementID]
+    WHERE Arrangement.ArrangementID=?`,
+    [ArrangementID]
   );
   const { AntallPlasser, AntallVerifiserte } = eventData[0][0];
   console.log(`${AntallVerifiserte} av ${AntallPlasser} mulige verifisert`);
   if (AntallVerifiserte >= AntallPlasser) {
     res.status(400).json({
-      status: 'full'
+      status: 'full',
     });
     return;
   }
@@ -234,9 +246,11 @@ router.post('/allCompanies', async (req, res) => {
   }
   try {
     const connection = await connect();
-    const event = (await connection.execute(
-      'SELECT ArrangementID, Beskrivelse, AntallPlasser, Dato FROM Arrangement ORDER BY Dato DESC LIMIT 1'
-    ))[0][0];
+    const event = (
+      await connection.execute(
+        'SELECT ArrangementID, Beskrivelse, AntallPlasser, Dato FROM Arrangement ORDER BY Dato DESC LIMIT 1'
+      )
+    )[0][0];
     const arrID = event.ArrangementID;
     const results = await connection.query(
       `SELECT Bedrift.BedriftID AS BedriftID, Bedrift.Navn AS Navn, Bedrift.Logo AS Logo, Bedrift.LokaltBilde AS local, Sponsor.SponsorType AS sponsorType
@@ -263,7 +277,7 @@ router.post('/allCompanies', async (req, res) => {
 
 router.post('/newCompany', async (req, res) => {
   const { token, navn, logo, lokaltBilde, sponsorType } = req.body;
-  const isImageLocal = lokaltBilde ? true : false;  // force boolean value, also if undefined
+  const isImageLocal = !!lokaltBilde; // force boolean value, also if undefined
   try {
     const { JWTKEY } = process.env;
     jwt.verify(token, JWTKEY);
@@ -275,15 +289,20 @@ router.post('/newCompany', async (req, res) => {
   }
   try {
     const connection = await connect();
-    const response = await connection.query('INSERT INTO Bedrift(Navn, Logo, LokaltBilde) VALUES (?, ?, ?)', [navn, logo, isImageLocal]);
+    const response = await connection.query('INSERT INTO Bedrift(Navn, Logo, LokaltBilde) VALUES (?, ?, ?)', [
+      navn,
+      logo,
+      isImageLocal,
+    ]);
     if (sponsorType) {
       const { insertId } = response;
-      const arrID =  (await connection.execute('SELECT ArrangementID FROM Arrangement ORDER BY Dato DESC LIMIT 1'))[0][0]
+      const arrID = (await connection.execute('SELECT ArrangementID FROM Arrangement ORDER BY Dato DESC LIMIT 1'))[0][0]
         .ArrangementID;
-      await connection.query(
-        'INSERT INTO Sponsor(ArrangementID, BedriftID, SponsorType) VALUES (?, ?, ?)',
-        [arrID, insertId, sponsorType]
-      );
+      await connection.query('INSERT INTO Sponsor(ArrangementID, BedriftID, SponsorType) VALUES (?, ?, ?)', [
+        arrID,
+        insertId,
+        sponsorType,
+      ]);
     }
     connection.end();
     res.json({
@@ -300,7 +319,7 @@ router.post('/newCompany', async (req, res) => {
 
 router.post('/editCompany', async (req, res) => {
   const { token, bedriftID, navn, logo, sponsorType, oldSponsorType, lokaltBilde } = req.body;
-  const isImageLocal = lokaltBilde ? true : false;
+  const isImageLocal = !!lokaltBilde;
   try {
     const { JWTKEY } = process.env;
     jwt.verify(token, JWTKEY);
@@ -316,16 +335,18 @@ router.post('/editCompany', async (req, res) => {
       navn,
       logo,
       isImageLocal,
-      bedriftID
+      bedriftID,
     ]);
     const isSponsor = sponsorType > 0;
     const wasSponsor = oldSponsorType > 0;
     if (isSponsor !== wasSponsor) {
-      const event =  (await connection.execute(
-        'SELECT ArrangementID, Beskrivelse, AntallPlasser, Dato FROM Arrangement ORDER BY Dato DESC LIMIT 1'
-      ))[0][0];
+      const event = (
+        await connection.execute(
+          'SELECT ArrangementID, Beskrivelse, AntallPlasser, Dato FROM Arrangement ORDER BY Dato DESC LIMIT 1'
+        )
+      )[0][0];
       const arrID = event.ArrangementID;
-      if(sponsorType) {
+      if (sponsorType) {
         await connection.query('INSERT INTO Sponsor(BedriftID, ArrangementID, SponsorType) VALUES (?, ?, ?)', [
           bedriftID,
           arrID,
@@ -335,12 +356,17 @@ router.post('/editCompany', async (req, res) => {
         await connection.query('DELETE FROM Sponsor WHERE ArrangementID=? AND BedriftID=?', [arrID, bedriftID]);
       }
     } else if (sponsorType !== oldSponsorType) {
-      const event =  (await connection.execute('SELECT ArrangementID, Beskrivelse, AntallPlasser, Dato FROM Arrangement ORDER BY Dato DESC LIMIT 1'))[0][0];
+      const event = (
+        await connection.execute(
+          'SELECT ArrangementID, Beskrivelse, AntallPlasser, Dato FROM Arrangement ORDER BY Dato DESC LIMIT 1'
+        )
+      )[0][0];
       const arrID = event.ArrangementID;
-      await connection.query(
-        'UPDATE Sponsor SET SponsorType=? WHERE ArrangementID=? AND BedriftID=?',
-        [sponsorType, arrID, bedriftID]
-      );
+      await connection.query('UPDATE Sponsor SET SponsorType=? WHERE ArrangementID=? AND BedriftID=?', [
+        sponsorType,
+        arrID,
+        bedriftID,
+      ]);
     }
     connection.end();
     const { affectedRows, changedRows } = response[0];
@@ -361,7 +387,7 @@ router.post('/editCompany', async (req, res) => {
     res.json({
       status: 'failed',
     });
-    console.log(`Error while updating company with id ${BedriftID}.`);
+    console.log(`Error while updating company with id ${bedriftID}.`);
     console.log(error);
   }
 });
@@ -443,19 +469,34 @@ router.post('/adminEvent', async (req, res) => {
     jwt.verify(token, JWTKEY);
   } catch (error) {
     res.json({
-      status: 'denied'
+      status: 'denied',
     });
     return;
   }
 
   try {
     const pool = connectPool();
-    const [ sponsorRes, programRes, eventRes, påmeldtRes, deltagereRes ] = await Promise.all([
-      pool.query('SELECT Bedrift.BedriftID AS BedriftID, Bedrift.Navn AS navn, Bedrift.Logo AS logo, Bedrift.LokaltBilde AS local, Sponsor.SponsorType AS sponsorType FROM Bedrift INNER JOIN Sponsor ON Bedrift.BedriftID=Sponsor.BedriftID WHERE Sponsor.ArrangementID = ?', [id]),
-      pool.query('SELECT PH.HendelsesID AS id, PH.Navn AS navn, PH.Klokkeslett AS tid, PH.Beskrivelse AS beskrivelse, PH.Varighet AS varighet, PH.Parallell AS parallell, PH.AlleParalleller AS alleParalleller, Rom.Navn AS stedNavn, Rom.MazemapURL AS stedLink, Bedrift.BedriftID AS bedriftID, Bedrift.Navn AS bedriftNavn FROM Rom Inner Join (ProgramHendelse AS PH) ON Rom.RomID=PH.RomID LEFT JOIN Bedrift ON PH.Bedrift=Bedrift.BedriftID WHERE PH.ArrangementID = ? ORDER BY tid ASC, stedNavn ASC', [id]),
-      pool.query('SELECT Beskrivelse, Dato, AntallPlasser, Link, PaameldingsStart FROM Arrangement WHERE ArrangementID=?', [id]),
-      pool.query('SELECT COUNT(PaameldingsHash) AS AntallPåmeldte FROM Paameldt WHERE ArrangementID=? AND Verifisert=TRUE', [id]),
-      pool.query('SELECT PaameldingsHash, Navn, Epost, Linjeforening, Alder, StudieAar, Verifisert, PaameldingsTidspunkt, Allergier FROM Paameldt WHERE ArrangementID=?', [id])
+    const [sponsorRes, programRes, eventRes, påmeldtRes, deltagereRes] = await Promise.all([
+      pool.query(
+        'SELECT Bedrift.BedriftID AS BedriftID, Bedrift.Navn AS navn, Bedrift.Logo AS logo, Bedrift.LokaltBilde AS local, Sponsor.SponsorType AS sponsorType FROM Bedrift INNER JOIN Sponsor ON Bedrift.BedriftID=Sponsor.BedriftID WHERE Sponsor.ArrangementID = ?',
+        [id]
+      ),
+      pool.query(
+        'SELECT PH.HendelsesID AS id, PH.Navn AS navn, PH.Klokkeslett AS tid, PH.Beskrivelse AS beskrivelse, PH.Varighet AS varighet, PH.Parallell AS parallell, PH.AlleParalleller AS alleParalleller, Rom.Navn AS stedNavn, Rom.MazemapURL AS stedLink, Bedrift.BedriftID AS bedriftID, Bedrift.Navn AS bedriftNavn FROM Rom Inner Join (ProgramHendelse AS PH) ON Rom.RomID=PH.RomID LEFT JOIN Bedrift ON PH.Bedrift=Bedrift.BedriftID WHERE PH.ArrangementID = ? ORDER BY tid ASC, stedNavn ASC',
+        [id]
+      ),
+      pool.query(
+        'SELECT Beskrivelse, Dato, AntallPlasser, Link, PaameldingsStart FROM Arrangement WHERE ArrangementID=?',
+        [id]
+      ),
+      pool.query(
+        'SELECT COUNT(PaameldingsHash) AS AntallPåmeldte FROM Paameldt WHERE ArrangementID=? AND Verifisert=TRUE',
+        [id]
+      ),
+      pool.query(
+        'SELECT PaameldingsHash, Navn, Epost, Linjeforening, Alder, StudieAar, Verifisert, PaameldingsTidspunkt, Allergier FROM Paameldt WHERE ArrangementID=?',
+        [id]
+      ),
     ]);
     pool.end();
     const sponsors = sponsorRes[0];
@@ -469,15 +510,15 @@ router.post('/adminEvent', async (req, res) => {
       sponsors,
       program,
       event,
-      deltagere
+      deltagere,
     });
   } catch (error) {
     res.json({
-      status: 'failed'
+      status: 'failed',
     });
     console.log(error);
   }
-})
+});
 
 router.post('/newEvent', async (req, res) => {
   const { token, dato, antallPlasser, beskrivelse, påmeldingsStart } = req.body;
@@ -518,14 +559,14 @@ router.post('/editEvent', async (req, res) => {
     jwt.verify(token, JWTKEY);
   } catch (error) {
     res.json({
-      status: 'denied'
+      status: 'denied',
     });
     return;
   }
 
   try {
     const connection = await connect();
-    const response = await connection.query(
+    await connection.query(
       'UPDATE Arrangement SET Dato=?, AntallPlasser=?, Beskrivelse=?, Link=?, PaameldingsStart=? WHERE ArrangementID=?',
       [dato, plasser, beskrivelse, link, påmeldingsStart, arrangementID]
     );
@@ -550,7 +591,7 @@ router.post('/deleteParticipant', async (req, res) => {
     jwt.verify(token, JWTKEY);
   } catch (error) {
     res.json({
-      status: 'denied'
+      status: 'denied',
     });
     return;
   }
@@ -560,14 +601,14 @@ router.post('/deleteParticipant', async (req, res) => {
     await connection.query('DELETE FROM Paameldt WHERE PaameldingsHash=?', [PaameldingsHash]);
     connection.end();
     res.json({
-      status: 'succeeded'
+      status: 'succeeded',
     });
   } catch (error) {
     res.json({
-      status: 'failed'
+      status: 'failed',
     });
   }
-})
+});
 
 router.post('/getRooms', async (req, res) => {
   const { token } = req.body;
@@ -576,9 +617,9 @@ router.post('/getRooms', async (req, res) => {
     jwt.verify(token, JWTKEY);
   } catch (err) {
     res.json({
-      status: 'denied'
+      status: 'denied',
     });
-    return
+    return;
   }
 
   try {
@@ -588,11 +629,11 @@ router.post('/getRooms', async (req, res) => {
     const rooms = response[0];
     res.json({
       status: 'succeeded',
-      rooms
+      rooms,
     });
   } catch (error) {
     res.json({
-      status: 'failed'
+      status: 'failed',
     });
   }
 });
@@ -604,7 +645,7 @@ router.post('/newRoom', async (req, res) => {
     jwt.verify(token, JWTKEY);
   } catch (err) {
     res.json({
-      status: 'denied'
+      status: 'denied',
     });
     return;
   }
@@ -614,16 +655,16 @@ router.post('/newRoom', async (req, res) => {
     await connection.query('INSERT INTO Rom(Navn, Bygning, MazemapURL) VALUES (?, ?, ?)', [name, building, mazemap]);
     connection.end();
     res.json({
-      status: 'succeeded'
+      status: 'succeeded',
     });
   } catch (err) {
-    console.log('Failed to create new room')
+    console.log('Failed to create new room');
     console.log(err);
     res.json({
-      status: 'failed'
+      status: 'failed',
     });
   }
-})
+});
 
 router.post('/preCreateProgram', async (req, res) => {
   const { token, arrangementID } = req.body;
@@ -632,7 +673,7 @@ router.post('/preCreateProgram', async (req, res) => {
     jwt.verify(token, JWTKEY);
   } catch (err) {
     res.json({
-      status: 'denied'
+      status: 'denied',
     });
     return;
   }
@@ -640,8 +681,11 @@ router.post('/preCreateProgram', async (req, res) => {
   try {
     const pool = await connectPool();
     const [sponsorRes, romRes] = await Promise.all([
-      pool.query('SELECT Bedrift.BedriftID AS BedriftID, Bedrift.Navn as navn FROM Bedrift INNER JOIN Sponsor ON Sponsor.BedriftID = Bedrift.BedriftID WHERE Sponsor.ArrangementID = ?', [arrangementID]),
-      pool.query('SELECT RomID AS romID, CONCAT(Bygning, \' \', Navn) AS navn FROM Rom')
+      pool.query(
+        'SELECT Bedrift.BedriftID AS BedriftID, Bedrift.Navn as navn FROM Bedrift INNER JOIN Sponsor ON Sponsor.BedriftID = Bedrift.BedriftID WHERE Sponsor.ArrangementID = ?',
+        [arrangementID]
+      ),
+      pool.query("SELECT RomID AS romID, CONCAT(Bygning, ' ', Navn) AS navn FROM Rom"),
     ]);
     pool.end();
     const sponsors = sponsorRes[0];
@@ -649,11 +693,11 @@ router.post('/preCreateProgram', async (req, res) => {
     res.json({
       status: 'succeeded',
       sponsors,
-      rom
+      rom,
     });
   } catch (err) {
     res.json({
-      status: 'failed'
+      status: 'failed',
     });
     console.log(`Failed to fetch rooms and sponsors for event with ID ${arrangementID}:`);
     console.log(err);
@@ -661,19 +705,30 @@ router.post('/preCreateProgram', async (req, res) => {
 });
 
 router.post('/createProgramEvent', async (req, res) => {
-  const { token, arrangementID, bedriftID, navn, beskrivelse, romID, klokkeslett, parallell, alleParalleller, varighet } = req.body;
+  const {
+    token,
+    arrangementID,
+    bedriftID,
+    navn,
+    beskrivelse,
+    romID,
+    klokkeslett,
+    parallell,
+    alleParalleller,
+    varighet,
+  } = req.body;
   try {
     const { JWTKEY } = process.env;
     jwt.verify(token, JWTKEY);
   } catch (err) {
     res.json({
-      status: 'denied'
+      status: 'denied',
     });
     return;
   }
 
   try {
-    // unngå utilsiktet  parallell, i tilfelle 
+    // unngå utilsiktet  parallell, i tilfelle
     const reellParallell = alleParalleller ? 1 : parallell;
     const connection = await connect();
     await connection.query(
@@ -681,10 +736,10 @@ router.post('/createProgramEvent', async (req, res) => {
       [arrangementID, bedriftID, navn, beskrivelse, romID, klokkeslett, reellParallell, alleParalleller, varighet]
     );
     res.json({
-      status: 'succeeded'
+      status: 'succeeded',
     });
   } catch (err) {
-    res.json({status: 'failed'});
+    res.json({ status: 'failed' });
     console.log('Failed to create new program event: ');
     console.log(err);
   }
@@ -695,17 +750,17 @@ router.post('/deleteProgramEvent', async (req, res) => {
   try {
     const { JWTKEY } = process.env;
     jwt.verify(token, JWTKEY);
-  } catch(e) {
-    res.status(401).json({status: 'denied'});
+  } catch (e) {
+    res.status(401).json({ status: 'denied' });
   }
 
   try {
     const connection = await connect();
     await connection.query('DELETE FROM ProgramHendelse WHERE HendelsesID=?', [id]);
     connection.end();
-    res.json({status:'ok'});
+    res.json({ status: 'ok' });
   } catch (error) {
-    res.status(500).json({status: 'failed'});
+    res.status(500).json({ status: 'failed' });
   }
 });
 
@@ -716,13 +771,17 @@ router.post('/addSponsor', async (req, res) => {
     jwt.verify(token, JWTKEY);
   } catch (error) {
     res.json({
-      status: 'denied'
+      status: 'denied',
     });
     return;
   }
   try {
     const connection = await connect();
-    await connection.query('INSERT INTO Sponsor(ArrangementID, BedriftID, SponsorType) VALUES (?, ?, ?)', [arrangementID, bedriftID, sponsorType]);
+    await connection.query('INSERT INTO Sponsor(ArrangementID, BedriftID, SponsorType) VALUES (?, ?, ?)', [
+      arrangementID,
+      bedriftID,
+      sponsorType,
+    ]);
     connection.end();
     res.json({
       status: 'succeeded',
@@ -743,7 +802,7 @@ router.post('/removeSponsor', async (req, res) => {
     jwt.verify(token, JWTKEY);
   } catch (error) {
     res.json({
-      status: 'denied'
+      status: 'denied',
     });
     return;
   }
@@ -763,23 +822,21 @@ router.post('/removeSponsor', async (req, res) => {
   }
 });
 
-//External people
+// External people
 router.post('/externalParticipants', async (req, res) => {
-  const { token, arrangementID, bedriftID } = req.body;
+  const { token } = req.body;
   try {
     const { JWTKEY } = process.env;
     jwt.verify(token, JWTKEY);
   } catch (error) {
     res.json({
-      status: 'denied'
+      status: 'denied',
     });
     return;
   }
   try {
     const connection = await connect();
-    const people =  (await connection.execute(
-      'SELECT UUID, Navn FROM ExternalParticipant'
-    ))[0];
+    const people = (await connection.execute('SELECT UUID, Navn FROM ExternalParticipant'))[0];
     connection.end();
 
     res.json(people);
@@ -796,25 +853,26 @@ router.post('/createExternalParticipants', async (req, res) => {
     jwt.verify(token, JWTKEY);
   } catch (error) {
     res.json({
-      status: 'denied'
+      status: 'denied',
     });
     return;
   }
   try {
     const connection = await connect();
-    const participants =  (await connection.query(
-      'SELECT Navn FROM ExternalParticipant WHERE Navn LIKE ?', [Navn.toLowerCase()]
-    ))[0];
-    if(participants.length != 0) {
-      res.json({status: "Already exists"});
+    const participants = (
+      await connection.query('SELECT Navn FROM ExternalParticipant WHERE Navn LIKE ?', [Navn.toLowerCase()])
+    )[0];
+    if (participants.length !== 0) {
+      res.json({ status: 'Already exists' });
       return;
     }
-    const people =  (await connection.query(
-      'INSERT INTO ExternalParticipant(UUID, Navn) VALUES (?, ?);', [uuid.v4(), Navn.toLowerCase()]
-    ))[0];
+    await connection.query('INSERT INTO ExternalParticipant(UUID, Navn) VALUES (?, ?);', [
+      uuid.v4(),
+      Navn.toLowerCase(),
+    ]);
     connection.end();
 
-    res.json({status: "yes"});
+    res.json({ status: 'yes' });
   } catch (error) {
     console.log('Could not fetch homepage');
     console.log(error);
@@ -822,22 +880,20 @@ router.post('/createExternalParticipants', async (req, res) => {
 });
 
 router.post('/externalParticipants/:uuid', async (req, res) => {
-  const { token, arrangementID, bedriftID } = req.body;
+  const { token } = req.body;
   try {
     const { JWTKEY } = process.env;
     jwt.verify(token, JWTKEY);
   } catch (error) {
     res.json({
-      status: 'denied'
+      status: 'denied',
     });
     return;
   }
   try {
-    const uuid = req.params.uuid;
+    const { uuidParam } = req.params;
     const connection = await connect();
-    const people =  (await connection.query(
-      'DELETE FROM ExternalParticipant WHERE UUID=?', [uuid] 
-    ))[0];
+    const people = (await connection.query('DELETE FROM ExternalParticipant WHERE UUID=?', [uuidParam]))[0];
     connection.end();
 
     res.json(people);
@@ -854,15 +910,13 @@ router.post('/blippTokens', async (req, res) => {
     jwt.verify(token, JWTKEY);
   } catch (error) {
     res.json({
-      status: 'denied'
+      status: 'denied',
     });
     return;
   }
   try {
     const connection = await connect();
-    const tokens =  (await connection.query(
-      'SELECT * FROM BlipBlopTokens;'
-    ))[0];
+    const tokens = (await connection.query('SELECT * FROM BlipBlopTokens;'))[0];
     connection.end();
 
     res.json(tokens);
@@ -872,9 +926,6 @@ router.post('/blippTokens', async (req, res) => {
   }
 });
 
-const adjectives = ["Sur", "Orange", "Gul", "Rød", "Turkis", "Sjalu"];
-const nouns = ["Glassmanet", "Potet", "Bil", "Hageslange", "Trimpet", ""]
-
 router.post('/blippTokens/create', async (req, res) => {
   const { token, paralellNo } = req.body;
   try {
@@ -882,24 +933,23 @@ router.post('/blippTokens/create', async (req, res) => {
     jwt.verify(token, JWTKEY);
   } catch (error) {
     res.json({
-      status: 'denied'
+      status: 'denied',
     });
     return;
   }
   try {
-    //Make a token
-    let newToken = "";
-    for(let i = 0; i < 3; i++) {
-      newToken += " "+norwegianWords[Math.floor(Math.random()*norwegianWords.length)];
+    // Make a token
+    let newToken = '';
+    for (let i = 0; i < 3; i += 1) {
+      newToken += ` ${norwegianWords[Math.floor(Math.random() * norwegianWords.length)]}`;
     }
-    newToken = newToken.replace(/[^\x00-\x7F]/g, "").trim();
+    // eslint-disable-next-line no-control-regex
+    newToken = newToken.replace(/[^\x00-\x7F]/g, '').trim();
     const connection = await connect();
-    const tokens =  (await connection.query(
-      'INSERT INTO BlipBlopTokens(`Token`, `Paralell`) VALUES (?, ?);', [newToken, paralellNo]
-    ))[0];
+    await connection.query('INSERT INTO BlipBlopTokens(`Token`, `Paralell`) VALUES (?, ?);', [newToken, paralellNo]);
     connection.end();
 
-    res.json({status: "yes"});
+    res.json({ status: 'yes' });
   } catch (error) {
     console.log('Could not fetch tokens');
     console.log(error);
@@ -913,31 +963,45 @@ router.post('/blippTokens/delete', async (req, res) => {
     jwt.verify(token, JWTKEY);
   } catch (error) {
     res.json({
-      status: 'denied'
+      status: 'denied',
     });
     return;
   }
   try {
     const connection = await connect();
-    const participants =  (await connection.query(
-      'SELECT Token FROM BlipBlopTokens WHERE Token LIKE ?', [blippToken]
-    ))[0];
-    if(participants.length == 0) {
-      res.json({status: "Doesn't exist"});
+    const participants = (
+      await connection.query('SELECT Token FROM BlipBlopTokens WHERE Token LIKE ?', [blippToken])
+    )[0];
+    if (participants.length === 0) {
+      res.json({ status: "Doesn't exist" });
       return;
     }
 
-    const tokens =  (await connection.query(
-      'DELETE FROM BlipBlopTokens WHERE `Token` = ?;', [blippToken]
-    ))[0];
+    await connection.query('DELETE FROM BlipBlopTokens WHERE `Token` = ?;', [blippToken]);
     connection.end();
 
-    res.json({status: "yes"});
+    res.json({ status: 'yes' });
   } catch (error) {
     console.log('Could not fetch tokens');
     console.log(error);
   }
 });
+
+async function getScanStatusByNames(connection, names) {
+  const result = [];
+  for (let i = 0; i < names.length; i += 1) {
+    const checks = connection.query(
+      'SELECT UUID, ScanTime, ParalellNo FROM ParticipantEventMapping WHERE ParticipantName = ?;',
+      [names[i]]
+    )[0];
+    result.push({
+      name: names[i],
+      scans: checks,
+    });
+  }
+
+  return result;
+}
 
 router.post('/scanStatus', async (req, res) => {
   const { token } = req.body;
@@ -946,162 +1010,148 @@ router.post('/scanStatus', async (req, res) => {
     jwt.verify(token, JWTKEY);
   } catch (error) {
     res.json({
-      status: 'denied'
+      status: 'denied',
     });
     return;
   }
 
   const connection = await connect();
-  let externalNames =  (await connection.query(
-    'SELECT Navn FROM ExternalParticipant ;'
-  ))[0];
-  let internalNames =  (await connection.query(
-    'SELECT Navn FROM Paameldt WHERE Verifisert=TRUE;'
-  ))[0];
+  let externalNames = (await connection.query('SELECT Navn FROM ExternalParticipant ;'))[0];
+  let internalNames = (await connection.query('SELECT Navn FROM Paameldt WHERE Verifisert=TRUE;'))[0];
 
-  internalNames = internalNames.map((name) => {return name.Navn.toLowerCase()});
+  internalNames = internalNames.map((name) => {
+    return name.Navn.toLowerCase();
+  });
 
-  externalNames = externalNames.map((name) => { return name.Navn.toLowerCase()});
+  externalNames = externalNames.map((name) => {
+    return name.Navn.toLowerCase();
+  });
 
-  let names = externalNames.concat(internalNames).unique().sort();
+  const names = externalNames
+    .concat(internalNames)
+    .unique()
+    .sort();
 
-  let result = [];
-
-  for(let i = 0; i < names.length; i++) {
-    let checks =  (await connection.query(
-      'SELECT UUID, ScanTime, ParalellNo FROM ParticipantEventMapping WHERE ParticipantName = ?;', [names[i]]
-    ))[0];
-    result.push({
-      name: names[i],
-      scans: checks
-    });
-  }
+  const result = await getScanStatusByNames(connect, names);
 
   res.json(result);
   connection.end();
-
 });
 
-//Blip blop
+// Blip blop
 
 const blippRouter = express.Router();
 
-blippRouter.use("/", async (req, res, next) => {
-  const token = req.headers["x-blipp-token"];
-  if(typeof token === "undefined") {
-    res.status(404).send("Not found");
-    console.log("No token!");
+blippRouter.use('/', async (req, res, next) => {
+  const token = req.headers['x-blipp-token'];
+  if (typeof token === 'undefined') {
+    res.status(404).send('Not found');
+    console.log('No token!');
     return;
   }
   console.log(`Blipp blopp middleware. Token: ${token}`);
 
   const connection = await connect();
-  const tokens =  (await connection.query(
-    'SELECT Token FROM BlipBlopTokens WHERE Token LIKE ?', [token]
-  ))[0];
-  if(tokens.length == 0) {
-    res.status(404).send("Not found");
-    console.log("Wrong token!");
+  const tokens = (await connection.query('SELECT Token FROM BlipBlopTokens WHERE Token LIKE ?', [token]))[0];
+  if (tokens.length === 0) {
+    res.status(404).send('Not found');
+    console.log('Wrong token!');
     return;
   }
   connection.end();
   next();
 });
 
-
 blippRouter.get('/check', async (req, res) => {
-  const token = req.headers["x-blipp-token"];
+  const token = req.headers['x-blipp-token'];
   const connection = await connect();
-  const tokens =  (await connection.query(
-    'SELECT Token, Paralell FROM BlipBlopTokens WHERE Token LIKE ?', [token]
-  ))[0];
+  const tokens = (await connection.query('SELECT Token, Paralell FROM BlipBlopTokens WHERE Token LIKE ?', [token]))[0];
   res.json(tokens[0]);
   connection.end();
 });
 
 blippRouter.get('/nfc/:nfcId', async (req, res) => {
-  const nfcId = req.params.nfcId;
+  const { nfcId } = req.params;
   const connection = await connect();
-  const tokens =  (await connection.query(
-    'SELECT CardID, ParticipantName FROM CardParticipantMapping WHERE CardID LIKE ?', [nfcId]
-  ))[0];
-  res.json(tokens.length==0 ? {CardID: nfcId} : tokens[0]);
+  const tokens = (
+    await connection.query('SELECT CardID, ParticipantName FROM CardParticipantMapping WHERE CardID LIKE ?', [nfcId])
+  )[0];
+  res.json(tokens.length === 0 ? { CardID: nfcId } : tokens[0]);
   connection.end();
-
 });
 
 blippRouter.post('/nfc/:nfcId', async (req, res) => {
-  const nfcId = req.params.nfcId;
+  const { nfcId } = req.params;
   const { userName } = req.body;
   const connection = await connect();
-  const tokens =  (await connection.query(
-    'SELECT CardID, ParticipantName FROM CardParticipantMapping WHERE CardID LIKE ?', [nfcId]
-  ))[0];
-  
-  if(tokens.length != 0) {
-    res.status(400).send("Object already exists");
+  const tokens = (
+    await connection.query('SELECT CardID, ParticipantName FROM CardParticipantMapping WHERE CardID LIKE ?', [nfcId])
+  )[0];
+
+  if (tokens.length !== 0) {
+    res.status(400).send('Object already exists');
   }
 
-  await connection.query('INSERT INTO CardParticipantMapping(`CardID`, `ParticipantName`) VALUES (?, ?)', [nfcId, userName]);
+  await connection.query('INSERT INTO CardParticipantMapping(`CardID`, `ParticipantName`) VALUES (?, ?)', [
+    nfcId,
+    userName,
+  ]);
 
-  res.json({success: true});
+  res.json({ success: true });
   connection.end();
-
 });
 
 blippRouter.post('/passing/:nfcId', async (req, res) => {
-  const nfcId = req.params.nfcId;
   const { userName } = req.body;
   const connection = await connect();
 
-  //We have to get the parallell
-  const token = req.headers["x-blipp-token"];
-  const paralell =  (await connection.query(
-    'SELECT Paralell FROM BlipBlopTokens WHERE Token LIKE ?', [token]
-  ))[0];
+  // We have to get the parallell
+  const token = req.headers['x-blipp-token'];
+  const paralell = (await connection.query('SELECT Paralell FROM BlipBlopTokens WHERE Token LIKE ?', [token]))[0];
 
   console.log(paralell);
 
-  await connection.query('INSERT INTO ParticipantEventMapping(`UUID`, `ParticipantName`, `ParalellNo`) VALUES (?, ?, ?)', [uuid.v4(), userName, paralell[0].Paralell]);
+  await connection.query(
+    'INSERT INTO ParticipantEventMapping(`UUID`, `ParticipantName`, `ParalellNo`) VALUES (?, ?, ?)',
+    [uuid.v4(), userName, paralell[0].Paralell]
+  );
 
-  res.json({success: true});
+  res.json({ success: true });
   connection.end();
-
 });
 
+// eslint-disable-next-line no-extend-native
 Array.prototype.unique = function() {
-    var a = this.concat();
-    for(var i=0; i<a.length; ++i) {
-        for(var j=i+1; j<a.length; ++j) {
-            if(a[i] === a[j])
-                a.splice(j--, 1);
-        }
+  const a = this.concat();
+  // eslint-disable-next-line no-plusplus
+  for (let i = 0; i < a.length; ++i) {
+    // eslint-disable-next-line no-plusplus
+    for (let j = i + 1; j < a.length; ++j) {
+      if (a[i] === a[j]) a.splice(j--, 1);
     }
+  }
 
-    return a;
+  return a;
 };
 
 blippRouter.get('/participants', async (req, res) => {
-  const nfcId = req.params.nfcId;
   const connection = await connect();
-  let externalNames =  (await connection.query(
-    'SELECT Navn FROM ExternalParticipant ;'
-  ))[0];
-  let internalNames =  (await connection.query(
-    'SELECT Navn FROM Paameldt WHERE Verifisert=TRUE;'
-  ))[0];
+  let externalNames = (await connection.query('SELECT Navn FROM ExternalParticipant ;'))[0];
+  let internalNames = (await connection.query('SELECT Navn FROM Paameldt WHERE Verifisert=TRUE;'))[0];
 
-  internalNames = internalNames.map((name) => {return name.Navn.toLowerCase()});
+  internalNames = internalNames.map((name) => {
+    return name.Navn.toLowerCase();
+  });
 
-  externalNames = externalNames.map((name) => { return name.Navn.toLowerCase()});
+  externalNames = externalNames.map((name) => {
+    return name.Navn.toLowerCase();
+  });
 
   const names = externalNames.concat(internalNames).unique();
 
   res.json(names);
   connection.end();
-
 });
-
 
 router.use('/blipp', blippRouter);
 
