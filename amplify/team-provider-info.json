@@ -1,0 +1,20 @@
+{
+    "prod": {
+        "awscloudformation": {
+            "AuthRoleName": "amplify-techtalks-prod-162210-authRole",
+            "UnauthRoleArn": "arn:aws:iam::891459268445:role/amplify-techtalks-prod-162210-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::891459268445:role/amplify-techtalks-prod-162210-authRole",
+            "Region": "eu-west-1",
+            "DeploymentBucketName": "amplify-techtalks-prod-162210-deployment",
+            "UnauthRoleName": "amplify-techtalks-prod-162210-unauthRole",
+            "StackName": "amplify-techtalks-prod-162210",
+            "StackId": "arn:aws:cloudformation:eu-west-1:891459268445:stack/amplify-techtalks-prod-162210/32d80fb0-eacc-11ea-80c9-0a7c48fe7b06",
+            "AmplifyAppId": "dxrm6c0mwqrlo"
+        },
+        "categories": {
+            "function": {
+                "techtalks": {}
+            }
+        }
+    }
+}

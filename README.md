@@ -53,6 +53,8 @@ TECHTALKS_DB_NAME="techtalks"
 #### Email information
 ```
 TECHTALKS_MAIL_USER="ekskom@online.ntnu.no"
+GMAIL_OAUTH_CLIENT_ID
+GMAIL_OAUTH_PRIVATE_KEY
 ```
 
 #### JWT
