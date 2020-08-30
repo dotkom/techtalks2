@@ -1,0 +1,34 @@
+{
+    "paths": [
+        {
+            "name": "/api",
+            "lambdaFunction": "techtalks",
+            "privacy": {
+                "open": true
+            }
+        }
+    ],
+    "resourceName": "techtalks",
+    "apiName": "techtalks",
+    "functionArns": [
+        {
+            "lambdaFunction": "techtalks"
+        }
+    ],
+    "privacy": {
+        "auth": 0,
+        "unauth": 0,
+        "authRoleName": "amplify-techtalks-dev-155014-authRole",
+        "unAuthRoleName": "amplify-techtalks-dev-155014-unauthRole"
+    },
+    "dependsOn": [
+        {
+            "category": "function",
+            "resourceName": "techtalks",
+            "attributes": [
+                "Name",
+                "Arn"
+            ]
+        }
+    ]
+}
