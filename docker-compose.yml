@@ -9,9 +9,9 @@ services:
       MYSQL_PASSWORD: admin
       MYSQL_ROOT_PASSWORD: admin
     ports:
-      - '3306:3306'
+      - 3306:3306
     expose:
-      - '3306'
+      - 3306
     volumes:
       - type: volume
         source: db-data
