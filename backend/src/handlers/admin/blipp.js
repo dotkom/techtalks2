@@ -17,7 +17,7 @@ router.get('/tokens', async (req, res, next) => {
 });
 
 router.post('/tokens', async (req, res, next) => {
-  const { paralellNo } = req.body;
+  const { parallelNo } = req.body;
 
   try {
     // Make a token
@@ -28,7 +28,7 @@ router.post('/tokens', async (req, res, next) => {
     // eslint-disable-next-line no-control-regex
     newToken = newToken.replace(/[^\x00-\x7F]/g, '').trim();
     const connection = await connect();
-    await connection.query('INSERT INTO BlipBlopTokens(`Token`, `Paralell`) VALUES (?, ?);', [newToken, paralellNo]);
+    await connection.query('INSERT INTO BlipBlopTokens(`Token`, `parallel`) VALUES (?, ?);', [newToken, parallelNo]);
     connection.end();
 
     res.send();

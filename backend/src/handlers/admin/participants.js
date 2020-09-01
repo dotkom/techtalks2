@@ -69,7 +69,7 @@ async function getScanStatusByNames(connection, names) {
   const result = [];
   for (let i = 0; i < names.length; i += 1) {
     const checks = connection.query(
-      'SELECT UUID, ScanTime, ParalellNo FROM ParticipantEventMapping WHERE ParticipantName = ?;',
+      'SELECT UUID, ScanTime, parallelNo FROM ParticipantEventMapping WHERE ParticipantName = ?;',
       [names[i]]
     )[0];
     result.push({

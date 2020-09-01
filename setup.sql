@@ -88,13 +88,13 @@ CREATE TABLE CardParticipantMapping(
 CREATE TABLE ParticipantEventMapping(
   UUID CHAR(64) NOT NULL,
   ParticipantName TEXT NOT NULL,
-  ParalellNo INT NOT NULL,
+  parallelNo INT NOT NULL,
   ScanTime DATETIME DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (UUID)
 );
 
 CREATE TABLE BlipBlopTokens(
   Token CHAR(64) NOT NULL,
-  Paralell INT NOT NULL,
+  parallel INT NOT NULL,
   PRIMARY KEY (Token)
 );

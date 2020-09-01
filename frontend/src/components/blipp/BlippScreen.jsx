@@ -195,7 +195,7 @@ const BlippScreen = (props) => {
 
   return (
     <Wrapper>
-      <h2>Parallell {tokenBlob.Paralell}</h2>
+      <h2>Parallell {tokenBlob.parallel}</h2>
       {success ? (
         <div>
           <h2>Velkommen!</h2>

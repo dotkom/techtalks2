@@ -26,7 +26,7 @@ router.get('/check', async (req, res, next) => {
   try {
     const connection = await connect();
     const tokens = (
-      await connection.query('SELECT Token, Paralell FROM BlipBlopTokens WHERE Token LIKE ?', [token])
+      await connection.query('SELECT Token, parallel FROM BlipBlopTokens WHERE Token LIKE ?', [token])
     )[0];
     connection.end();
     res.json(tokens[0]);
@@ -81,11 +81,11 @@ router.post('/passing/:nfcId', async (req, res, next) => {
 
     // We have to get the parallell
     const token = req.headers['x-blipp-token'];
-    const paralell = (await connection.query('SELECT Paralell FROM BlipBlopTokens WHERE Token LIKE ?', [token]))[0];
+    const parallel = (await connection.query('SELECT parallel FROM BlipBlopTokens WHERE Token LIKE ?', [token]))[0];
 
     await connection.query(
-      'INSERT INTO ParticipantEventMapping(`UUID`, `ParticipantName`, `ParalellNo`) VALUES (?, ?, ?)',
-      [uuid.v4(), userName, paralell[0].Paralell]
+      'INSERT INTO ParticipantEventMapping(`UUID`, `ParticipantName`, `parallelNo`) VALUES (?, ?, ?)',
+      [uuid.v4(), userName, parallel[0].parallel]
     );
 
     res.send();

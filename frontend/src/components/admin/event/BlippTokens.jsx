@@ -21,7 +21,7 @@ const UploadArea = styled.div`
 
 const BlippTokens = (props) => {
   const [tokens, setTokens] = useState([]);
-  const [newTokenParalell, setNewTokenParalell] = useState(0);
+  const [newTokenparallel, setNewTokenparallel] = useState(0);
 
   function getTokens() {
     const internal = async () => {
@@ -46,10 +46,10 @@ const BlippTokens = (props) => {
     getTokens();
   }
 
-  async function newParalell() {
+  async function newparallel() {
     const req = {
       body: JSON.stringify({
-        paralellNo: newTokenParalell,
+        parallelNo: newTokenparallel,
       }),
     };
     await post(`/admin/blipp/tokens`, req);
@@ -67,7 +67,7 @@ const BlippTokens = (props) => {
             <thead>
               <tr>
                 <td>Token</td>
-                <td>Paralell</td>
+                <td>parallel</td>
               </tr>
             </thead>
             <tbody>
@@ -77,7 +77,7 @@ const BlippTokens = (props) => {
                     <td>
                       <code>{blippToken.Token}</code>
                     </td>
-                    <td>{blippToken.Paralell}</td>
+                    <td>{blippToken.parallel}</td>
                     <td>
                       <button
                         onClick={() => {
@@ -93,12 +93,12 @@ const BlippTokens = (props) => {
             </tbody>
           </Table>
           <p>
-            <i>Paralell 0 betyr at token gjelder for events som varer over alle paraleller</i>
+            <i>parallel 0 betyr at token gjelder for events som varer over alle paralleler</i>
           </p>
           <div>
             <h2>Ny token</h2>
-            <InputField type="number" label="Paralell: " val={newTokenParalell} updateValue={setNewTokenParalell} />
-            <button type="button" onClick={newParalell}>
+            <InputField type="number" label="parallel: " val={newTokenparallel} updateValue={setNewTokenparallel} />
+            <button type="button" onClick={newparallel}>
               Lagre
             </button>
           </div>

@@ -23,7 +23,7 @@ const NewEvent = (props) => {
       }),
     };
 
-    await post(`/events`, req).then((response) => {
+    await post(`/admin/events`, req).then((response) => {
       if (response.ok) {
         setStatus('success');
       }

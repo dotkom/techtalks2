@@ -27,7 +27,7 @@ const ScanContainer = styled.div`
 function UserScanHistory(scan) {
   return (
     <ScanContainer>
-      <p>Parallell {scan.ParalellNo}</p>
+      <p>Parallell {scan.parallelNo}</p>
       <p>{scan.ScanTime}</p>
       <p>
         <i>{scan.UUID}</i>
