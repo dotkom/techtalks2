@@ -24,3 +24,10 @@ functions:
     events:
       - http: ANY /
       - http: 'ANY {proxy+}'
+    vpc:
+      securityGroupIds:
+        - sg-f48f6392
+      subnetIds:
+        - subnet-aa167fdc
+        - subnet-c260dc9a
+        - subnet-f29cee96
