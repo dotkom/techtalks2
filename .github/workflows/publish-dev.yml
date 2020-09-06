@@ -12,7 +12,7 @@ jobs:
         run: npm ci
         working-directory: ./backend
       - name: Install serverless
-        run: npm install -g serverless
+        run: sudo npm install -g serverless
       - name: serverless deploy
         run: serverless deploy
         env:
