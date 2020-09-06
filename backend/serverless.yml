@@ -1,0 +1,26 @@
+service: techtalks2
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: eu-west-1
+  stage: prod
+
+functions:
+  backend:
+    handler: index_serverless.handler
+    environment:
+      NODE_ENV: production
+      TECHTALKS_DB_HOST: ${ssm:/techtalks/db_host}
+      TECHTALKS_DB_USER: ${ssm:/techtalks/db_user}
+      TECHTALKS_DB_PASSWORD: ${ssm:/techtalks/db_password~true}
+      TECHTALKS_DB_NAME: ${ssm:/techtalks/db_name}
+      TECHTALKS_MAIL_USER: ${ssm:/techtalks/mail_user}
+      GMAIL_OAUTH_PRIVATE_KEY: ${ssm:/techtalks/mail_ouath_private_key}
+      GMAIL_OAUTH_CLIENT_ID: ${ssm:/techtalks/mail_ouath_client_id}
+      TECHTALKS_JWT_KEY: ${ssm:/techtalks/jwt_key~true}
+      TECHTALKS_ADMIN_NAME: ${ssm:/techtalks/admin_name}
+      TECHTALKS_ADMIN_PASSWORD: ${ssm:/techtalks/admin_password~true}
+    events:
+      - http: ANY /
+      - http: 'ANY {proxy+}'

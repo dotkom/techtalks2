@@ -1,0 +1,12 @@
+{
+  "root": true,
+  "extends": ["airbnb", "plugin:prettier/recommended"],
+  "plugins": ["react-hooks"],
+  "env": {
+    "browser": true,
+    "es6": true
+  },
+  "rules": {
+    "react/prop-types": 0
+  }
+}
