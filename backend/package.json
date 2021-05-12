@@ -27,7 +27,7 @@
     "morgan": "~1.9.1",
     "mysql": "^2.17.1",
     "mysql2": "^1.6.5",
-    "nodemailer": "^6.4.2",
+    "nodemailer": "^6.4.16",
     "pug": "^2.0.4",
     "save": "^2.4.0",
     "serverless-http": "^2.5.0",
